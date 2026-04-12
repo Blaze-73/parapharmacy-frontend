@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-titre: 'Syne', sans-serif;
+  --font-corps: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-corps);
+  background: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-titre);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+@layer components {
+  .btn-vert {
+    @apply inline-flex items-center justify-center gap-2
+           bg-vert-600 text-white font-semibold
+           px-5 py-2.5 rounded-xl
+           hover:bg-vert-700 active:scale-95
+           transition-all duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed
+           cursor-pointer select-none;
+  }
+  .btn-blanc {
+    @apply inline-flex items-center justify-center gap-2
+           bg-white text-vert-700 font-semibold
+           border-2 border-vert-600
+           px-5 py-2.5 rounded-xl
+           hover:bg-vert-50 active:scale-95
+           transition-all duration-150
+           cursor-pointer select-none;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-1.5
+           text-gray-600 font-medium
+           px-3 py-2 rounded-lg
+           hover:bg-gray-100 hover:text-gray-900
+           transition-colors cursor-pointer;
+  }
+  .champ {
+    @apply w-full px-4 py-3 rounded-xl
+           border border-gray-200 bg-white
+           text-gray-900 placeholder-gray-400 text-sm
+           focus:outline-none focus:ring-2 focus:ring-vert-500 focus:border-transparent
+           transition-all duration-150;
+  }
+  .carte {
+    @apply bg-white rounded-2xl border border-gray-100 shadow-sm;
+  }
+  .badge-vert  { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-vert-100 text-vert-800; }
+  .badge-rouge { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700; }
+  .badge-jaune { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800; }
+  .badge-bleu  { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700; }
+  .erreur { @apply text-xs text-red-500 mt-1 font-medium; }
+}
+
+.carte-produit {
+  @apply carte overflow-hidden cursor-pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.carte-produit:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(0,0,0,0.10); }
+.carte-produit:hover .img-produit { transform: scale(1.06); }
+.img-produit { transition: transform 0.35s ease; }
+
+.prix-principal { font-family: var(--font-titre); font-weight: 700; color: #15803d; }
+.prix-barre     { text-decoration: line-through; color: #94a3b8; }
+
+@media (max-width: 768px) {
+  .btn-vert, .btn-blanc { min-height: 44px; }
+  button { -webkit-tap-highlight-color: transparent; }
+}
