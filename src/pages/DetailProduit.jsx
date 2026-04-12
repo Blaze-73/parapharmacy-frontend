@@ -73,6 +73,7 @@ export default function DetailProduit() {
             <img
               src={produit.image}
               alt={produit.nom}
+              loading="lazy"
               className="w-full h-full object-contain p-8"
             />
           ) : (
