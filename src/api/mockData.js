@@ -79,16 +79,16 @@ const AVIS = [
 ]
 
 const BRANDS = [
-  { nom: 'La Roche-Posay', logo: 'https://logo.clearbit.com/laroche-posay.com', couleur: 'bg-blue-100', produits: 2 },
-  { nom: 'Avène', logo: 'https://logo.clearbit.com/avene.com', couleur: 'bg-green-100', produits: 5 },
-  { nom: 'Bioderma', logo: 'https://logo.clearbit.com/bioderma.com', couleur: 'bg-pink-100', produits: 0 },
-  { nom: 'Vichy', logo: 'https://logo.clearbit.com/vichy.com', couleur: 'bg-purple-100', produits: 4 },
-  { nom: 'Eucerin', logo: 'https://logo.clearbit.com/eucerin.com', couleur: 'bg-teal-100', produits: 0 },
-  { nom: 'CeraVe', logo: 'https://logo.clearbit.com/cerave.com', couleur: 'bg-amber-100', produits: 0 },
-  { nom: 'Mustela', logo: 'https://logo.clearbit.com/mustela.com', couleur: 'bg-indigo-100', produits: 5 },
-  { nom: 'Arkopharma', logo: 'https://logo.clearbit.com/arkopharma.com', couleur: 'bg-orange-100', produits: 5 },
-  { nom: 'Nuxe', logo: 'https://logo.clearbit.com/nuxe.com', couleur: 'bg-cyan-100', produits: 0 },
-  { nom: 'Ducray', logo: 'https://logo.clearbit.com/ducray.com', couleur: 'bg-red-100', produits: 0 },
+  { nom: 'La Roche-Posay', logo: 'https://www.google.com/s2/favicons?domain=laroche-posay.com&sz=64', couleur: 'bg-blue-100', produits: 2 },
+  { nom: 'Avène', logo: 'https://www.google.com/s2/favicons?domain=avene.com&sz=64', couleur: 'bg-green-100', produits: 5 },
+  { nom: 'Bioderma', logo: 'https://www.google.com/s2/favicons?domain=bioderma.com&sz=64', couleur: 'bg-pink-100', produits: 0 },
+  { nom: 'Vichy', logo: 'https://www.google.com/s2/favicons?domain=vichy.com&sz=64', couleur: 'bg-purple-100', produits: 4 },
+  { nom: 'Eucerin', logo: 'https://www.google.com/s2/favicons?domain=eucerin.com&sz=64', couleur: 'bg-teal-100', produits: 0 },
+  { nom: 'CeraVe', logo: 'https://www.google.com/s2/favicons?domain=cerave.com&sz=64', couleur: 'bg-amber-100', produits: 0 },
+  { nom: 'Mustela', logo: 'https://www.google.com/s2/favicons?domain=mustela.com&sz=64', couleur: 'bg-indigo-100', produits: 5 },
+  { nom: 'Arkopharma', logo: 'https://www.google.com/s2/favicons?domain=arkopharma.com&sz=64', couleur: 'bg-orange-100', produits: 5 },
+  { nom: 'Nuxe', logo: 'https://www.google.com/s2/favicons?domain=nuxe.com&sz=64', couleur: 'bg-cyan-100', produits: 0 },
+  { nom: 'Ducray', logo: 'https://www.google.com/s2/favicons?domain=ducray.com&sz=64', couleur: 'bg-red-100', produits: 0 },
 ]
 
 const COMMANDES = [
