@@ -2,19 +2,19 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Pencil, Trash2, X, Check, Upload, Image } from 'lucide-react'
+import CategoryIcon from '../../components/CategoryIcon.jsx'
 import { adminApi } from '../../api/index.js'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
 export default function AdminProduits() {
   const qc = useQueryClient()
-  const [modal, setModal]                   = useState(null)
-  const [supprConfirm, setSupprConfirm]     = useState(null)
-  const [imagePreview, setImagePreview]     = useState(null)
-  const [imageFile, setImageFile]           = useState(null)
+  const [modal, setModal]               = useState(null)
+  const [supprConfirm, setSupprConfirm] = useState(null)
+  const [previews, setPreviews]         = useState([null, null, null])
 
-  const { data, isLoading }  = useQuery({ queryKey: ['admin-produits'], queryFn: () => adminApi.produits() })
-  const { data: catData }    = useQuery({ queryKey: ['admin-categories'], queryFn: adminApi.categories })
+  const { data, isLoading } = useQuery({ queryKey: ['admin-produits'], queryFn: () => adminApi.produits() })
+  const { data: catData }   = useQuery({ queryKey: ['admin-categories'], queryFn: adminApi.categories })
   const produits   = data?.data?.data    || []
   const categories = catData?.data?.data || []
 
@@ -32,7 +32,7 @@ export default function AdminProduits() {
       if (formData.description)  fd.append('description',  formData.description)
       fd.append('actif',      formData.actif      ? '1' : '0')
       fd.append('en_vedette', formData.en_vedette ? '1' : '0')
-      if (imageFile) fd.append('image', imageFile)
+      previews.forEach((p, i) => { if (p && p.startsWith('data:')) fd.append(`image_${i + 1}`, p) })
       if (modal?.id) {
         fd.append('_method', 'PUT')
         return adminApi.modifierProduit(modal.id, fd)
@@ -42,7 +42,7 @@ export default function AdminProduits() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin-produits'] })
       toast.success(modal?.id ? 'Produit modifié !' : 'Produit créé !')
-      setModal(null); reset(); setImagePreview(null); setImageFile(null)
+      setModal(null); reset(); setPreviews([null, null, null])
     },
     onError: (e) => {
       const errs = e.response?.data?.errors
@@ -57,7 +57,7 @@ export default function AdminProduits() {
   })
 
   function ouvrirModal(produit) {
-    setImagePreview(null); setImageFile(null)
+    setPreviews([null, null, null])
     if (produit) {
       setModal(produit)
       setTimeout(() => {
@@ -71,20 +71,25 @@ export default function AdminProduits() {
         setValue('actif',        produit.actif)
         setValue('en_vedette',   produit.en_vedette)
       }, 0)
-      if (produit.image) setImagePreview(produit.image)
+      if (produit.images?.length) setPreviews([produit.images[0], produit.images[1] || null, produit.images[2] || null])
+      else if (produit.image) setPreviews([produit.image, null, null])
     } else {
       setModal('creer')
       reset({ nom:'', categorie_id:'', marque:'', prix:'', prix_promo:'', stock:'', description:'', actif:true, en_vedette:false })
     }
   }
 
-  function handleImageChange(e) {
-    const file = e.target.files?.[0]
+  function handleImageChange(slot, file) {
     if (!file) return
-    setImageFile(file)
     const reader = new FileReader()
-    reader.onload = () => setImagePreview(reader.result)
+    reader.onload = () => {
+      setPreviews(prev => { const n = [...prev]; n[slot] = reader.result; return n })
+    }
     reader.readAsDataURL(file)
+  }
+
+  function retirerImage(slot) {
+    setPreviews(prev => { const n = [...prev]; n[slot] = null; return n })
   }
 
   return (
@@ -119,7 +124,7 @@ export default function AdminProduits() {
                       <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
                         {p.image
                           ? <img src={p.image} alt={p.nom} className="w-full h-full object-cover" />
-                          : <span className="text-lg">{p.categorie?.icone || '💊'}</span>
+                          : <CategoryIcon slug={p.categorie?.slug} className="w-5 h-5 text-gray-400" />
                         }
                       </div>
                       <div>
@@ -186,25 +191,34 @@ export default function AdminProduits() {
               </div>
 
               <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="p-6 space-y-4">
-                {/* Image */}
+                {/* Images (up to 3) */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Image <span className="text-gray-400 font-normal">(optionnel)</span>
+                    Images <span className="text-gray-400 font-normal">(jusqu'à 3)</span>
                   </label>
-                  <div className="flex gap-3 items-center">
-                    <div className="w-20 h-20 rounded-xl border-2 border-gray-100 flex items-center justify-center overflow-hidden bg-gray-50 flex-shrink-0">
-                      {imagePreview
-                        ? <img src={imagePreview} alt="Aperçu" className="w-full h-full object-cover rounded-xl" />
-                        : <Image className="w-7 h-7 text-gray-300" />
-                      }
-                    </div>
-                    <label className="flex-1 flex flex-col items-center justify-center h-20 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-vert-400 hover:bg-vert-50 transition-colors">
-                      <Upload className="w-4 h-4 text-gray-400 mb-1" />
-                      <span className="text-xs text-gray-500 text-center px-2">
-                        {imageFile ? imageFile.name : 'Cliquer pour uploader (JPG, PNG)'}
-                      </span>
-                      <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                    </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[0, 1, 2].map(slot => (
+                      <div key={slot} className="relative">
+                        <div className="aspect-square rounded-xl border-2 border-gray-100 flex items-center justify-center overflow-hidden bg-gray-50">
+                          {previews[slot]
+                            ? <img src={previews[slot]} alt="" className="w-full h-full object-cover" />
+                            : <Image className="w-6 h-6 text-gray-300" />
+                          }
+                        </div>
+                        {previews[slot] && (
+                          <button type="button" onClick={() => retirerImage(slot)}
+                            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center shadow"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        )}
+                        <label className="mt-1 flex items-center justify-center gap-1 py-1.5 border border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-vert-400 hover:bg-vert-50 transition-colors text-xs text-gray-500">
+                          <Upload className="w-3 h-3" />
+                          {previews[slot] ? 'Changer' : 'Ajouter'}
+                          <input type="file" accept="image/*" onChange={e => handleImageChange(slot, e.target.files?.[0])} className="hidden" />
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -221,7 +235,7 @@ export default function AdminProduits() {
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Catégorie *</label>
                     <select {...register('categorie_id', { required: 'La catégorie est obligatoire.' })} className={`champ ${errors.categorie_id ? 'border-red-400' : ''}`}>
                       <option value="">Choisir…</option>
-                      {categories.map(c => <option key={c.id} value={c.id}>{c.icone} {c.nom}</option>)}
+                      {categories.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
                     </select>
                     {errors.categorie_id && <p className="erreur">{errors.categorie_id.message}</p>}
                   </div>

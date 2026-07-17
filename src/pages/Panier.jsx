@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
+import CategoryIcon from '../components/CategoryIcon.jsx'
 import { usePanier } from '../store/index.js'
 
 export default function Panier() {
@@ -29,7 +30,7 @@ export default function Panier() {
                 className="w-20 h-20 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100 overflow-hidden">
                 {produit.image
                   ? <img src={produit.image} alt={produit.nom} className="w-full h-full object-contain p-1" />
-                  : <span className="text-3xl">{produit.categorie?.icone || '💊'}</span>
+                  : <CategoryIcon slug={produit.categorie?.slug} className="w-8 h-8 text-gray-300" />
                 }
               </Link>
               <div className="flex-1 min-w-0">

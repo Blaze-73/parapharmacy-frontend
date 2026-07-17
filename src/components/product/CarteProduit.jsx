@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShoppingCart } from 'lucide-react'
+import { ShoppingCart, Star } from 'lucide-react'
+import CategoryIcon from '../CategoryIcon.jsx'
 import { usePanier } from '../../store/index.js'
 import toast from 'react-hot-toast'
 
@@ -15,11 +16,29 @@ const GRADIENTS = {
   'premiers-secours': 'from-red-50 to-rose-100',
 }
 
+function Etoiles({ note, size = 12 }) {
+  const full = Math.floor(note)
+  const half = note - full >= 0.5
+  return (
+    <div className="flex items-center gap-0.5">
+      {Array.from({ length: 5 }, (_, i) => (
+        <Star
+          key={i}
+          size={size}
+          className={i < full ? 'fill-amber-400 text-amber-400' : i === full && half ? 'fill-amber-400/50 text-amber-400' : 'text-gray-200'}
+        />
+      ))}
+      <span className="text-xs font-semibold text-gray-500 ml-1">{note}</span>
+    </div>
+  )
+}
+
 export default function CarteProduit({ produit, index = 0 }) {
   const { ajouterArticle, ouvrir } = usePanier()
   const slug     = produit.categorie?.slug || ''
   const gradient = GRADIENTS[slug] || 'from-gray-50 to-slate-100'
   const emoji    = produit.categorie?.icone || '💊'
+  const catSlug  = produit.categorie?.slug || ''
 
   function handleAjouter(e) {
     e.preventDefault()
@@ -53,6 +72,11 @@ export default function CarteProduit({ produit, index = 0 }) {
               ⭐ Vedette
             </div>
           )}
+          {produit.note >= 4.8 && !produit.en_solde && !produit.en_vedette && (
+            <div className="absolute top-2 right-2 z-10 bg-purple-500 text-white text-xs font-semibold px-2 py-1 rounded-lg shadow-sm">
+              🏆 Top
+            </div>
+          )}
           {!produit.en_stock && (
             <div className="absolute inset-0 bg-white/75 flex items-center justify-center z-10">
               <span className="text-sm font-semibold text-gray-500 bg-white px-3 py-1.5 rounded-full shadow border border-gray-200">
@@ -78,7 +102,7 @@ export default function CarteProduit({ produit, index = 0 }) {
               className="w-full h-full flex items-center justify-center"
               style={{ display: produit.image ? 'none' : 'flex' }}
             >
-              <span style={{ fontSize: '3.5rem', lineHeight: 1 }}>{emoji}</span>
+              <CategoryIcon slug={catSlug} className="w-12 h-12 text-gray-300" />
             </div>
           </div>
         </div>
@@ -91,11 +115,18 @@ export default function CarteProduit({ produit, index = 0 }) {
             </p>
           )}
           <h3
-            className="text-sm font-semibold text-gray-900 leading-snug mb-3"
+            className="text-sm font-semibold text-gray-900 leading-snug mb-1"
             style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
           >
             {produit.nom}
           </h3>
+
+          {produit.note > 0 && (
+            <div className="mb-2">
+              <Etoiles note={produit.note} size={11} />
+            </div>
+          )}
+
           <div className="flex items-center justify-between gap-2">
             <div>
               <span className="prix-principal text-base sm:text-lg">

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { SlidersHorizontal, X, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { produitsApi } from '../api/index.js'
+import CategoryIcon from '../components/CategoryIcon.jsx'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 
 export default function Produits() {
@@ -96,7 +97,7 @@ export default function Produits() {
               <label key={c.id} className="flex items-center gap-2.5 cursor-pointer group">
                 <input type="radio" name="cat" checked={filtres.categorie === c.slug} onChange={() => update('categorie', c.slug)} className="accent-vert-600" />
                 <span className="text-sm text-gray-700 group-hover:text-vert-700 transition-colors">
-                  {c.icone} {c.nom}
+                  <CategoryIcon slug={c.slug} className="w-4 h-4 text-gray-500 inline-block align-middle" /> {c.nom}
                 </span>
               </label>
             ))}
@@ -191,6 +192,7 @@ export default function Produits() {
               className="champ py-2 w-auto text-sm cursor-pointer ml-auto"
             >
               <option value="recent">Plus récents</option>
+              <option value="note">Mieux notés</option>
               <option value="prix_asc">Prix croissant</option>
               <option value="prix_desc">Prix décroissant</option>
               <option value="nom">Nom A–Z</option>

@@ -3,7 +3,7 @@ import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, ShoppingBag } from 'l
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { usePanier } from '../../store/index.js'
-
+import CategoryIcon from '../CategoryIcon.jsx'
 export default function PanierDrawer() {
   const { articles, ouvert, fermer, modifierQuantite, retirerArticle, sousTotal } = usePanier()
   const navigate   = useNavigate()
@@ -93,7 +93,7 @@ export default function PanierDrawer() {
                       >
                         {produit.image
                           ? <img src={produit.image} alt={produit.nom} className="w-full h-full object-contain p-1" />
-                          : <span className="text-2xl">{produit.categorie?.icone || '💊'}</span>
+                          : <CategoryIcon slug={produit.categorie?.slug} className="w-7 h-7 text-gray-300" />
                         }
                       </Link>
 

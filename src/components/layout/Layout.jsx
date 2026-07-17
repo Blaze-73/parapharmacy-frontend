@@ -5,6 +5,7 @@ import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search } from 'luc
 import { useAuth, usePanier } from '../../store/index.js'
 import { authApi, produitsApi } from '../../api/index.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
+import CategoryIcon from '../CategoryIcon.jsx'
 import toast from 'react-hot-toast'
 
 // ── Search with suggestions ───────────────────────────────────────────────────
@@ -127,7 +128,7 @@ function SearchBar({ mobile = false }) {
                     <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {produit.image
                         ? <img src={produit.image} alt={produit.nom} className="w-full h-full object-contain p-0.5" />
-                        : <span className="text-lg">{produit.categorie?.icone || '💊'}</span>
+                        : <CategoryIcon slug={produit.categorie?.slug} className="w-5 h-5 text-gray-400" />
                       }
                     </div>
                     <div className="flex-1 min-w-0">

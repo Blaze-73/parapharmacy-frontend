@@ -2,17 +2,37 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { Minus, Plus, ShoppingCart, ArrowLeft, Check } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, ArrowLeft, Check, Star, ChevronDown, ChevronUp } from 'lucide-react'
 import { produitsApi } from '../api/index.js'
+import CategoryIcon from '../components/CategoryIcon.jsx'
 import { usePanier } from '../store/index.js'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import toast from 'react-hot-toast'
+
+function Etoiles({ note, size = 18, afficherNote = true }) {
+  const full = Math.floor(note)
+  const half = note - full >= 0.5
+  return (
+    <div className="flex items-center gap-0.5">
+      {Array.from({ length: 5 }, (_, i) => (
+        <Star
+          key={i}
+          size={size}
+          className={i < full ? 'fill-amber-400 text-amber-400' : i === full && half ? 'fill-amber-400/50 text-amber-400' : 'text-gray-200'}
+        />
+      ))}
+      {afficherNote && <span className="text-sm font-semibold text-gray-600 ml-1.5">{note}/5</span>}
+    </div>
+  )
+}
 
 export default function DetailProduit() {
   const { slug } = useParams()
   const { ajouterArticle, ouvrir } = usePanier()
   const [qty, setQty] = useState(1)
   const [ajoute, setAjoute] = useState(false)
+  const [voirAvis, setVoirAvis] = useState(true)
+  const [imageActive, setImageActive] = useState(0)
 
   const { data, isLoading } = useQuery({
     queryKey: ['produit', slug],
@@ -22,6 +42,7 @@ export default function DetailProduit() {
 
   const produit    = data?.data?.data?.produit
   const similaires = data?.data?.data?.similaires || []
+  const avis       = data?.data?.data?.avis || []
 
   function handleAjouter() {
     if (!produit?.en_stock) return
@@ -53,7 +74,7 @@ export default function DetailProduit() {
     </div>
   )
 
-  const emoji = produit.categorie?.icone || '💊'
+  const catSlug = produit.categorie?.slug || ''
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -62,22 +83,39 @@ export default function DetailProduit() {
         Retour aux produits
       </Link>
 
-      <div className="grid md:grid-cols-2 gap-10 mb-16">
-        {/* Image */}
+      <div className="grid md:grid-cols-2 gap-10 mb-12">
+        {/* Images */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden"
+          className="space-y-3"
         >
-          {produit.image ? (
-            <img
-              src={produit.image}
-              alt={produit.nom}
-              loading="lazy"
-              className="w-full h-full object-contain p-8"
-            />
-          ) : (
-            <span style={{ fontSize: '8rem', lineHeight: 1 }}>{emoji}</span>
+          <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden">
+            {produit.images?.[imageActive] || produit.image ? (
+              <img
+                src={produit.images?.[imageActive] || produit.image}
+                alt={produit.nom}
+                loading='lazy'
+                className="w-full h-full object-contain p-8 transition-opacity duration-200"
+              />
+            ) : (
+              <CategoryIcon slug={catSlug} className="w-32 h-32 text-gray-200" />
+            )}
+          </div>
+          {(produit.images?.length > 1) && (
+            <div className="flex gap-2">
+              {produit.images.map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => setImageActive(i)}
+                  className={`w-16 h-16 rounded-xl border-2 overflow-hidden flex-shrink-0 transition-all ${
+                    i === imageActive ? 'border-vert-500 ring-2 ring-vert-200' : 'border-gray-100 hover:border-gray-300'
+                  }`}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
           )}
         </motion.div>
 
@@ -99,6 +137,14 @@ export default function DetailProduit() {
           <h1 className="text-3xl font-bold text-gray-900 leading-tight" style={{ fontFamily: 'Syne' }}>
             {produit.nom}
           </h1>
+
+          {/* Rating */}
+          {produit.note > 0 && (
+            <div className="flex items-center gap-2">
+              <Etoiles note={produit.note} size={18} />
+              <span className="text-sm text-gray-400">({produit.nb_avis || 0} avis)</span>
+            </div>
+          )}
 
           {/* Price */}
           <div className="flex items-center gap-3 flex-wrap">
@@ -182,6 +228,51 @@ export default function DetailProduit() {
           </div>
         </motion.div>
       </div>
+
+      {/* Avis clients */}
+      {avis.length > 0 && (
+        <section className="mb-12">
+          <button
+            onClick={() => setVoirAvis(v => !v)}
+            className="flex items-center justify-between w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 hover:shadow-sm transition-shadow"
+          >
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'Syne' }}>Avis clients</h2>
+              <span className="bg-vert-100 text-vert-700 text-xs font-bold px-2.5 py-1 rounded-full">{avis.length} avis</span>
+              {produit.note > 0 && <Etoiles note={produit.note} size={16} afficherNote={false} />}
+            </div>
+            {voirAvis ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+          </button>
+          {voirAvis && (
+            <div className="mt-4 space-y-3">
+              {avis.map(a => {
+                const initiales = a.user.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+                return (
+                  <div key={a.id} className="carte p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="w-9 h-9 bg-vert-100 rounded-full flex items-center justify-center text-vert-700 text-xs font-bold flex-shrink-0">
+                        {initiales}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-gray-900 text-sm">{a.user}</span>
+                          <span className="text-xs text-gray-400">· {a.date}</span>
+                        </div>
+                        <div className="flex items-center gap-0.5 mt-0.5 mb-2">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <Star key={i} size={12} className={i < a.note ? 'fill-amber-400 text-amber-400' : 'text-gray-200'} />
+                          ))}
+                        </div>
+                        <p className="text-sm text-gray-600 leading-relaxed">{a.commentaire}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Similaires */}
       {similaires.length > 0 && (
