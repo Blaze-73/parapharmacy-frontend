@@ -37,7 +37,7 @@ export default function AdminLayout() {
               <span className="text-white font-extrabold" style={{ fontFamily: 'Syne' }}>P</span>
             </div>
             <div>
-              <p className="text-white font-bold text-sm" style={{ fontFamily: 'Syne' }}>ParaPharma</p>
+              <p className="text-white font-bold text-sm" style={{ fontFamily: 'Syne' }}>Omar &amp; Karima's</p>
               <p className="text-gray-400 text-xs">Administration</p>
             </div>
           </Link>

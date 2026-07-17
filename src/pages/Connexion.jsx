@@ -46,7 +46,7 @@ export default function Connexion() {
             <div className="w-10 h-10 bg-vert-600 rounded-2xl flex items-center justify-center">
               <span className="text-white font-extrabold text-xl" style={{ fontFamily: 'Syne' }}>P</span>
             </div>
-            <span className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>ParaPharma</span>
+            <span className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Omar &amp; Karima's</span>
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">Connexion</h1>
           <p className="text-gray-500 mt-2">Bienvenue ! Connectez-vous à votre compte.</p>

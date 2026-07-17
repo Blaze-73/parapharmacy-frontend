@@ -370,7 +370,7 @@ export default function Layout() {
                 <div className="w-8 h-8 bg-vert-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold" style={{ fontFamily: 'Syne' }}>P</span>
                 </div>
-                <span className="text-lg font-bold text-white" style={{ fontFamily: 'Syne' }}>ParaPharma</span>
+                <span className="text-lg font-bold text-white" style={{ fontFamily: 'Syne' }}>Omar &amp; Karima's</span>
               </div>
               <p className="text-sm text-gray-400 leading-relaxed">
                 Votre parapharmacie en ligne de confiance. Produits de santé et bien-être livrés chez vous.
@@ -395,7 +395,7 @@ export default function Layout() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
-            © {new Date().getFullYear()} ParaPharmacie. Tous droits réservés.
+            © {new Date().getFullYear()} Omar &amp; Karima's. Tous droits réservés.
           </div>
         </div>
       </footer>
