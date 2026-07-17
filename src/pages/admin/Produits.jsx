@@ -7,6 +7,23 @@ import { adminApi } from '../../api/index.js'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
+function compressDataUrl(dataUrl, maxW = 400, quality = 0.7) {
+  return new Promise(resolve => {
+    const img = new Image()
+    img.onload = () => {
+      if (img.naturalWidth <= maxW && dataUrl.length < 200000) { resolve(dataUrl); return }
+      const c = document.createElement('canvas')
+      const scale = Math.min(maxW / img.naturalWidth, 1)
+      c.width = Math.round(img.naturalWidth * scale)
+      c.height = Math.round(img.naturalHeight * scale)
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height)
+      resolve(c.toDataURL('image/jpeg', quality))
+    }
+    img.onerror = () => resolve(dataUrl)
+    img.src = dataUrl
+  })
+}
+
 export default function AdminProduits() {
   const qc = useQueryClient()
   const [modal, setModal]               = useState(null)
@@ -79,13 +96,21 @@ export default function AdminProduits() {
     }
   }
 
-  function handleImageChange(slot, file) {
+  async function handleImageChange(slot, file) {
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      setPreviews(prev => { const n = [...prev]; n[slot] = reader.result; return n })
+    if (file.size > 5 * 1024 * 1024) { toast.error('Image trop volumineuse (max 5 Mo)'); return }
+    try {
+      const raw = await new Promise((resolve, reject) => {
+        const r = new FileReader()
+        r.onload = () => resolve(r.result)
+        r.onerror = reject
+        r.readAsDataURL(file)
+      })
+      const compressed = await compressDataUrl(raw)
+      setPreviews(prev => { const n = [...prev]; n[slot] = compressed; return n })
+    } catch {
+      toast.error("Erreur lors de la lecture de l'image")
     }
-    reader.readAsDataURL(file)
   }
 
   function retirerImage(slot) {

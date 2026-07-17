@@ -79,16 +79,7 @@ const AVIS = [
 ]
 
 const BRANDS = [
-  { nom: 'La Roche-Posay', logo: 'https://www.google.com/s2/favicons?domain=laroche-posay.com&sz=64', couleur: 'bg-blue-100', produits: 2 },
-  { nom: 'Avène', logo: 'https://www.google.com/s2/favicons?domain=avene.com&sz=64', couleur: 'bg-green-100', produits: 5 },
-  { nom: 'Bioderma', logo: 'https://www.google.com/s2/favicons?domain=bioderma.com&sz=64', couleur: 'bg-pink-100', produits: 0 },
-  { nom: 'Vichy', logo: 'https://www.google.com/s2/favicons?domain=vichy.com&sz=64', couleur: 'bg-purple-100', produits: 4 },
-  { nom: 'Eucerin', logo: 'https://www.google.com/s2/favicons?domain=eucerin.com&sz=64', couleur: 'bg-teal-100', produits: 0 },
-  { nom: 'CeraVe', logo: 'https://www.google.com/s2/favicons?domain=cerave.com&sz=64', couleur: 'bg-amber-100', produits: 0 },
-  { nom: 'Mustela', logo: 'https://www.google.com/s2/favicons?domain=mustela.com&sz=64', couleur: 'bg-indigo-100', produits: 5 },
-  { nom: 'Arkopharma', logo: 'https://www.google.com/s2/favicons?domain=arkopharma.com&sz=64', couleur: 'bg-orange-100', produits: 5 },
-  { nom: 'Nuxe', logo: 'https://www.google.com/s2/favicons?domain=nuxe.com&sz=64', couleur: 'bg-cyan-100', produits: 0 },
-  { nom: 'Ducray', logo: 'https://www.google.com/s2/favicons?domain=ducray.com&sz=64', couleur: 'bg-red-100', produits: 0 },
+  { nom: "Omar & Karima's", logo: '', couleur: 'bg-vert-100', produits: 48 },
 ]
 
 const COMMANDES = [
@@ -147,8 +138,14 @@ const STORAGE_KEY = 'parapharmacy_data'
 
 function sauvegarder() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ produits: PRODUITS, commandes: COMMANDES, categories: CATEGORIES }))
-  } catch (e) { /* localStorage plein ou indisponible */ }
+    const raw = JSON.stringify({ produits: PRODUITS, commandes: COMMANDES, categories: CATEGORIES })
+    const sizeKB = new Blob([raw]).size / 1024
+    if (sizeKB > 4000) { console.warn('sauvegarder: données trop volumineuses (' + Math.round(sizeKB) + ' KB) — tentative…') }
+    localStorage.setItem(STORAGE_KEY, raw)
+  } catch (e) {
+    console.error('sauvegarder: échec — ' + e.message)
+    throw new Error('Impossible de sauvegarder : ' + (e.name === 'QuotaExceededError' ? 'limite de stockage dépassée' : e.message))
+  }
 }
 
 function charger() {
@@ -330,63 +327,71 @@ function getImagesFromData(data, existing) {
 }
 
 export function creerProduit(data) {
-  const maxId = Math.max(...PRODUITS.map(p => p.id))
-  const cat = CATEGORIES.find(c => c.id === Number(data.get?.('categorie_id'))) || CATEGORIES[0]
-  const imgs = getImagesFromData(data)
-  const nouveau = {
-    id: maxId + 1,
-    nom: data.get?.('nom') || 'Nouveau produit',
-    slug: (data.get?.('nom') || 'nouveau-produit').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
-    marque: data.get?.('marque') || '',
-    categorie_id: cat.id,
-    categorie: cat,
-    prix: Number(data.get?.('prix') || 0),
-    prix_effectif: Number(data.get?.('prix_promo') || data.get?.('prix') || 0),
-    prix_promo: Number(data.get?.('prix_promo') || 0),
-    en_solde: !!data.get?.('prix_promo'),
-    remise: 0,
-    en_vedette: data.get?.('en_vedette') === '1',
-    en_stock: Number(data.get?.('stock') || 0) > 0,
-    stock: Number(data.get?.('stock') || 0),
-    actif: data.get?.('actif') === '1',
-    description: data.get?.('description') || '',
-    images: imgs.images, image: imgs.image,
-    note: 0,
-    nb_avis: 0,
-    created_at: new Date().toISOString(),
+  try {
+    const maxId = Math.max(...PRODUITS.map(p => p.id))
+    const cat = CATEGORIES.find(c => c.id === Number(data.get?.('categorie_id'))) || CATEGORIES[0]
+    const imgs = getImagesFromData(data)
+    const nouveau = {
+      id: maxId + 1,
+      nom: data.get?.('nom') || 'Nouveau produit',
+      slug: (data.get?.('nom') || 'nouveau-produit').toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+      marque: data.get?.('marque') || '',
+      categorie_id: cat.id,
+      categorie: cat,
+      prix: Number(data.get?.('prix') || 0),
+      prix_effectif: Number(data.get?.('prix_promo') || data.get?.('prix') || 0),
+      prix_promo: Number(data.get?.('prix_promo') || 0),
+      en_solde: !!data.get?.('prix_promo'),
+      remise: 0,
+      en_vedette: data.get?.('en_vedette') === '1',
+      en_stock: Number(data.get?.('stock') || 0) > 0,
+      stock: Number(data.get?.('stock') || 0),
+      actif: data.get?.('actif') === '1',
+      description: data.get?.('description') || '',
+      images: imgs.images, image: imgs.image,
+      note: 0,
+      nb_avis: 0,
+      created_at: new Date().toISOString(),
+    }
+    PRODUITS.push(nouveau)
+    sauvegarder()
+    return Promise.resolve({ data: { data: nouveau } })
+  } catch (e) {
+    return Promise.reject({ response: { data: { message: e.message } } })
   }
-  PRODUITS.push(nouveau)
-  sauvegarder()
-  return Promise.resolve({ data: { data: nouveau } })
 }
 
 export function modifierProduit(id, data) {
-  const idx = PRODUITS.findIndex(p => p.id === id)
-  if (idx === -1) return Promise.reject({ response: { data: { message: 'Produit introuvable' }, status: 404 } })
-  const exists = PRODUITS[idx]
-  const cat = CATEGORIES.find(c => c.id === Number(data.get?.('categorie_id'))) || exists.categorie
-  const imgs = getImagesFromData(data, exists)
-  const updated = {
-    ...exists,
-    nom: data.get?.('nom') || exists.nom,
-    marque: data.get?.('marque') || exists.marque,
-    categorie_id: cat.id,
-    categorie: cat,
-    prix: Number(data.get?.('prix') || exists.prix),
-    prix_effectif: Number(data.get?.('prix_promo') || data.get?.('prix') || exists.prix_effectif),
-    prix_promo: Number(data.get?.('prix_promo') || exists.prix_promo || 0),
-    en_solde: !!data.get?.('prix_promo') || exists.en_solde,
-    en_vedette: data.get?.('en_vedette') === '1',
-    en_stock: Number(data.get?.('stock') || exists.stock) > 0,
-    stock: Number(data.get?.('stock') || exists.stock),
-    actif: data.get?.('actif') === '1',
-    description: data.get?.('description') || exists.description,
-    images: imgs.images,
-    image: imgs.image,
+  try {
+    const idx = PRODUITS.findIndex(p => p.id === id)
+    if (idx === -1) return Promise.reject({ response: { data: { message: 'Produit introuvable' }, status: 404 } })
+    const exists = PRODUITS[idx]
+    const cat = CATEGORIES.find(c => c.id === Number(data.get?.('categorie_id'))) || exists.categorie
+    const imgs = getImagesFromData(data, exists)
+    const updated = {
+      ...exists,
+      nom: data.get?.('nom') || exists.nom,
+      marque: data.get?.('marque') || exists.marque,
+      categorie_id: cat.id,
+      categorie: cat,
+      prix: Number(data.get?.('prix') || exists.prix),
+      prix_effectif: Number(data.get?.('prix_promo') || data.get?.('prix') || exists.prix_effectif),
+      prix_promo: Number(data.get?.('prix_promo') || exists.prix_promo || 0),
+      en_solde: !!data.get?.('prix_promo') || exists.en_solde,
+      en_vedette: data.get?.('en_vedette') === '1',
+      en_stock: Number(data.get?.('stock') || exists.stock) > 0,
+      stock: Number(data.get?.('stock') || exists.stock),
+      actif: data.get?.('actif') === '1',
+      description: data.get?.('description') || exists.description,
+      images: imgs.images,
+      image: imgs.image,
+    }
+    PRODUITS[idx] = updated
+    sauvegarder()
+    return Promise.resolve({ data: { data: updated } })
+  } catch (e) {
+    return Promise.reject({ response: { data: { message: e.message } } })
   }
-  PRODUITS[idx] = updated
-  sauvegarder()
-  return Promise.resolve({ data: { data: updated } })
 }
 
 export function supprimerProduit(id) {

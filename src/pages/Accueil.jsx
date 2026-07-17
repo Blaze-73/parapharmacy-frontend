@@ -84,6 +84,7 @@ function TimerPromo() {
 }
 
 function BrandLogo({ marque: m }) {
+  if (!m.logo) return <span className="font-bold text-sm">{m.nom}</span>
   const [ok, setOk] = useState(true)
   if (!ok) {
     const init = m.nom.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
@@ -193,7 +194,7 @@ export default function Accueil() {
       {marques.length > 0 && (
         <section className="bg-white border-b border-gray-100 py-6">
           <div className="max-w-7xl mx-auto px-4">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-4">Nos marques partenaires</p>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-4">Notre marque</p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               {marques.map(m => (
                 <Link key={m.nom} to={`/produits?marque=${m.nom}`}
