@@ -107,7 +107,8 @@ export default function AdminProduits() {
         <div className="space-y-3">{[1,2,3,4,5].map(i=><div key={i} className="h-16 bg-gray-100 rounded-xl animate-pulse"/>)}</div>
       ) : (
         <div className="carte overflow-x-auto">
-          <table className="w-full text-sm min-w-[600px]">
+          {/* Desktop table */}
+          <table className="w-full text-sm min-w-[600px] hidden sm:table">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
                 {['Produit','Catégorie','Prix','Stock','Statut','Actions'].map(h => (
@@ -167,6 +168,59 @@ export default function AdminProduits() {
               )}
             </tbody>
           </table>
+
+          {/* Mobile cards */}
+          <div className="sm:hidden divide-y divide-gray-50">
+            {produits.map(p => (
+              <div key={p.id} className="px-4 py-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      {p.image
+                        ? <img src={p.image} alt={p.nom} className="w-full h-full object-cover" />
+                        : <CategoryIcon slug={p.categorie?.slug} className="w-5 h-5 text-gray-400" />
+                      }
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-gray-900 text-sm truncate">{p.nom}</p>
+                      {p.marque && <p className="text-xs text-gray-400 truncate">{p.marque}</p>}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button onClick={() => ouvrirModal(p)} className="p-2 text-gray-400 hover:text-vert-600 hover:bg-vert-50 rounded-lg transition-colors">
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    {supprConfirm === p.id ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => supprimer.mutate(p.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg"><Check className="w-4 h-4"/></button>
+                        <button onClick={() => setSupprConfirm(null)} className="p-2 text-gray-400 hover:bg-gray-100 rounded-lg"><X className="w-4 h-4"/></button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setSupprConfirm(p.id)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-3">
+                    <span className="text-gray-600">{p.categorie?.nom}</span>
+                    <span className={p.actif ? 'badge-vert' : 'badge-rouge'}>{p.actif ? 'Actif' : 'Inactif'}</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-900">{Number(p.prix).toFixed(2)} MAD</p>
+                    {p.prix_promo && <p className="text-xs text-vert-600">Promo : {Number(p.prix_promo).toFixed(2)}</p>}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-gray-400">Stock : <strong className={`${p.stock<=5?'text-red-500':p.stock<=15?'text-orange-500':'text-gray-700'}`}>{p.stock}</strong></span>
+                </div>
+              </div>
+            ))}
+            {produits.length === 0 && (
+              <p className="px-4 py-10 text-center text-gray-400 text-sm">Aucun produit</p>
+            )}
+          </div>
         </div>
       )}
 

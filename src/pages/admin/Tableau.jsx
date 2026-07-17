@@ -9,7 +9,7 @@ function KPICard({ titre, valeur, Icone, couleur }) {
       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${couleur}`}>
         <Icone className="w-6 h-6" />
       </div>
-      <p className="text-2xl font-extrabold text-gray-900 mb-1" style={{ fontFamily: 'Syne' }}>{valeur}</p>
+      <p className="text-2xl font-extrabold text-gray-900 mb-1 font-mono tracking-tight">{valeur}</p>
       <p className="text-sm font-medium text-gray-600">{titre}</p>
     </div>
   )
@@ -71,7 +71,7 @@ export default function AdminTableau() {
                   <p className="text-xs text-gray-400">{c.user?.nom}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold">{Number(c.total).toFixed(2)} MAD</p>
+                  <p className="text-sm font-bold font-mono">{Number(c.total).toFixed(2)} MAD</p>
                   <span className={STATUTS[c.statut] || 'badge-jaune'}>{c.statut?.replace('_', ' ')}</span>
                 </div>
               </div>
@@ -92,7 +92,7 @@ export default function AdminTableau() {
             {(d?.produits_stock_bas || []).map(p => (
               <div key={p.id} className="flex items-center justify-between px-6 py-3">
                 <p className="text-sm text-gray-800 font-medium line-clamp-1 flex-1 mr-3">{p.nom}</p>
-                <span className="badge-rouge flex-shrink-0">{p.stock} restants</span>
+                <span className="badge-rouge flex-shrink-0"><span className="font-mono">{p.stock}</span> restants</span>
               </div>
             ))}
             {(!d?.produits_stock_bas || d.produits_stock_bas.length === 0) && (
