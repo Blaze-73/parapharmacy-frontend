@@ -296,8 +296,7 @@ export default function Accueil() {
         {promotions.length > 0 && (
           <section className="mt-16">
             <div className="relative rounded-3xl overflow-hidden mb-7 h-44 md:h-52">
-              <img src="https://loremflickr.com/1200/400/sale,cosmetics" alt="Promotions" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-r from-red-900/80 via-orange-800/65 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-red-900 via-orange-800 to-red-900/90" />
               <div className="absolute inset-0 flex items-center p-6 md:p-8">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 w-full">
                   <div>

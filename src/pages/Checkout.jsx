@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
 export default function Checkout() {
-  const { articles, viderPanier, sousTotal,fermer } = usePanier()
+  const { articles, viderPanier, sousTotal, fermer } = usePanier()
   const navigate = useNavigate()
   const [chargement, setChargement] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: { paiement: 'livraison' } })

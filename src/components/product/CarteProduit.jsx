@@ -4,6 +4,7 @@ import { ShoppingCart, Star } from 'lucide-react'
 import CategoryIcon from '../CategoryIcon.jsx'
 import { usePanier } from '../../store/index.js'
 import toast from 'react-hot-toast'
+import { useState } from 'react'
 
 const GRADIENTS = {
   'soins-visage':     'from-pink-50 to-rose-100',
@@ -35,6 +36,7 @@ function Etoiles({ note, size = 12 }) {
 
 export default function CarteProduit({ produit, index = 0 }) {
   const { ajouterArticle, ouvrir } = usePanier()
+  const [imgError, setImgError] = useState(false)
   const slug     = produit.categorie?.slug || ''
   const gradient = GRADIENTS[slug] || 'from-gray-50 to-slate-100'
   const emoji    = produit.categorie?.icone || '💊'
@@ -86,24 +88,17 @@ export default function CarteProduit({ produit, index = 0 }) {
           )}
 
           <div className="img-produit w-full h-full flex items-center justify-center p-4">
-            {produit.image ? (
+            {produit.image && !imgError ? (
               <img
                 src={produit.image}
                 alt={produit.nom}
                 className="w-full h-full object-contain drop-shadow-sm"
                 loading="lazy"
-                onError={(e) => {
-                  e.target.style.display = 'none'
-                  e.target.nextSibling.style.display = 'flex'
-                }}
+                onError={() => setImgError(true)}
               />
-            ) : null}
-            <div
-              className="w-full h-full flex items-center justify-center"
-              style={{ display: produit.image ? 'none' : 'flex' }}
-            >
+            ) : (
               <CategoryIcon slug={catSlug} className="w-12 h-12 text-gray-300" />
-            </div>
+            )}
           </div>
         </div>
 

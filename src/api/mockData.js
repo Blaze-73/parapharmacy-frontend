@@ -329,8 +329,7 @@ function getImagesFromData(data, existing) {
   }
   if (urls.length === 0 && existing?.images?.length) return { images: [...existing.images], image: existing.image }
   if (urls.length === 0) {
-    const fallback = 'https://loremflickr.com/400/400/product?lock=' + Date.now()
-    return { images: [fallback], image: fallback }
+    return { images: [], image: null }
   }
   return { images: urls, image: urls[0] }
 }

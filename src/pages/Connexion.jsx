@@ -44,7 +44,7 @@ export default function Connexion() {
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-5">
             <div className="w-10 h-10 bg-vert-600 rounded-2xl flex items-center justify-center">
-              <span className="text-white font-extrabold text-xl" style={{ fontFamily: 'Syne' }}>P</span>
+              <span className="text-white font-extrabold text-xl" style={{ fontFamily: 'Syne' }}>OK</span>
             </div>
             <span className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Omar &amp; Karima's</span>
           </Link>
