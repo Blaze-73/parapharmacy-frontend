@@ -83,6 +83,15 @@ function TimerPromo() {
   )
 }
 
+function BrandLogo({ marque: m }) {
+  const [ok, setOk] = useState(true)
+  if (!ok) {
+    const init = m.nom.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    return <span className="font-bold text-sm">{init}</span>
+  }
+  return <img src={m.logo} alt={m.nom} className="h-7" onError={() => setOk(false)} />
+}
+
 export default function Accueil() {
   const [slide, setSlide]       = useState(0)
   const [autoplay, setAutoplay] = useState(true)
@@ -188,8 +197,8 @@ export default function Accueil() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               {marques.map(m => (
                 <Link key={m.nom} to={`/produits?marque=${m.nom}`}
-                  className={`${m.couleur} px-4 py-2 rounded-xl font-bold text-sm hover:shadow-md hover:-translate-y-0.5 transition-all`}>
-                  {m.logo}
+                  className={`${m.couleur} px-4 py-2 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all`}>
+                  <BrandLogo marque={m} />
                 </Link>
               ))}
             </div>

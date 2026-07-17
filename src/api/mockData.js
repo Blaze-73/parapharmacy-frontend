@@ -79,16 +79,16 @@ const AVIS = [
 ]
 
 const BRANDS = [
-  { nom: 'La Roche-Posay', logo: 'LRP', couleur: 'bg-blue-100 text-blue-700', produits: 2 },
-  { nom: 'Avène', logo: 'AV', couleur: 'bg-green-100 text-green-700', produits: 5 },
-  { nom: 'Bioderma', logo: 'BD', couleur: 'bg-pink-100 text-pink-700', produits: 0 },
-  { nom: 'Vichy', logo: 'V', couleur: 'bg-purple-100 text-purple-700', produits: 4 },
-  { nom: 'Eucerin', logo: 'EU', couleur: 'bg-teal-100 text-teal-700', produits: 0 },
-  { nom: 'CeraVe', logo: 'CV', couleur: 'bg-amber-100 text-amber-700', produits: 0 },
-  { nom: 'Mustela', logo: 'MU', couleur: 'bg-indigo-100 text-indigo-700', produits: 5 },
-  { nom: 'Arkopharma', logo: 'ARK', couleur: 'bg-orange-100 text-orange-700', produits: 5 },
-  { nom: 'Nuxe', logo: 'NX', couleur: 'bg-cyan-100 text-cyan-700', produits: 0 },
-  { nom: 'Ducray', logo: 'DC', couleur: 'bg-red-100 text-red-700', produits: 0 },
+  { nom: 'La Roche-Posay', logo: 'https://logo.clearbit.com/laroche-posay.com', couleur: 'bg-blue-100', produits: 2 },
+  { nom: 'Avène', logo: 'https://logo.clearbit.com/avene.com', couleur: 'bg-green-100', produits: 5 },
+  { nom: 'Bioderma', logo: 'https://logo.clearbit.com/bioderma.com', couleur: 'bg-pink-100', produits: 0 },
+  { nom: 'Vichy', logo: 'https://logo.clearbit.com/vichy.com', couleur: 'bg-purple-100', produits: 4 },
+  { nom: 'Eucerin', logo: 'https://logo.clearbit.com/eucerin.com', couleur: 'bg-teal-100', produits: 0 },
+  { nom: 'CeraVe', logo: 'https://logo.clearbit.com/cerave.com', couleur: 'bg-amber-100', produits: 0 },
+  { nom: 'Mustela', logo: 'https://logo.clearbit.com/mustela.com', couleur: 'bg-indigo-100', produits: 5 },
+  { nom: 'Arkopharma', logo: 'https://logo.clearbit.com/arkopharma.com', couleur: 'bg-orange-100', produits: 5 },
+  { nom: 'Nuxe', logo: 'https://logo.clearbit.com/nuxe.com', couleur: 'bg-cyan-100', produits: 0 },
+  { nom: 'Ducray', logo: 'https://logo.clearbit.com/ducray.com', couleur: 'bg-red-100', produits: 0 },
 ]
 
 const COMMANDES = [
