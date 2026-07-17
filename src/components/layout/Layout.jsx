@@ -218,10 +218,10 @@ export default function Layout() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
             <div className="w-9 h-9 bg-vert-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-extrabold text-lg" style={{ fontFamily: 'Syne' }}>P</span>
+              <span className="text-white font-extrabold text-lg" style={{ fontFamily: 'Syne' }}>OK</span>
             </div>
             <span className="text-xl font-extrabold text-gray-900 hidden sm:block" style={{ fontFamily: 'Syne' }}>
-              Para<span className="text-vert-600">Pharma</span>
+              Omar &amp; <span className="text-vert-600">Karima's</span>
             </span>
           </Link>
 

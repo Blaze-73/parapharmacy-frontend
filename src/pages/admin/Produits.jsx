@@ -195,7 +195,7 @@ export default function AdminProduits() {
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Images <span className="text-gray-400 font-normal">(jusqu'à 3)</span>
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {[0, 1, 2].map(slot => (
                       <div key={slot} className="relative">
                         <div className="aspect-square rounded-xl border-2 border-gray-100 flex items-center justify-center overflow-hidden bg-gray-50">
@@ -211,7 +211,7 @@ export default function AdminProduits() {
                             <X className="w-3 h-3" />
                           </button>
                         )}
-                        <label className="mt-1 flex items-center justify-center gap-1 py-1.5 border border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-vert-400 hover:bg-vert-50 transition-colors text-xs text-gray-500">
+                        <label className="mt-1 flex items-center justify-center gap-1 py-2 sm:py-1.5 border border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-vert-400 hover:bg-vert-50 transition-colors text-xs text-gray-500 min-h-[36px]">
                           <Upload className="w-3 h-3" />
                           {previews[slot] ? 'Changer' : 'Ajouter'}
                           <input type="file" accept="image/*" onChange={e => handleImageChange(slot, e.target.files?.[0])} className="hidden" />

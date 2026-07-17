@@ -54,7 +54,8 @@ export default function AdminCommandes() {
         </div>
       ) : (
         <div className="carte overflow-x-auto">
-          <table className="w-full text-sm min-w-[700px]">
+          {/* Desktop table */}
+          <table className="w-full text-sm min-w-[600px] hidden sm:table">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
                 {['Numéro', 'Client', 'Téléphone', 'Total', 'Date', 'Statut', 'Changer'].map(h => (
@@ -119,6 +120,46 @@ export default function AdminCommandes() {
               )}
             </tbody>
           </table>
+
+          {/* Mobile cards */}
+          <div className="sm:hidden divide-y divide-gray-50">
+            {commandes.map(c => {
+              const st = STATUTS.find(s => s.v === c.statut)
+              return (
+                <div key={c.id} className="px-4 py-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setDetail(detail?.id === c.id ? null : c)}
+                      className="font-mono font-semibold text-vert-700 hover:underline text-sm"
+                    >
+                      {c.numero}
+                    </button>
+                    {st && <span className={st.cls}>{st.l}</span>}
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-700 font-medium">{c.user?.nom}</span>
+                    <span className="font-bold text-gray-900">{Number(c.total).toFixed(2)} MAD</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <span>{c.user?.telephone || '—'}</span>
+                    <span>{new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
+                  </div>
+                  <div className="pt-1">
+                    <select
+                      value={c.statut}
+                      onChange={e => mutation.mutate({ id: c.id, statut: e.target.value })}
+                      className="w-full text-xs border border-gray-200 rounded-lg px-2 py-2 bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-vert-400"
+                    >
+                      {STATUTS.map(s => <option key={s.v} value={s.v}>{s.l}</option>)}
+                    </select>
+                  </div>
+                </div>
+              )
+            })}
+            {commandes.length === 0 && (
+              <p className="px-4 py-10 text-center text-gray-400 text-sm">Aucune commande</p>
+            )}
+          </div>
         </div>
       )}
 

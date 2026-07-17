@@ -14,7 +14,7 @@ const SLIDES = [
     badge:     '✨ Nouveautés',
     lien:      '/produits',
     cta:       'Découvrir nos produits',
-    image:     'https://loremflickr.com/1200/400/pharmacy,beauty',
+    image:     'https://images.unsplash.com/photo-1576671081837-49000212a370?w=1600&q=80&auto=format',
     overlay:   'from-black/70 via-black/40 to-transparent',
   },
   {
@@ -23,7 +23,7 @@ const SLIDES = [
     badge:     '🔥 Offres limitées',
     lien:      '/produits?en_promo=true',
     cta:       'Voir les promos',
-    image:     'https://loremflickr.com/1200/400/skincare,products',
+    image:     'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=1600&q=80&auto=format',
     overlay:   'from-black/70 via-black/40 to-transparent',
   },
   {
@@ -32,7 +32,7 @@ const SLIDES = [
     badge:     '👶 Bébé & Maman',
     lien:      '/produits?categorie=bebe-maman',
     cta:       'Explorer la gamme',
-    image:     'https://loremflickr.com/1200/400/baby,family',
+    image:     'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=1600&q=80&auto=format',
     overlay:   'from-black/70 via-black/40 to-transparent',
   },
 ]
@@ -136,7 +136,7 @@ export default function Accueil() {
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden h-[480px] md:h-[560px] bg-gray-900">
+      <section className="relative overflow-hidden h-[520px] md:h-[650px] bg-gray-900">
         {SLIDES.map((sl, i) => (
           <motion.div
             key={i}
@@ -194,7 +194,7 @@ export default function Accueil() {
       {marques.length > 0 && (
         <section className="bg-white border-b border-gray-100 py-6">
           <div className="max-w-7xl mx-auto px-4">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-4">Notre marque</p>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-4">Nos marques partenaires</p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               {marques.map(m => (
                 <Link key={m.nom} to={`/produits?marque=${m.nom}`}

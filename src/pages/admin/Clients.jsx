@@ -19,7 +19,8 @@ export default function AdminClients() {
         <div className="space-y-3">{[1,2,3,4,5].map(i=><div key={i} className="h-14 bg-gray-100 rounded-xl animate-pulse"/>)}</div>
       ) : (
         <div className="carte overflow-x-auto">
-          <table className="w-full text-sm min-w-[560px]">
+          {/* Desktop table */}
+          <table className="w-full text-sm min-w-[560px] hidden sm:table">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
                 {['Nom','Email','Téléphone','Commandes','Inscrit le'].map(h => (
@@ -46,6 +47,23 @@ export default function AdminClients() {
               )}
             </tbody>
           </table>
+
+          {/* Mobile cards */}
+          <div className="sm:hidden divide-y divide-gray-50">
+            {clients.map(c => (
+              <div key={c.id} className="px-4 py-3 space-y-1">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-gray-900 text-sm">{c.nom}</p>
+                  <span className="badge-vert text-xs">{c.commandes_count} cmd</span>
+                </div>
+                <p className="text-xs text-gray-600">{c.email}</p>
+                <p className="text-xs text-gray-400">{c.telephone || '—'} · {new Date(c.created_at).toLocaleDateString('fr-FR')}</p>
+              </div>
+            ))}
+            {clients.length === 0 && (
+              <p className="px-4 py-10 text-center text-gray-400 text-sm">Aucun client</p>
+            )}
+          </div>
         </div>
       )}
     </div>
