@@ -26,6 +26,7 @@ import {
   getAdminCategories,
   creerCategorie,
   getAdminUtilisateurs,
+  exporterDonnees,
 } from './mockData.js'
 
 export const authApi = {
@@ -65,4 +66,5 @@ export const adminApi = {
   utilisateurs:     (p)        => getAdminUtilisateurs(p),
   categories:       ()         => getAdminCategories(),
   creerCategorie:   (d)        => creerCategorie(d),
+  exporterDonnees:  ()         => exporterDonnees(),
 }

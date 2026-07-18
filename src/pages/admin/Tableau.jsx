@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { TrendingUp, ShoppingBag, Package, Users, AlertTriangle } from 'lucide-react'
+import { TrendingUp, ShoppingBag, Package, Users, AlertTriangle, Download } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
 
 function KPICard({ titre, valeur, Icone, couleur }) {
@@ -42,9 +42,15 @@ export default function AdminTableau() {
 
   return (
     <div className="p-6 lg:p-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Tableau de bord</h1>
-        <p className="text-gray-500 mt-1 text-sm">Vue d'ensemble de votre boutique</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Tableau de bord</h1>
+          <p className="text-gray-500 mt-1 text-sm">Vue d'ensemble de votre boutique</p>
+        </div>
+        <button onClick={adminApi.exporterDonnees} className="btn btn-ghost text-sm gap-2">
+          <Download className="w-4 h-4" />
+          Exporter les données
+        </button>
       </div>
 
       {/* KPIs */}

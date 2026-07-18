@@ -147,7 +147,7 @@ const STORAGE_KEY = 'parapharmacy_data'
 
 function sauvegarder() {
   try {
-    const raw = JSON.stringify({ produits: PRODUITS, commandes: COMMANDES, categories: CATEGORIES })
+    const raw = JSON.stringify({ produits: PRODUITS, commandes: COMMANDES, categories: CATEGORIES, avis: AVIS, brands: BRANDS, utilisateurs: UTILISATEURS })
     const sizeKB = new Blob([raw]).size / 1024
     if (sizeKB > 4000) { console.warn('sauvegarder: données trop volumineuses (' + Math.round(sizeKB) + ' KB) — tentative…') }
     localStorage.setItem(STORAGE_KEY, raw)
@@ -164,9 +164,38 @@ function charger() {
     const data = JSON.parse(raw)
     if (data.produits?.length) { PRODUITS.length = 0; PRODUITS.push(...data.produits) }
     if (data.commandes?.length) { COMMANDES.length = 0; COMMANDES.push(...data.commandes) }
+    if (data.categories?.length) { CATEGORIES.length = 0; CATEGORIES.push(...data.categories) }
   } catch (e) { /* ignore */ }
 }
+
+function initialiserDepuisFichier() {
+  try {
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', '/data/produits.json?t=' + Date.now(), false)
+    xhr.send()
+    if (xhr.status !== 200) return
+    const data = JSON.parse(xhr.responseText)
+    if (data.categories?.length) { CATEGORIES.length = 0; CATEGORIES.push(...data.categories) }
+    if (data.produits?.length) { PRODUITS.length = 0; PRODUITS.push(...data.produits) }
+    if (data.commandes?.length) { COMMANDES.length = 0; COMMANDES.push(...data.commandes) }
+    if (data.avis?.length) { AVIS.length = 0; AVIS.push(...data.avis) }
+    if (data.brands?.length) { BRANDS.length = 0; BRANDS.push(...data.brands) }
+    if (data.utilisateurs?.length) { UTILISATEURS.length = 0; UTILISATEURS.push(...data.utilisateurs) }
+  } catch (e) { /* keep hardcoded fallback */ }
+}
+initialiserDepuisFichier()
 charger()
+
+export function exporterDonnees() {
+  const data = { categories: CATEGORIES, produits: PRODUITS, commandes: COMMANDES, avis: AVIS, brands: BRANDS, utilisateurs: UTILISATEURS }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = 'produits.json'
+  document.body.appendChild(a); a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
 
 let orderIdCounter = 8
 const orderNumDate = new Date().toISOString().slice(0, 7).replace('-', '')
