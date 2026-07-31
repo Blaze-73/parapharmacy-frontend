@@ -1,8 +1,8 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search } from 'lucide-react'
-import { useAuth, usePanier } from '../../store/index.js'
+import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search, Heart } from 'lucide-react'
+import { useAuth, usePanier, useWishlist } from '../../store/index.js'
 import { authApi, produitsApi } from '../../api/index.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
 import CategoryIcon from '../CategoryIcon.jsx'
@@ -172,6 +172,7 @@ function SearchBar({ mobile = false }) {
 export default function Layout() {
   const { connecte, user, deconnexion } = useAuth()
   const { totalArticles, ouvrir }       = usePanier()
+  const { ids: favorisIds }             = useWishlist()
   const navigate                        = useNavigate()
   const location                        = useLocation()
   const [menuOuvert, setMenuOuvert]     = useState(false)
@@ -203,6 +204,7 @@ export default function Layout() {
   }
 
   const nb = totalArticles()
+  const nbFavoris = favorisIds.length
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -241,7 +243,26 @@ export default function Layout() {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-1 ml-auto">
+          <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
+            {/* Favoris */}
+            <Link
+              to="/favoris"
+              aria-label={`Mes favoris (${nbFavoris})`}
+              className="relative p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
+            >
+              <Heart className="w-5 h-5" />
+              {nbFavoris > 0 && (
+                <motion.span
+                  key={nbFavoris}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center"
+                >
+                  {nbFavoris > 9 ? '9+' : nbFavoris}
+                </motion.span>
+              )}
+            </Link>
+
             {/* Cart */}
             <button onClick={ouvrir} className="relative p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
               <ShoppingCart className="w-5 h-5" />
@@ -292,6 +313,10 @@ export default function Layout() {
                         <Link to="/mes-commandes" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
                           <Package className="w-4 h-4" /> Mes commandes
                         </Link>
+                        <Link to="/favoris" className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                          <Heart className="w-4 h-4" /> Mes favoris
+                          {nbFavoris > 0 && <span className="ml-auto text-xs font-bold bg-red-100 text-red-600 rounded-full px-2 py-0.5">{nbFavoris}</span>}
+                        </Link>
                       </div>
                       <div className="border-t border-gray-100 py-1">
                         <button onClick={handleDeconnexion}
@@ -339,6 +364,7 @@ export default function Layout() {
                   ['/produits?categorie=soins-visage', 'Soins du visage'],
                   ['/produits?categorie=vitamines', 'Vitamines'],
                   ['/produits?en_promo=true', '🔥 Promotions'],
+                  ['/favoris', '❤️ Mes favoris'],
                 ].map(([href, label]) => (
                   <Link key={href} to={href}
                     className="block px-3 py-2.5 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-sm">

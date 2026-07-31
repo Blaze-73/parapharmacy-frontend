@@ -211,8 +211,15 @@ export default function DetailProduit() {
               </h1>
             </div>
             <button
-              onClick={() => basculer(produit.id)}
-              className="flex-shrink-0 w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                const devientFavori = !estFavori
+                basculer(produit.id)
+                if (devientFavori) toast.success('Ajouté aux favoris ❤️')
+                else toast('Retiré des favoris')
+              }}
+              aria-label={estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+              aria-pressed={estFavori}
+              className={`flex-shrink-0 w-10 h-10 rounded-xl border flex items-center justify-center transition-colors ${estFavori ? 'border-red-200 bg-red-50' : 'border-gray-200 hover:bg-gray-50'}`}
             >
               <Heart className={`w-5 h-5 transition-colors ${estFavori ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
             </button>

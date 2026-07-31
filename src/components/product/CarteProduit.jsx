@@ -53,6 +53,15 @@ export default function CarteProduit({ produit, index = 0 }) {
     ouvrir()
   }
 
+  function handleFavori(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    const devientFavori = !estFavori
+    basculer(produit.id)
+    if (devientFavori) toast.success('Ajouté aux favoris ❤️')
+    else toast('Retiré des favoris')
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -77,8 +86,10 @@ export default function CarteProduit({ produit, index = 0 }) {
             </div>
           )}
           <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); basculer(produit.id) }}
-            className="absolute top-2 right-2 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/80 hover:bg-white shadow-sm backdrop-blur-sm transition-all"
+            onClick={handleFavori}
+            aria-label={estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+            aria-pressed={estFavori}
+            className="absolute top-2 right-2 z-20 w-9 h-9 rounded-full flex items-center justify-center bg-white/80 hover:bg-white shadow-sm backdrop-blur-sm transition-all"
           >
             <Heart className={`w-4 h-4 transition-colors ${estFavori ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-400'}`} />
           </button>

@@ -11,6 +11,7 @@ const Accueil          = lazy(() => import('./pages/Accueil.jsx'))
 const Produits         = lazy(() => import('./pages/Produits.jsx'))
 const DetailProduit    = lazy(() => import('./pages/DetailProduit.jsx'))
 const Panier           = lazy(() => import('./pages/Panier.jsx'))
+const Favoris          = lazy(() => import('./pages/Favoris.jsx'))
 const Checkout         = lazy(() => import('./pages/Checkout.jsx'))
 const CommandeOk       = lazy(() => import('./pages/CommandeOk.jsx'))
 const Connexion        = lazy(() => import('./pages/Connexion.jsx'))
@@ -73,6 +74,7 @@ export default function App() {
                 <Route path="/produits"       element={<Produits />} />
                 <Route path="/produits/:slug" element={<DetailProduit />} />
                 <Route path="/panier"         element={<Panier />} />
+                <Route path="/favoris"        element={<Favoris />} />
                 <Route path="/connexion"      element={<Connexion />} />
                 <Route path="/inscription"    element={<Inscription />} />
                 <Route path="/checkout"       element={<RouteProtegee><Checkout /></RouteProtegee>} />
