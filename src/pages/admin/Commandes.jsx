@@ -12,6 +12,32 @@ const STATUTS = [
   { v: 'annulee',    l: 'Annulée',     cls: 'badge-rouge' },
 ]
 
+const TRANSITIONS = {
+  en_attente: ['confirmee', 'annulee'],
+  confirmee:  ['expediee', 'annulee'],
+  expediee:   ['livree', 'annulee'],
+  livree:     [],
+  annulee:    [],
+}
+
+function OptionsStatut({ statut, onChange, className }) {
+  const suivants = TRANSITIONS[statut] || []
+  if (suivants.length === 0) {
+    return <span className="text-xs text-gray-400 italic">—</span>
+  }
+  return (
+    <select
+      value={statut}
+      onChange={e => onChange(e.target.value)}
+      className={className}
+    >
+      {STATUTS.filter(s => s.v === statut || suivants.includes(s.v)).map(s => (
+        <option key={s.v} value={s.v}>{s.v === statut ? `${s.l} (actuel)` : s.l}</option>
+      ))}
+    </select>
+  )
+}
+
 export default function AdminCommandes() {
   usePageMeta({ title: 'Admin — Commandes', path: '/admin/commandes', noindex: true })
   const qc = useQueryClient()
@@ -29,6 +55,7 @@ export default function AdminCommandes() {
       qc.invalidateQueries({ queryKey: ['admin-commandes'] })
       toast.success('Statut mis à jour.')
     },
+    onError: () => toast.error('Transition de statut invalide'),
   })
 
   const commandes = data?.data?.data || []
@@ -104,13 +131,11 @@ export default function AdminCommandes() {
                       {st && <span className={st.cls}>{st.l}</span>}
                     </td>
                     <td className="px-4 py-3">
-                      <select
-                        value={c.statut}
-                        onChange={e => mutation.mutate({ id: c.id, statut: e.target.value })}
+                      <OptionsStatut
+                        statut={c.statut}
+                        onChange={statut => mutation.mutate({ id: c.id, statut })}
                         className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-vert-400"
-                      >
-                        {STATUTS.map(s => <option key={s.v} value={s.v}>{s.l}</option>)}
-                      </select>
+                      />
                     </td>
                   </tr>
                 )
@@ -147,13 +172,11 @@ export default function AdminCommandes() {
                     <span>{new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
                   </div>
                   <div className="pt-1">
-                    <select
-                      value={c.statut}
-                      onChange={e => mutation.mutate({ id: c.id, statut: e.target.value })}
+                    <OptionsStatut
+                      statut={c.statut}
+                      onChange={statut => mutation.mutate({ id: c.id, statut })}
                       className="w-full text-xs border border-gray-200 rounded-lg px-2 py-2 bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-vert-400"
-                    >
-                      {STATUTS.map(s => <option key={s.v} value={s.v}>{s.l}</option>)}
-                    </select>
+                    />
                   </div>
                 </div>
               )
@@ -197,6 +220,9 @@ export default function AdminCommandes() {
           <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-100">
             <div className="text-sm text-gray-600">
               Paiement : <span className="font-semibold">{detail.paiement === 'livraison' ? 'À la livraison' : 'Carte bancaire'}</span>
+              {detail.statut_updated_at && (
+                <p className="text-xs text-gray-400 mt-1">Dernière mise à jour : {new Date(detail.statut_updated_at).toLocaleString('fr-FR')}</p>
+              )}
             </div>
             <div className="text-right">
               <p className="text-xs text-gray-400">Livraison : {Number(detail.frais_livraison).toFixed(2)} MAD</p>

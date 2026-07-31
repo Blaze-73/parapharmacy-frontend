@@ -93,12 +93,13 @@ export default function Checkout() {
               <h2 className="font-bold text-gray-900 mb-5 text-lg">💳 Mode de paiement</h2>
               <div className="space-y-3">
                 {[
-                  { v: 'livraison', label: '💵 Paiement à la livraison', desc: 'Payez en espèces à la réception' },
-                  { v: 'carte',     label: '💳 Carte bancaire',          desc: 'Paiement sécurisé (bientôt disponible)' },
+                  { v: 'livraison', label: '💵 Paiement à la livraison', desc: 'Payez en espèces à la réception', disabled: false },
+                  { v: 'carte',     label: '💳 Carte bancaire',          desc: 'Paiement sécurisé (bientôt disponible)', disabled: true },
                 ].map(opt => (
                   <label key={opt.v}
-                    className="flex items-start gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors border-gray-100 hover:border-vert-300">
+                    className={`flex items-start gap-3 p-4 border-2 rounded-xl transition-colors ${opt.disabled ? 'border-gray-100 bg-gray-50 cursor-not-allowed opacity-60' : 'cursor-pointer border-gray-100 hover:border-vert-300'}`}>
                     <input {...register('paiement')} type="radio" value={opt.v}
+                      disabled={opt.disabled}
                       className="mt-0.5 accent-vert-600 w-4 h-4 flex-shrink-0" />
                     <div>
                       <p className="font-semibold text-gray-900 text-sm">{opt.label}</p>

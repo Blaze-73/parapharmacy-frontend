@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search, Heart } from 'lucide-react'
+import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search, Heart, Cross } from 'lucide-react'
 import { useAuth, usePanier, useWishlist } from '../../store/index.js'
 import { authApi, produitsApi } from '../../api/index.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
@@ -218,22 +218,23 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 flex items-center h-16 gap-3">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-9 h-9 bg-vert-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-extrabold text-lg" style={{ fontFamily: 'Syne' }}>OK</span>
+          <Link to="/" className="flex items-center gap-2 flex-shrink-0 min-w-0" aria-label="Parapharmacie Karima">
+            <div className="w-9 h-9 bg-vert-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Cross className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-extrabold text-gray-900 hidden sm:block" style={{ fontFamily: 'Syne' }}>
-              Omar &amp; <span className="text-vert-600">Karima's</span>
+            <span className="text-lg xl:text-xl font-extrabold text-gray-900 whitespace-nowrap" style={{ fontFamily: 'Syne' }}>
+              <span className="sm:hidden">Karima</span>
+              <span className="hidden sm:inline">Parapharmacie <span className="text-vert-600">Karima</span></span>
             </span>
           </Link>
 
           {/* Desktop search with suggestions */}
-          <div className="flex-1 max-w-lg hidden md:flex items-center gap-2">
+          <div className="flex-1 max-w-lg hidden lg:flex items-center gap-2">
             <SearchBar />
           </div>
 
           {/* Nav links */}
-          <nav className="hidden lg:flex items-center gap-1 flex-shrink-0">
+          <nav className="hidden xl:flex items-center gap-1 flex-shrink-0">
             <Link to="/produits" className="btn-ghost text-sm">Produits</Link>
             <Link to="/produits?categorie=soins-visage" className="btn-ghost text-sm">Soins</Link>
             <Link to="/produits?categorie=vitamines" className="btn-ghost text-sm">Vitamines</Link>
@@ -330,21 +331,21 @@ export default function Layout() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Link to="/connexion" className="btn-ghost text-sm hidden sm:inline-flex">Connexion</Link>
-                <Link to="/inscription" className="btn-vert text-sm py-2 px-4">S'inscrire</Link>
+                <Link to="/connexion" className="btn-ghost text-sm hidden lg:inline-flex">Connexion</Link>
+                <Link to="/inscription" className="btn-vert text-sm py-2 px-4 hidden lg:inline-flex">S'inscrire</Link>
               </div>
             )}
 
             {/* Mobile menu toggle */}
             <button onClick={() => setMenuOuvert(v => !v)}
-              className="md:hidden p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 ml-1">
+              className="xl:hidden p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 ml-1">
               {menuOuvert ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile search */}
-        <div className="md:hidden px-4 pb-3">
+        <div className="lg:hidden px-4 pb-3">
           <SearchBar mobile />
         </div>
 
@@ -355,7 +356,7 @@ export default function Layout() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="md:hidden border-t border-gray-100 bg-white overflow-hidden"
+              className="lg:hidden border-t border-gray-100 bg-white overflow-hidden"
             >
               <div className="px-4 py-3 space-y-1">
                 {[
@@ -394,9 +395,9 @@ export default function Layout() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-vert-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold" style={{ fontFamily: 'Syne' }}>P</span>
+                  <Cross className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-lg font-bold text-white" style={{ fontFamily: 'Syne' }}>Omar &amp; Karima's</span>
+                <span className="text-lg font-bold text-white" style={{ fontFamily: 'Syne' }}>Parapharmacie Karima</span>
               </div>
               <p className="text-sm text-gray-400 leading-relaxed">
                 Votre parapharmacie en ligne de confiance. Produits de santé et bien-être livrés chez vous.
@@ -421,7 +422,7 @@ export default function Layout() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
-            © {new Date().getFullYear()} Omar &amp; Karima's. Tous droits réservés.
+            © {new Date().getFullYear()} Parapharmacie Karima. Tous droits réservés.
           </div>
         </div>
       </footer>

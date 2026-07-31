@@ -183,6 +183,14 @@ initialiserDepuisFichier()
 charger()
 
 const STATUT_LABELS = { en_attente: 'En attente', confirmee: 'Confirmée', expediee: 'Expédiée', livree: 'Livrée', annulee: 'Annulée' }
+
+const STATUT_TRANSITIONS = {
+  en_attente: ['confirmee', 'annulee'],
+  confirmee:  ['expediee', 'annulee'],
+  expediee:   ['livree', 'annulee'],
+  livree:     [],
+  annulee:    [],
+}
 const PAIEMENT_LABELS = { livraison: 'Paiement à la livraison', carte: 'Carte bancaire' }
 
 function htmlEscape(v) {
@@ -415,6 +423,7 @@ export function creerCommande(payload) {
     user_id: 1,
     user: { id: 1, nom: "Admin Omar & Karima's", email: 'admin@parapharmacie.ma', telephone: '+212 5XX-XXXXXX' },
     statut: 'en_attente',
+    statut_updated_at: now,
     total: total + frais,
     sous_total: total,
     frais_livraison: frais,
@@ -440,7 +449,10 @@ export function getDetailCommande(id) {
 
 export function annulerCommande(id) {
   const cmd = COMMANDES.find(c => c.id === id)
-  if (cmd) cmd.statut = 'annulee'
+  if (cmd) {
+    cmd.statut = 'annulee'
+    cmd.statut_updated_at = new Date().toISOString()
+  }
   return Promise.resolve({ data: { data: cmd } })
 }
 
@@ -601,7 +613,12 @@ export function getAdminCommandes(params) {
 
 export function updateStatutCommande(id, statut) {
   const cmd = COMMANDES.find(c => c.id === id)
-  if (cmd) cmd.statut = statut
+  if (!cmd) return Promise.resolve({ data: { data: null } })
+  if (!STATUT_TRANSITIONS[cmd.statut]?.includes(statut)) {
+    return Promise.reject(new Error(`Transition invalide : ${cmd.statut} → ${statut}`))
+  }
+  cmd.statut = statut
+  cmd.statut_updated_at = new Date().toISOString()
   return Promise.resolve({ data: { data: cmd } })
 }
 
