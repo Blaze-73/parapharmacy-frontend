@@ -33,7 +33,7 @@ export default function Checkout() {
         items: articles.map(a => ({ produit_id: a.produit.id, quantite: a.quantite })),
         adresse_livraison: data.adresse,
         ville: data.ville,
-        code_postal: data.code_postal || '',
+        telephone: data.telephone,
         paiement: data.paiement,
         notes: data.notes || '',
       }
@@ -66,18 +66,26 @@ export default function Checkout() {
                     placeholder="Numéro et nom de rue" />
                   {errors.adresse && <p className="erreur">{errors.adresse.message}</p>}
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Ville *</label>
-                    <input {...register('ville', { required: 'La ville est obligatoire.' })}
-                      className={`champ ${errors.ville ? 'border-red-400' : ''}`}
-                      placeholder="Casablanca" />
-                    {errors.ville && <p className="erreur">{errors.ville.message}</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Code postal</label>
-                    <input {...register('code_postal')} className="champ" placeholder="20000" />
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Ville *</label>
+                  <input {...register('ville', { required: 'La ville est obligatoire.' })}
+                    className={`champ ${errors.ville ? 'border-red-400' : ''}`}
+                    placeholder="Casablanca" />
+                  {errors.ville && <p className="erreur">{errors.ville.message}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                    Téléphone <span className="text-red-500">*</span>
+                    <span className="text-gray-400 font-normal"> (pour être contacté sur WhatsApp)</span>
+                  </label>
+                  <input {...register('telephone', {
+                    required: 'Le numéro de téléphone est obligatoire.',
+                    pattern: { value: /^[+]?[\d\s-]{9,15}$/, message: 'Numéro de téléphone invalide.' },
+                  })}
+                    type="tel"
+                    className={`champ ${errors.telephone ? 'border-red-400' : ''}`}
+                    placeholder="06 12 34 56 78" />
+                  {errors.telephone && <p className="erreur">{errors.telephone.message}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">

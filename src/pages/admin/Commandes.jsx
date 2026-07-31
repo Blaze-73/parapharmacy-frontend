@@ -20,6 +20,12 @@ const TRANSITIONS = {
   annulee:    [],
 }
 
+function numWhatsApp(num) {
+  let n = (num || '').replace(/[^\d]/g, '')
+  if (n.startsWith('0')) n = '212' + n.slice(1)
+  return n
+}
+
 function OptionsStatut({ statut, onChange, className }) {
   const suivants = TRANSITIONS[statut] || []
   if (suivants.length === 0) {
@@ -111,12 +117,23 @@ export default function AdminCommandes() {
                     </td>
                     <td className="px-4 py-3">
                       {c.user?.telephone ? (
-                        <a
-                          href={`tel:${c.user.telephone}`}
-                          className="flex items-center gap-1.5 text-vert-700 hover:text-vert-800 font-medium text-sm hover:underline"
-                        >
-                          📞 {c.user.telephone}
-                        </a>
+                        <div className="flex items-center gap-1.5">
+                          <a
+                            href={`tel:${c.user.telephone}`}
+                            className="flex items-center gap-1.5 text-vert-700 hover:text-vert-800 font-medium text-sm hover:underline"
+                          >
+                            📞 {c.user.telephone}
+                          </a>
+                          <a
+                            href={`https://wa.me/${numWhatsApp(c.user.telephone)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title="Contacter sur WhatsApp"
+                            className="w-7 h-7 rounded-full bg-vert-100 hover:bg-vert-200 flex items-center justify-center text-vert-700 text-sm transition-colors flex-shrink-0"
+                          >
+                            💬
+                          </a>
+                        </div>
                       ) : (
                         <span className="text-gray-400 text-xs italic">Non renseigné</span>
                       )}
@@ -168,7 +185,20 @@ export default function AdminCommandes() {
                     <span className="font-bold text-gray-900">{Number(c.total).toFixed(2)} MAD</span>
                   </div>
                   <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>{c.user?.telephone || '—'}</span>
+                    <span className="flex items-center gap-1.5">
+                      {c.user?.telephone || '—'}
+                      {c.user?.telephone && (
+                        <a
+                          href={`https://wa.me/${numWhatsApp(c.user.telephone)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Contacter sur WhatsApp"
+                          className="w-6 h-6 rounded-full bg-vert-100 hover:bg-vert-200 flex items-center justify-center text-vert-700 flex-shrink-0"
+                        >
+                          💬
+                        </a>
+                      )}
+                    </span>
                     <span>{new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
                   </div>
                   <div className="pt-1">
@@ -205,9 +235,19 @@ export default function AdminCommandes() {
               <p className="font-semibold text-gray-900">{detail.user?.nom}</p>
               <p className="text-sm text-gray-600">{detail.user?.email}</p>
               {detail.user?.telephone && (
-                <a href={`tel:${detail.user.telephone}`} className="text-sm text-vert-700 hover:underline font-medium">
-                  📞 {detail.user.telephone}
-                </a>
+                <div className="flex items-center gap-2 mt-2">
+                  <a href={`tel:${detail.user.telephone}`} className="text-sm text-vert-700 hover:underline font-medium">
+                    📞 {detail.user.telephone}
+                  </a>
+                  <a
+                    href={`https://wa.me/${numWhatsApp(detail.user.telephone)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-vert-700 bg-vert-100 hover:bg-vert-200 rounded-full px-3 py-1.5 transition-colors"
+                  >
+                    💬 Contacter sur WhatsApp
+                  </a>
+                </div>
               )}
             </div>
             <div>

@@ -418,10 +418,11 @@ export function creerCommande(payload) {
     return sum + (p ? Number(p.prix_effectif) * item.quantite : 0)
   }, 0)
   const frais = total > 0 && total < 300 ? 30 : 0
+  const telephone = payload.telephone || ''
   const commande = {
     id, numero,
     user_id: 1,
-    user: { id: 1, nom: "Admin Omar & Karima's", email: 'admin@parapharmacie.ma', telephone: '+212 5XX-XXXXXX' },
+    user: { id: 1, nom: "Admin Omar & Karima's", email: 'admin@parapharmacie.ma', telephone },
     statut: 'en_attente',
     statut_updated_at: now,
     total: total + frais,
@@ -430,11 +431,13 @@ export function creerCommande(payload) {
     adresse_livraison: payload.adresse_livraison || 'Casablanca',
     ville: payload.ville || 'Casablanca',
     code_postal: payload.code_postal || '',
+    telephone,
     paiement: payload.paiement || 'livraison',
     notes: payload.notes || '',
     created_at: now,
   }
   COMMANDES.unshift(commande)
+  sauvegarder()
   return Promise.resolve({ data: { data: { commande, numero } } })
 }
 
@@ -452,6 +455,7 @@ export function annulerCommande(id) {
   if (cmd) {
     cmd.statut = 'annulee'
     cmd.statut_updated_at = new Date().toISOString()
+    sauvegarder()
   }
   return Promise.resolve({ data: { data: cmd } })
 }
@@ -619,6 +623,7 @@ export function updateStatutCommande(id, statut) {
   }
   cmd.statut = statut
   cmd.statut_updated_at = new Date().toISOString()
+  sauvegarder()
   return Promise.resolve({ data: { data: cmd } })
 }
 
