@@ -1,6 +1,22 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+// ── Wishlist / Favoris ─────────────────────────────────────────────────────────
+export const useWishlist = create(
+  persist(
+    (set, get) => ({
+      ids: [],
+      basculer: (id) => {
+        const has = get().ids.includes(id)
+        set({ ids: has ? get().ids.filter(x => x !== id) : [...get().ids, id] })
+      },
+      estFavori: (id) => get().ids.includes(id),
+      nombre: () => get().ids.length,
+    }),
+    { name: 'wishlist', partialize: (s) => ({ ids: s.ids }) }
+  )
+)
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const useAuth = create(
   persist(

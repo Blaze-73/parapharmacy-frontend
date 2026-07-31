@@ -5,9 +5,16 @@ import { motion } from 'framer-motion'
 import { SlidersHorizontal, X, ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { produitsApi } from '../api/index.js'
 import CategoryIcon from '../components/CategoryIcon.jsx'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import CarteProduit from '../components/product/CarteProduit.jsx'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 export default function Produits() {
+  usePageMeta({
+    title: 'Produits de parapharmacie',
+    description: 'Découvrez toute notre gamme de produits de parapharmacie au Maroc : soins, vitamines, solaires, hygiène et premiers secours. Livraison 24–48h.',
+    path: '/produits',
+  })
   const [searchParams, setSearchParams] = useSearchParams()
   const [filtreMobile, setFiltreMobile] = useState(false)
   const [searchInput, setSearchInput] = useState(searchParams.get('recherche') || '')
@@ -30,6 +37,7 @@ export default function Produits() {
   const filtres = {
     recherche: searchParams.get('recherche') || undefined,
     categorie: searchParams.get('categorie') || undefined,
+    marque:    searchParams.get('marque')    || undefined,
     en_promo:  searchParams.get('en_promo')  || undefined,
     en_stock:  searchParams.get('en_stock')  || undefined,
     tri:       searchParams.get('tri')       || 'recent',
@@ -49,9 +57,16 @@ export default function Produits() {
     staleTime: 3_600_000,
   })
 
+  const { data: brandData } = useQuery({
+    queryKey: ['marques'],
+    queryFn:  produitsApi.marques,
+    staleTime: 3_600_000,
+  })
+
   const produits   = data?.data?.data    || []
   const meta       = data?.data?.meta
   const categories = catData?.data?.data || []
+  const marques    = brandData?.data?.data || []
 
   function update(k, v) {
     const p = new URLSearchParams(searchParams)
@@ -72,7 +87,7 @@ export default function Produits() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const hasFilters = !!(filtres.recherche || filtres.categorie || filtres.en_promo || filtres.en_stock)
+  const hasFilters = !!(filtres.recherche || filtres.categorie || filtres.marque || filtres.en_promo || filtres.en_stock)
 
   function FilterContent() {
     return (
@@ -121,12 +136,42 @@ export default function Produits() {
             </label>
           ))}
         </div>
+
+        {marques.length > 0 && (
+          <div>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Marque</p>
+            <div className="space-y-1.5 max-h-48 overflow-y-auto">
+              <label className="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="brand" checked={!filtres.marque} onChange={() => update('marque', '')} className="accent-vert-600" />
+                <span className="text-sm text-gray-700">Toutes</span>
+              </label>
+              {marques.filter(m => m.produits > 0).map(m => (
+                <label key={m.nom} className="flex items-center gap-2.5 cursor-pointer group">
+                  <input type="radio" name="brand" checked={filtres.marque === m.nom} onChange={() => update('marque', m.nom)} className="accent-vert-600" />
+                  <span className="text-sm text-gray-700 group-hover:text-vert-700 transition-colors flex-1">{m.nom}</span>
+                  <span className="text-xs text-gray-400">{m.produits}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     )
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      <Breadcrumbs items={[
+        ...(filtres.categorie ? [
+          { label: 'Produits', to: '/produits' },
+          { label: categories.find(c => c.slug === filtres.categorie)?.nom || filtres.categorie },
+        ] : filtres.recherche ? [
+          { label: 'Produits', to: '/produits' },
+          { label: `Résultats pour "${filtres.recherche}"` },
+        ] : [
+          { label: 'Produits' },
+        ]),
+      ]} />
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">
           {filtres.categorie

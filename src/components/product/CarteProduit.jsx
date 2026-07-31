@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShoppingCart, Star } from 'lucide-react'
+import { ShoppingCart, Star, Heart } from 'lucide-react'
 import CategoryIcon from '../CategoryIcon.jsx'
-import { usePanier } from '../../store/index.js'
+import { usePanier, useWishlist } from '../../store/index.js'
 import toast from 'react-hot-toast'
 import { useState } from 'react'
 
@@ -36,6 +36,8 @@ function Etoiles({ note, size = 12 }) {
 
 export default function CarteProduit({ produit, index = 0 }) {
   const { ajouterArticle, ouvrir } = usePanier()
+  const { ids, basculer } = useWishlist()
+  const estFavori = ids.includes(produit.id)
   const [imgError, setImgError] = useState(false)
   const slug     = produit.categorie?.slug || ''
   const gradient = GRADIENTS[slug] || 'from-gray-50 to-slate-100'
@@ -74,8 +76,14 @@ export default function CarteProduit({ produit, index = 0 }) {
               ⭐ Vedette
             </div>
           )}
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); basculer(produit.id) }}
+            className="absolute top-2 right-2 z-20 w-8 h-8 rounded-full flex items-center justify-center bg-white/80 hover:bg-white shadow-sm backdrop-blur-sm transition-all"
+          >
+            <Heart className={`w-4 h-4 transition-colors ${estFavori ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-400'}`} />
+          </button>
           {produit.note >= 4.8 && !produit.en_solde && !produit.en_vedette && (
-            <div className="absolute top-2 right-2 z-10 bg-purple-500 text-white text-xs font-semibold px-2 py-1 rounded-lg shadow-sm">
+            <div className="absolute bottom-2 left-2 z-10 bg-purple-500 text-white text-xs font-semibold px-2 py-1 rounded-lg shadow-sm">
               🏆 Top
             </div>
           )}

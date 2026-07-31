@@ -6,6 +6,7 @@ import { ArrowRight, ChevronLeft, ChevronRight, Truck, Shield, RefreshCw, Clock,
 import { produitsApi } from '../api/index.js'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import CategoryIcon from '../components/CategoryIcon.jsx'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 const SLIDES = [
   {
@@ -94,6 +95,7 @@ function BrandLogo({ marque: m }) {
 }
 
 export default function Accueil() {
+  usePageMeta({ path: '/' })
   const [slide, setSlide]       = useState(0)
   const [autoplay, setAutoplay] = useState(true)
   const [temoinIndex, setTemoinIndex] = useState(0)
@@ -146,7 +148,7 @@ export default function Accueil() {
             className="absolute inset-0"
             style={{ zIndex: i === slide ? 1 : 0 }}
           >
-            <img src={sl.image} alt="" className="w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} />
+            <img src={sl.image} alt={i === 0 ? 'Parapharmacie Maroc — produits de santé, bien-être et beauté' : ''} className="w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
           </motion.div>
         ))}

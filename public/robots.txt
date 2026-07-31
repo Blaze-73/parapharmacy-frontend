@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /panier
+Disallow: /checkout
+Disallow: /connexion
+Disallow: /inscription
+Disallow: /mes-commandes
+
+Sitemap: https://parapharmacyy.vercel.app/sitemap.xml

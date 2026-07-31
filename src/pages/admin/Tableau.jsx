@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { TrendingUp, ShoppingBag, Package, Users, AlertTriangle, Download } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
+import usePageMeta from '../../hooks/usePageMeta.js'
 
 function KPICard({ titre, valeur, Icone, couleur }) {
   return (
@@ -24,6 +25,7 @@ const STATUTS = {
 }
 
 export default function AdminTableau() {
+  usePageMeta({ title: 'Admin — Tableau de bord', path: '/admin', noindex: true })
   const { data, isLoading } = useQuery({
     queryKey: ['admin-tableau'],
     queryFn:  adminApi.tableau,

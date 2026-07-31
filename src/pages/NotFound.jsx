@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 export default function NotFound() {
+  usePageMeta({ title: 'Page introuvable', path: '/404', noindex: true })
   return (
     <div className="min-h-[70vh] flex items-center justify-center p-4">
       <motion.div

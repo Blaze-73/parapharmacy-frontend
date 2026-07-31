@@ -6,8 +6,10 @@ import CategoryIcon from '../../components/CategoryIcon.jsx'
 import { adminApi } from '../../api/index.js'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import usePageMeta from '../../hooks/usePageMeta.js'
 
 export default function AdminProduits() {
+  usePageMeta({ title: 'Admin — Produits', path: '/admin/produits', noindex: true })
   const qc = useQueryClient()
   const [modal, setModal]               = useState(null)
   const [supprConfirm, setSupprConfirm] = useState(null)

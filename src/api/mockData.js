@@ -1,3 +1,5 @@
+import dataFichier from '../data/produits.json'
+
 const CATEGORIES = [
   { id: 1, nom: 'Soins du visage', slug: 'soins-visage', icone: '🧴' },
   { id: 2, nom: 'Vitamines', slug: 'vitamines', icone: '💊' },
@@ -143,7 +145,7 @@ function filterProducts(params = {}) {
   return paginate(result, page, perPage)
 }
 
-const STORAGE_KEY = 'parapharmacy_data'
+const STORAGE_KEY = 'parapharmacy_data_v2'
 
 function sauvegarder() {
   try {
@@ -169,19 +171,13 @@ function charger() {
 }
 
 function initialiserDepuisFichier() {
-  try {
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', '/data/produits.json?t=' + Date.now(), false)
-    xhr.send()
-    if (xhr.status !== 200) return
-    const data = JSON.parse(xhr.responseText)
-    if (data.categories?.length) { CATEGORIES.length = 0; CATEGORIES.push(...data.categories) }
-    if (data.produits?.length) { PRODUITS.length = 0; PRODUITS.push(...data.produits) }
-    if (data.commandes?.length) { COMMANDES.length = 0; COMMANDES.push(...data.commandes) }
-    if (data.avis?.length) { AVIS.length = 0; AVIS.push(...data.avis) }
-    if (data.brands?.length) { BRANDS.length = 0; BRANDS.push(...data.brands) }
-    if (data.utilisateurs?.length) { UTILISATEURS.length = 0; UTILISATEURS.push(...data.utilisateurs) }
-  } catch (e) { /* keep hardcoded fallback */ }
+  const data = dataFichier
+  if (data.categories?.length) { CATEGORIES.length = 0; CATEGORIES.push(...data.categories) }
+  if (data.produits?.length) { PRODUITS.length = 0; PRODUITS.push(...data.produits) }
+  if (data.commandes?.length) { COMMANDES.length = 0; COMMANDES.push(...data.commandes) }
+  if (data.avis?.length) { AVIS.length = 0; AVIS.push(...data.avis) }
+  if (data.brands?.length) { BRANDS.length = 0; BRANDS.push(...data.brands) }
+  if (data.utilisateurs?.length) { UTILISATEURS.length = 0; UTILISATEURS.push(...data.utilisateurs) }
 }
 initialiserDepuisFichier()
 charger()
@@ -244,6 +240,19 @@ export function getMarques() {
 
 export function getAvisRecents() {
   return Promise.resolve({ data: { data: AVIS.slice(-6).reverse() } })
+}
+
+let avisIdCounter = 16
+export function soumettreAvis(produitId, note, commentaire) {
+  const avis = { id: avisIdCounter++, produit_id: produitId, user: 'Vous', note, commentaire, date: new Date().toISOString().slice(0, 10) }
+  AVIS.push(avis)
+  const p = PRODUITS.find(x => x.id === produitId)
+  if (p) {
+    p.nb_avis = (p.nb_avis || 0) + 1
+    p.note = ((p.note || 0) * (p.nb_avis - 1) + note) / p.nb_avis
+  }
+  sauvegarder()
+  return Promise.resolve({ data: { data: avis } })
 }
 
 export function creerCommande(payload) {

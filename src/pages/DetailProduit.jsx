@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
-import { Minus, Plus, ShoppingCart, ArrowLeft, Check, Star, ChevronDown, ChevronUp } from 'lucide-react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Minus, Plus, ShoppingCart, ArrowLeft, Check, Star, ChevronDown, ChevronUp, Heart, X, ZoomIn } from 'lucide-react'
 import { produitsApi } from '../api/index.js'
 import CategoryIcon from '../components/CategoryIcon.jsx'
-import { usePanier } from '../store/index.js'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import { usePanier, useWishlist } from '../store/index.js'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import toast from 'react-hot-toast'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 function Etoiles({ note, size = 18, afficherNote = true }) {
   const full = Math.floor(note)
@@ -26,13 +28,31 @@ function Etoiles({ note, size = 18, afficherNote = true }) {
   )
 }
 
+function EtoilesInput({ value, onChange }) {
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map(i => (
+        <button key={i} type="button" onClick={() => onChange(i)} className="p-0.5">
+          <Star size={22} className={i <= value ? 'fill-amber-400 text-amber-400' : 'text-gray-200 hover:text-amber-300 transition-colors'} />
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function DetailProduit() {
   const { slug } = useParams()
   const { ajouterArticle, ouvrir } = usePanier()
+  const { ids, basculer } = useWishlist()
+  const qc = useQueryClient()
   const [qty, setQty] = useState(1)
   const [ajoute, setAjoute] = useState(false)
   const [voirAvis, setVoirAvis] = useState(true)
   const [imageActive, setImageActive] = useState(0)
+  const [lightboxOuvert, setLightboxOuvert] = useState(false)
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 })
+  const [formAvis, setFormAvis] = useState({ note: 0, commentaire: '' })
+  const [formEnvoye, setFormEnvoye] = useState(false)
 
   const { data, isLoading } = useQuery({
     queryKey: ['produit', slug],
@@ -40,9 +60,33 @@ export default function DetailProduit() {
     enabled:  !!slug,
   })
 
+  const avisMutation = useMutation({
+    mutationFn: ({ pid, note, commentaire }) => produitsApi.soumettreAvis(pid, note, commentaire),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['produit', slug] })
+      toast.success('Votre avis a été publié !')
+      setFormAvis({ note: 0, commentaire: '' })
+      setFormEnvoye(true)
+      setTimeout(() => setFormEnvoye(false), 3000)
+    },
+    onError: () => toast.error('Erreur lors de l\'envoi de l\'avis'),
+  })
+
   const produit    = data?.data?.data?.produit
   const similaires = data?.data?.data?.similaires || []
   const avis       = data?.data?.data?.avis || []
+  const estFavori  = ids.includes(produit?.id)
+
+  usePageMeta({
+    title: produit?.nom || 'Produit',
+    description: produit?.description
+      ? `${produit.nom} — ${produit.marque}. ${produit.description.slice(0, 150)} Prix : ${produit.prix_effectif} MAD.`
+      : undefined,
+    path: `/produits/${slug}`,
+    image: produit?.image || undefined,
+  })
+
+  const imagesDisponibles = (produit?.images?.length ? produit.images : produit?.image ? [produit.image] : [])
 
   function handleAjouter() {
     if (!produit?.en_stock) return
@@ -51,6 +95,20 @@ export default function DetailProduit() {
     setTimeout(() => setAjoute(false), 2000)
     toast.success(`${produit.nom.slice(0, 30)}… ajouté !`)
     ouvrir()
+  }
+
+  function handleZoom(e) {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setZoomPos({ x, y })
+  }
+
+  function handleSubmitAvis(e) {
+    e.preventDefault()
+    if (!formAvis.note) { toast.error('Veuillez donner une note'); return }
+    if (!formAvis.commentaire.trim()) { toast.error('Veuillez écrire un commentaire'); return }
+    avisMutation.mutate({ pid: produit.id, note: formAvis.note, commentaire: formAvis.commentaire })
   }
 
   if (isLoading) return (
@@ -78,10 +136,11 @@ export default function DetailProduit() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <Link to="/produits" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-vert-700 mb-8 group">
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-        Retour aux produits
-      </Link>
+      <Breadcrumbs items={[
+        { label: 'Produits', to: '/produits' },
+        ...(produit.categorie ? [{ label: produit.categorie.nom, to: `/produits?categorie=${produit.categorie.slug}` }] : []),
+        { label: produit.nom },
+      ]} />
 
       <div className="grid md:grid-cols-2 gap-10 mb-12">
         {/* Images */}
@@ -90,21 +149,33 @@ export default function DetailProduit() {
           animate={{ opacity: 1, x: 0 }}
           className="space-y-3"
         >
-          <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden">
-            {produit.images?.[imageActive] || produit.image ? (
-              <img
-                src={produit.images?.[imageActive] || produit.image}
-                alt={produit.nom}
-                loading='lazy'
-                className="w-full h-full object-contain p-8 transition-opacity duration-200"
-              />
+          <div
+            className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden relative group cursor-zoom-in"
+            onMouseMove={handleZoom}
+            onClick={() => imagesDisponibles.length > 0 && setLightboxOuvert(true)}
+          >
+            {imagesDisponibles[imageActive] ? (
+              <>
+                <img
+                  src={imagesDisponibles[imageActive]}
+                  alt={produit.nom}
+                  loading='lazy'
+                  className="w-full h-full object-contain p-8 transition-transform duration-200 group-hover:scale-150"
+                  style={{ transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` }}
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 rounded-xl px-3 py-1.5 text-xs font-semibold text-gray-600 shadow-sm flex items-center gap-1.5">
+                    <ZoomIn className="w-3.5 h-3.5" /> Zoom
+                  </div>
+                </div>
+              </>
             ) : (
               <CategoryIcon slug={catSlug} className="w-32 h-32 text-gray-200" />
             )}
           </div>
-          {(produit.images?.length > 1) && (
+          {imagesDisponibles.length > 1 && (
             <div className="flex gap-2">
-              {produit.images.map((img, i) => (
+              {imagesDisponibles.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setImageActive(i)}
@@ -125,18 +196,27 @@ export default function DetailProduit() {
           animate={{ opacity: 1, x: 0 }}
           className="space-y-5"
         >
-          {produit.marque && (
-            <Link
-              to={`/produits?marque=${produit.marque}`}
-              className="text-sm font-bold text-vert-600 uppercase tracking-wider hover:underline"
+          <div className="flex items-start justify-between gap-3">
+            <div className="space-y-1">
+              {produit.marque && (
+                <Link
+                  to={`/produits?marque=${produit.marque}`}
+                  className="text-sm font-bold text-vert-600 uppercase tracking-wider hover:underline"
+                >
+                  {produit.marque}
+                </Link>
+              )}
+              <h1 className="text-3xl font-bold text-gray-900 leading-tight" style={{ fontFamily: 'Syne' }}>
+                {produit.nom}
+              </h1>
+            </div>
+            <button
+              onClick={() => basculer(produit.id)}
+              className="flex-shrink-0 w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
             >
-              {produit.marque}
-            </Link>
-          )}
-
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight" style={{ fontFamily: 'Syne' }}>
-            {produit.nom}
-          </h1>
+              <Heart className={`w-5 h-5 transition-colors ${estFavori ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+            </button>
+          </div>
 
           {/* Rating */}
           {produit.note > 0 && (
@@ -230,49 +310,81 @@ export default function DetailProduit() {
       </div>
 
       {/* Avis clients */}
-      {avis.length > 0 && (
-        <section className="mb-12">
-          <button
-            onClick={() => setVoirAvis(v => !v)}
-            className="flex items-center justify-between w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 hover:shadow-sm transition-shadow"
-          >
-            <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'Syne' }}>Avis clients</h2>
-              <span className="bg-vert-100 text-vert-700 text-xs font-bold px-2.5 py-1 rounded-full">{avis.length} avis</span>
-              {produit.note > 0 && <Etoiles note={produit.note} size={16} afficherNote={false} />}
-            </div>
-            {voirAvis ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-          </button>
-          {voirAvis && (
-            <div className="mt-4 space-y-3">
-              {avis.map(a => {
-                const initiales = a.user.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
-                return (
-                  <div key={a.id} className="carte p-5">
-                    <div className="flex items-start gap-4">
-                      <div className="w-9 h-9 bg-vert-100 rounded-full flex items-center justify-center text-vert-700 text-xs font-bold flex-shrink-0">
-                        {initiales}
+      <section className="mb-12">
+        <button
+          onClick={() => setVoirAvis(v => !v)}
+          className="flex items-center justify-between w-full bg-white border border-gray-100 rounded-2xl px-6 py-4 hover:shadow-sm transition-shadow"
+        >
+          <div className="flex items-center gap-3">
+            <h2 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'Syne' }}>Avis clients</h2>
+            <span className="bg-vert-100 text-vert-700 text-xs font-bold px-2.5 py-1 rounded-full">{avis.length} avis</span>
+            {produit.note > 0 && <Etoiles note={produit.note} size={16} afficherNote={false} />}
+          </div>
+          {voirAvis ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+        </button>
+        {voirAvis && (
+          <div className="mt-4 space-y-3">
+            {avis.map(a => {
+              const initiales = a.user.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+              return (
+                <div key={a.id} className="carte p-5">
+                  <div className="flex items-start gap-4">
+                    <div className="w-9 h-9 bg-vert-100 rounded-full flex items-center justify-center text-vert-700 text-xs font-bold flex-shrink-0">
+                      {initiales}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-semibold text-gray-900 text-sm">{a.user}</span>
+                        <span className="text-xs text-gray-400">· {a.date}</span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-semibold text-gray-900 text-sm">{a.user}</span>
-                          <span className="text-xs text-gray-400">· {a.date}</span>
-                        </div>
-                        <div className="flex items-center gap-0.5 mt-0.5 mb-2">
-                          {Array.from({ length: 5 }, (_, i) => (
-                            <Star key={i} size={12} className={i < a.note ? 'fill-amber-400 text-amber-400' : 'text-gray-200'} />
-                          ))}
-                        </div>
-                        <p className="text-sm text-gray-600 leading-relaxed">{a.commentaire}</p>
+                      <div className="flex items-center gap-0.5 mt-0.5 mb-2">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <Star key={i} size={12} className={i < a.note ? 'fill-amber-400 text-amber-400' : 'text-gray-200'} />
+                        ))}
                       </div>
+                      <p className="text-sm text-gray-600 leading-relaxed">{a.commentaire}</p>
                     </div>
                   </div>
-                )
-              })}
+                </div>
+              )
+            })}
+
+            {/* Review form */}
+            <div className="carte p-5 border-dashed border-2 border-vert-100">
+              <h3 className="font-bold text-gray-900 text-sm mb-3">Donnez votre avis</h3>
+              {formEnvoye ? (
+                <p className="text-sm text-vert-700 font-medium flex items-center gap-2">
+                  <Check className="w-4 h-4" /> Merci pour votre avis !
+                </p>
+              ) : (
+                <form onSubmit={handleSubmitAvis} className="space-y-3">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 mb-1 block">Votre note</label>
+                    <EtoilesInput value={formAvis.note} onChange={n => setFormAvis(f => ({ ...f, note: n }))} />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 mb-1 block">Votre commentaire</label>
+                    <textarea
+                      value={formAvis.commentaire}
+                      onChange={e => setFormAvis(f => ({ ...f, commentaire: e.target.value }))}
+                      placeholder="Partagez votre expérience avec ce produit…"
+                      rows={3}
+                      className="champ resize-none"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={avisMutation.isPending}
+                    className="btn-vert text-sm py-2.5 px-5"
+                  >
+                    {avisMutation.isPending ? 'Envoi…' : 'Publier mon avis'}
+                  </button>
+                </form>
+              )}
             </div>
-          )}
-        </section>
-      )}
+          </div>
+        )}
+      </section>
 
       {/* Similaires */}
       {similaires.length > 0 && (
@@ -287,6 +399,51 @@ export default function DetailProduit() {
           </div>
         </section>
       )}
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxOuvert && imagesDisponibles[imageActive] && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
+            onClick={() => setLightboxOuvert(false)}
+          >
+            <button
+              onClick={() => setLightboxOuvert(false)}
+              className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+            <motion.img
+              key={imageActive}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              src={imagesDisponibles[imageActive]}
+              alt={produit.nom}
+              className="max-w-full max-h-full object-contain"
+              onClick={e => e.stopPropagation()}
+            />
+            {imagesDisponibles.length > 1 && (
+              <div className="absolute bottom-6 flex gap-2">
+                {imagesDisponibles.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={(e) => { e.stopPropagation(); setImageActive(i) }}
+                    className={`w-14 h-14 rounded-lg border-2 overflow-hidden transition-all ${
+                      i === imageActive ? 'border-white ring-2 ring-white/50' : 'border-white/30 hover:border-white/60'
+                    }`}
+                  >
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

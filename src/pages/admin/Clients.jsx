@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { adminApi } from '../../api/index.js'
+import usePageMeta from '../../hooks/usePageMeta.js'
 
 export default function AdminClients() {
+  usePageMeta({ title: 'Admin — Clients', path: '/admin/clients', noindex: true })
   const { data, isLoading } = useQuery({
     queryKey: ['admin-clients'],
     queryFn:  () => adminApi.utilisateurs(),

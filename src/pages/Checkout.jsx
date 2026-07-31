@@ -4,9 +4,12 @@ import { ArrowRight, ShoppingBag } from 'lucide-react'
 import { usePanier } from '../store/index.js'
 import { commandesApi } from '../api/index.js'
 import { useForm } from 'react-hook-form'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import toast from 'react-hot-toast'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 export default function Checkout() {
+  usePageMeta({ title: 'Finaliser ma commande', path: '/checkout', noindex: true })
   const { articles, viderPanier, sousTotal, fermer } = usePanier()
   const navigate = useNavigate()
   const [chargement, setChargement] = useState(false)
@@ -48,6 +51,7 @@ export default function Checkout() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
+      <Breadcrumbs items={[{ label: 'Panier', to: '/panier' }, { label: 'Commander' }]} />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Passer la commande</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid lg:grid-cols-3 gap-6">

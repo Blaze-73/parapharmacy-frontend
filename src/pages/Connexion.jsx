@@ -6,8 +6,10 @@ import { Eye, EyeOff } from 'lucide-react'
 import { authApi } from '../api/index.js'
 import { useAuth } from '../store/index.js'
 import toast from 'react-hot-toast'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 export default function Connexion() {
+  usePageMeta({ title: 'Connexion', path: '/connexion', noindex: true })
   const [voirMdp, setVoirMdp] = useState(false)
   const [chargement, setChargement] = useState(false)
   const { setAuth } = useAuth()

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../api/index.js'
 import toast from 'react-hot-toast'
+import usePageMeta from '../../hooks/usePageMeta.js'
 
 const STATUTS = [
   { v: 'en_attente', l: 'En attente',  cls: 'badge-jaune' },
@@ -12,6 +13,7 @@ const STATUTS = [
 ]
 
 export default function AdminCommandes() {
+  usePageMeta({ title: 'Admin — Commandes', path: '/admin/commandes', noindex: true })
   const qc = useQueryClient()
   const [filtreStatut, setFiltreStatut] = useState('')
   const [detail, setDetail] = useState(null)

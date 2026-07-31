@@ -1,9 +1,11 @@
 import { Link, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { CheckCircle } from 'lucide-react'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 export default function CommandeOk() {
   const { numero } = useParams()
+  usePageMeta({ title: 'Commande confirmée', path: `/commande-confirmee/${numero}`, noindex: true })
   return (
     <div className="max-w-lg mx-auto px-4 py-20 text-center">
       <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 15 }}>

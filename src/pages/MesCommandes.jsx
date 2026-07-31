@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
-import { ShoppingBag } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { ShoppingBag, XCircle } from 'lucide-react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { commandesApi } from '../api/index.js'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import toast from 'react-hot-toast'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 const STATUTS = {
   en_attente: { label: 'En attente',  cls: 'badge-jaune' },
@@ -11,12 +14,26 @@ const STATUTS = {
   annulee:    { label: 'Annulée',     cls: 'badge-rouge' },
 }
 
+const ANNULABLE = ['en_attente', 'confirmee']
+
 export default function MesCommandes() {
+  usePageMeta({ title: 'Mes commandes', path: '/mes-commandes', noindex: true })
+  const qc = useQueryClient()
   const { data, isLoading } = useQuery({ queryKey: ['mes-commandes'], queryFn: commandesApi.liste })
   const commandes = data?.data?.data || []
 
+  const annulerMutation = useMutation({
+    mutationFn: (id) => commandesApi.annuler(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['mes-commandes'] })
+      toast.success('Commande annulée')
+    },
+    onError: () => toast.error("Impossible d'annuler la commande"),
+  })
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
+      <Breadcrumbs items={[{ label: 'Mes commandes' }]} />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Mes commandes</h1>
       {isLoading && <div className="space-y-3">{[1,2,3].map(i=><div key={i} className="carte h-24 animate-pulse bg-gray-100"/>)}</div>}
       {!isLoading && commandes.length === 0 && (
@@ -30,6 +47,7 @@ export default function MesCommandes() {
         <div className="space-y-4">
           {commandes.map(c => {
             const st = STATUTS[c.statut] || { label: c.statut, cls: 'badge-jaune' }
+            const peutAnnuler = ANNULABLE.includes(c.statut)
             return (
               <div key={c.id} className="carte p-5 hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -38,9 +56,23 @@ export default function MesCommandes() {
                     <p className="text-sm text-gray-500 mt-0.5">{new Date(c.created_at).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}</p>
                     <p className="text-sm text-gray-500 mt-0.5">{c.adresse_livraison}, {c.ville}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex flex-col items-end gap-2">
                     <span className={st.cls}>{st.label}</span>
-                    <p className="prix-principal text-xl mt-1">{Number(c.total).toFixed(2)} MAD</p>
+                    <p className="prix-principal text-xl">{Number(c.total).toFixed(2)} MAD</p>
+                    {peutAnnuler && (
+                      <button
+                        onClick={() => {
+                          if (confirm('Confirmer l\'annulation de cette commande ?')) {
+                            annulerMutation.mutate(c.id)
+                          }
+                        }}
+                        disabled={annulerMutation.isPending}
+                        className="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1 transition-colors"
+                      >
+                        <XCircle className="w-3.5 h-3.5" />
+                        Annuler
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

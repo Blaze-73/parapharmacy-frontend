@@ -1,9 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
 import CategoryIcon from '../components/CategoryIcon.jsx'
+import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import { usePanier } from '../store/index.js'
+import usePageMeta from '../hooks/usePageMeta.js'
 
 export default function Panier() {
+  usePageMeta({ title: 'Mon panier', path: '/panier', noindex: true })
   const { articles, modifierQuantite, retirerArticle, sousTotal, viderPanier } = usePanier()
   const navigate = useNavigate()
   const sous = sousTotal()
@@ -21,6 +24,7 @@ export default function Panier() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
+      <Breadcrumbs items={[{ label: 'Mon panier' }]} />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Mon panier</h1>
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-3">

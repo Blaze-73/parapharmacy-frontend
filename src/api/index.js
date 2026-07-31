@@ -27,6 +27,7 @@ import {
   creerCategorie,
   getAdminUtilisateurs,
   exporterDonnees,
+  soumettreAvis,
 } from './mockData.js'
 
 export const authApi = {
@@ -46,6 +47,7 @@ export const produitsApi = {
   categories:  ()       => getCategories(),
   marques:     ()       => getMarques(),
   avisRecents: ()       => getAvisRecents(),
+  soumettreAvis: (pid, note, commentaire) => soumettreAvis(pid, note, commentaire),
 }
 
 export const commandesApi = {
