@@ -7,6 +7,7 @@ import { produitsApi } from '../api/index.js'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import CategoryIcon from '../components/CategoryIcon.jsx'
 import usePageMeta from '../hooks/usePageMeta.js'
+import toast from 'react-hot-toast'
 
 const SLIDES = [
   {
@@ -396,7 +397,7 @@ export default function Accueil() {
               <p className="text-white/80 text-sm mb-6">
                 Recevez nos promotions exclusives et nos conseils santé directement dans votre boîte mail.
               </p>
-              <form onSubmit={e => e.preventDefault()} className="flex gap-2 max-w-sm mx-auto">
+              <form onSubmit={e => { e.preventDefault(); toast.success('Merci ! Vous êtes bien abonné(e).') }} className="flex gap-2 max-w-sm mx-auto">
                 <input type="email" placeholder="votre@email.com" className="flex-1 px-4 py-3 rounded-xl text-sm border-0 focus:ring-2 focus:ring-white/50 bg-white/95 placeholder-gray-400" />
                 <button type="submit" className="bg-white text-vert-700 font-bold px-6 py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors whitespace-nowrap">
                   S'abonner

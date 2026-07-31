@@ -1,7 +1,7 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LayoutDashboard, Package, ShoppingBag, Users, LogOut, Menu } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingBag, Users, LogOut, Menu, Cross } from 'lucide-react'
 import { useAuth } from '../../store/index.js'
 import { authApi } from '../../api/index.js'
 
@@ -34,10 +34,10 @@ export default function AdminLayout() {
         <div className="px-5 py-5 border-b border-gray-800">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-vert-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-extrabold" style={{ fontFamily: 'Syne' }}>OK</span>
+              <Cross className="w-4 h-4 text-white" />
             </div>
             <div>
-              <p className="text-white font-bold text-sm" style={{ fontFamily: 'Syne' }}>Omar &amp; Karima's</p>
+              <p className="text-white font-bold text-sm" style={{ fontFamily: 'Syne' }}>Parapharmacie Karima</p>
               <p className="text-gray-400 text-xs">Administration</p>
             </div>
           </Link>

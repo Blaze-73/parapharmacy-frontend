@@ -32,14 +32,16 @@ const qc = new QueryClient({
 
 function RouteProtegee({ children }) {
   const { connecte } = useAuth()
+  const location = useLocation()
   if (connecte === null) return <Chargement />
-  return connecte ? children : <Navigate to="/connexion" replace />
+  return connecte ? children : <Navigate to="/connexion" replace state={{ from: location }} />
 }
 
 function RouteAdmin({ children }) {
   const { connecte, user } = useAuth()
+  const location = useLocation()
   if (connecte === null) return <Chargement />
-  if (!connecte) return <Navigate to="/connexion" replace />
+  if (!connecte) return <Navigate to="/connexion" replace state={{ from: location }} />
   if (user?.role !== 'admin') return <Navigate to="/" replace />
   return children
 }

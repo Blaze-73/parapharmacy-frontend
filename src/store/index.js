@@ -27,10 +27,6 @@ export const useAuth = create(
 
       setAuth: (user, token) => {
         localStorage.setItem('token', token)
-        // Clear the cart when a NEW user logs in
-        localStorage.removeItem('panier')
-        // Reset cart state in memory too
-        usePanier.setState({ articles: [], ouvert: false })
         set({ user, token, connecte: true })
       },
 
@@ -38,10 +34,7 @@ export const useAuth = create(
 
       deconnexion: () => {
         localStorage.removeItem('token')
-        localStorage.removeItem('panier')
         localStorage.removeItem('auth')
-        // Reset cart immediately
-        usePanier.setState({ articles: [], ouvert: false })
         set({ user: null, token: null, connecte: false })
       },
     }),

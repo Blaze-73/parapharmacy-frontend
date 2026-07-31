@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Cross } from 'lucide-react'
 import { authApi } from '../api/index.js'
 import { useAuth } from '../store/index.js'
 import toast from 'react-hot-toast'
@@ -14,6 +14,7 @@ export default function Connexion() {
   const [chargement, setChargement] = useState(false)
   const { setAuth } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const { register, handleSubmit, formState: { errors }, setError } = useForm()
 
   async function onSubmit(data) {
@@ -23,7 +24,10 @@ export default function Connexion() {
       const { user, token } = res.data.data
       setAuth(user, token)
       toast.success(`Bienvenue ${user.nom.split(' ')[0]} !`)
-      navigate(user.role === 'admin' ? '/admin' : '/')
+      const from = location.state?.from
+      if (user.role === 'admin') navigate('/admin')
+      else if (from) navigate(from.pathname + (from.search || ''), { replace: true })
+      else navigate('/')
     } catch (e) {
       const errs = e.response?.data?.errors
       if (errs?.email) {
@@ -46,9 +50,9 @@ export default function Connexion() {
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-5">
             <div className="w-10 h-10 bg-vert-600 rounded-2xl flex items-center justify-center">
-              <span className="text-white font-extrabold text-xl" style={{ fontFamily: 'Syne' }}>OK</span>
+              <Cross className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Omar &amp; Karima's</span>
+            <span className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Parapharmacie Karima</span>
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">Connexion</h1>
           <p className="text-gray-500 mt-2">Bienvenue ! Connectez-vous à votre compte.</p>
