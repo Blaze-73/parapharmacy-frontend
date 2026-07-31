@@ -182,15 +182,160 @@ function initialiserDepuisFichier() {
 initialiserDepuisFichier()
 charger()
 
-export function exporterDonnees() {
-  const data = { categories: CATEGORIES, produits: PRODUITS, commandes: COMMANDES, avis: AVIS, brands: BRANDS, utilisateurs: UTILISATEURS }
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+const STATUT_LABELS = { en_attente: 'En attente', confirmee: 'Confirmée', expediee: 'Expédiée', livree: 'Livrée', annulee: 'Annulée' }
+const PAIEMENT_LABELS = { livraison: 'Paiement à la livraison', carte: 'Carte bancaire' }
+
+function htmlEscape(v) {
+  const s = v === null || v === undefined ? '' : String(v)
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function tableHTML(colonnes, lignes) {
+  const head = colonnes.map(c => `<th>${htmlEscape(c.titre)}</th>`).join('')
+  const body = lignes
+    .map(l => '<tr>' + colonnes.map(c => `<td>${c.valeur(l)}</td>`).join('') + '</tr>')
+    .join('')
+  return `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`
+}
+
+function badgeStatut(statut) {
+  const label = STATUT_LABELS[statut] || statut
+  return `<span class="st st-${statut}">${htmlEscape(label)}</span>`
+}
+
+function telechargerFichier(fichier, contenu, type) {
+  const blob = new Blob([contenu], { type: type || 'text/html;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
-  a.href = url; a.download = 'produits.json'
-  document.body.appendChild(a); a.click()
+  a.href = url
+  a.download = fichier
+  document.body.appendChild(a)
+  a.click()
   document.body.removeChild(a)
-  URL.revokeObjectURL(url)
+  setTimeout(() => URL.revokeObjectURL(url), 2000)
+}
+
+export function exporterDonnees() {
+  const maintenant = new Date()
+  const date = maintenant.toISOString().slice(0, 10)
+  const dateLisible = maintenant.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+
+  const caTotal = COMMANDES.reduce((t, c) => t + Number(c.total || 0), 0)
+  const noteMoyenne = PRODUITS.length
+    ? (PRODUITS.reduce((t, p) => t + Number(p.note || 0), 0) / PRODUITS.length).toFixed(1)
+    : '0'
+
+  const sections = [
+    {
+      titre: 'Produits',
+      compteur: PRODUITS.length + ' produits',
+      table: tableHTML([
+        { titre: 'Nom', valeur: p => htmlEscape(p.nom) },
+        { titre: 'Marque', valeur: p => htmlEscape(p.marque) },
+        { titre: 'Catégorie', valeur: p => htmlEscape(p.categorie?.nom || '') },
+        { titre: 'Prix (MAD)', valeur: p => Number(p.prix || 0).toFixed(2) },
+        { titre: 'Prix promo (MAD)', valeur: p => (p.prix_promo ? Number(p.prix_promo).toFixed(2) : '—') },
+        { titre: 'Stock', valeur: p => p.stock },
+        { titre: 'Note', valeur: p => `${p.note || 0}/5` },
+      ], PRODUITS),
+    },
+    {
+      titre: 'Commandes',
+      compteur: COMMANDES.length + ' commandes',
+      table: tableHTML([
+        { titre: 'N°', valeur: c => htmlEscape(c.numero) },
+        { titre: 'Client', valeur: c => htmlEscape(c.user?.nom || '') },
+        { titre: 'Statut', valeur: c => badgeStatut(c.statut) },
+        { titre: 'Total (MAD)', valeur: c => Number(c.total || 0).toFixed(2) },
+        { titre: 'Paiement', valeur: c => htmlEscape(PAIEMENT_LABELS[c.paiement] || c.paiement || '') },
+        { titre: 'Ville', valeur: c => htmlEscape(c.ville || '') },
+        { titre: 'Date', valeur: c => new Date(c.created_at).toLocaleDateString('fr-FR') },
+      ], COMMANDES),
+    },
+    {
+      titre: 'Clients',
+      compteur: UTILISATEURS.length + ' clients',
+      table: tableHTML([
+        { titre: 'Nom', valeur: u => htmlEscape(u.nom) },
+        { titre: 'Email', valeur: u => htmlEscape(u.email) },
+        { titre: 'Téléphone', valeur: u => htmlEscape(u.telephone || '') },
+        { titre: 'Rôle', valeur: u => (u.role === 'admin' ? 'Administrateur' : 'Client') },
+        { titre: 'Commandes', valeur: u => u.commandes_count || 0 },
+      ], UTILISATEURS),
+    },
+    {
+      titre: 'Avis clients',
+      compteur: AVIS.length + ' avis',
+      table: tableHTML([
+        { titre: 'Produit', valeur: a => htmlEscape(PRODUITS.find(p => p.id === a.produit_id)?.nom || `Produit #${a.produit_id}`) },
+        { titre: 'Client', valeur: a => htmlEscape(a.user) },
+        { titre: 'Note', valeur: a => `${a.note}/5` },
+        { titre: 'Commentaire', valeur: a => htmlEscape(a.commentaire) },
+        { titre: 'Date', valeur: a => new Date(a.date).toLocaleDateString('fr-FR') },
+      ], AVIS),
+    },
+  ]
+
+  const contenu = `<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rapport Parapharmacie — ${dateLisible}</title>
+<style>
+  :root { --vert:#16a34a; --vert-fonce:#15803d; --texte:#111827; --muted:#6b7280; --fond:#f3f4f6; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; background:var(--fond); color:var(--texte); }
+  header { background:linear-gradient(135deg,var(--vert),var(--vert-fonce)); color:#fff; padding:24px 16px; }
+  header h1 { margin:0 0 4px; font-size:22px; }
+  header p { margin:0; opacity:.9; font-size:13px; }
+  .stats { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .stat { background:rgba(255,255,255,.15); border-radius:10px; padding:8px 12px; font-size:13px; }
+  .stat b { display:block; font-size:18px; }
+  main { max-width:960px; margin:0 auto; padding:16px; }
+  section { background:#fff; border-radius:14px; box-shadow:0 1px 3px rgba(0,0,0,.08); margin-bottom:18px; overflow:hidden; }
+  section h2 { margin:0; padding:14px 16px; font-size:16px; background:#f9fafb; border-bottom:1px solid #e5e7eb; }
+  section h2 span { font-weight:400; color:var(--muted); font-size:12px; margin-left:8px; }
+  .wrap { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; min-width:640px; font-size:13px; }
+  th, td { text-align:left; padding:9px 12px; border-bottom:1px solid #f0f0f0; white-space:nowrap; }
+  th { background:#f9fafb; color:#374151; font-weight:600; position:sticky; top:0; }
+  tr:last-child td { border-bottom:none; }
+  .st { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:600; }
+  .st-en_attente { background:#fef3c7; color:#92400e; }
+  .st-confirmee { background:#d1fae5; color:#065f46; }
+  .st-expediee { background:#dbeafe; color:#1e40af; }
+  .st-livree { background:#c7e9c0; color:#14532d; }
+  .st-annulee { background:#fee2e2; color:#991b1b; }
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:12px; }
+  @media (max-width:600px){ header h1 { font-size:19px; } main { padding:10px; } th,td { padding:8px; font-size:12px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Rapport — Parapharmacie Maroc</h1>
+  <p>Rapport exporté le ${dateLisible}</p>
+  <div class="stats">
+    <div class="stat"><b>${PRODUITS.length}</b>Produits</div>
+    <div class="stat"><b>${COMMANDES.length}</b>Commandes</div>
+    <div class="stat"><b>${UTILISATEURS.length}</b>Clients</div>
+    <div class="stat"><b>${AVIS.length}</b>Avis</div>
+    <div class="stat"><b>${caTotal.toLocaleString('fr-FR')} MAD</b>Chiffre d'affaires</div>
+    <div class="stat"><b>${noteMoyenne}/5</b>Note moyenne</div>
+  </div>
+</header>
+<main>
+${sections.map(s => `<section><h2>${htmlEscape(s.titre)} <span>${htmlEscape(s.compteur)}</span></h2><div class="wrap">${s.table}</div></section>`).join('\n')}
+</main>
+<footer>Généré depuis l'espace d'administration — Parapharmacie Maroc</footer>
+</body>
+</html>`
+
+  telechargerFichier(`rapport-parapharmacie-${date}.html`, contenu, 'text/html;charset=utf-8;')
 }
 
 let orderIdCounter = 8

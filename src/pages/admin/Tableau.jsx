@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { TrendingUp, ShoppingBag, Package, Users, AlertTriangle, Download } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
 import usePageMeta from '../../hooks/usePageMeta.js'
+import toast from 'react-hot-toast'
 
 function KPICard({ titre, valeur, Icone, couleur }) {
   return (
@@ -49,7 +50,13 @@ export default function AdminTableau() {
           <h1 className="text-3xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Tableau de bord</h1>
           <p className="text-gray-500 mt-1 text-sm">Vue d'ensemble de votre boutique</p>
         </div>
-        <button onClick={adminApi.exporterDonnees} className="btn btn-ghost text-sm gap-2">
+        <button
+          onClick={() => {
+            adminApi.exporterDonnees()
+            toast.success('Rapport HTML téléchargé — ouvrable sur téléphone sans logiciel')
+          }}
+          className="btn btn-ghost text-sm gap-2"
+        >
           <Download className="w-4 h-4" />
           Exporter les données
         </button>
