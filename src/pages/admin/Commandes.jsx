@@ -257,6 +257,20 @@ export default function AdminCommandes() {
               {detail.notes && <p className="text-sm text-gray-500 italic mt-1">Note : {detail.notes}</p>}
             </div>
           </div>
+          {detail.items?.length > 0 && (
+            <div className="mt-5">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Articles</p>
+              <div className="space-y-1.5">
+                {detail.items.map((it, i) => (
+                  <div key={i} className="flex items-center justify-between text-sm gap-3">
+                    <span className="text-gray-700 flex-1 min-w-0 truncate">{it.nom}</span>
+                    <span className="text-gray-500 flex-shrink-0">×{it.quantite}</span>
+                    <span className="font-semibold text-gray-900 flex-shrink-0">{(Number(it.prix_effectif) * it.quantite).toFixed(2)} MAD</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-100">
             <div className="text-sm text-gray-600">
               Paiement : <span className="font-semibold">{detail.paiement === 'livraison' ? 'À la livraison' : 'Carte bancaire'}</span>

@@ -145,7 +145,7 @@ function filterProducts(params = {}) {
   return paginate(result, page, perPage)
 }
 
-const STORAGE_KEY = 'parapharmacy_data_v2'
+const STORAGE_KEY = 'parapharmacy_data_v3'
 
 function sauvegarder() {
   try {
@@ -419,10 +419,20 @@ export function creerCommande(payload) {
   }, 0)
   const frais = total > 0 && total < 300 ? 30 : 0
   const telephone = payload.telephone || ''
+  const user = payload.user || { id: 1, nom: "Admin Elmakhfi", email: 'admin@parapharmacie.ma', telephone }
   const commande = {
     id, numero,
-    user_id: 1,
-    user: { id: 1, nom: "Admin Elmakhfi", email: 'admin@parapharmacie.ma', telephone },
+    user_id: payload.user_id ?? 1,
+    user,
+    items: items.map(item => {
+      const p = PRODUITS.find(prod => prod.id === item.produit_id)
+      return {
+        produit_id: item.produit_id,
+        nom: p?.nom || `Produit #${item.produit_id}`,
+        prix_effectif: p ? Number(p.prix_effectif) : 0,
+        quantite: item.quantite,
+      }
+    }),
     statut: 'en_attente',
     statut_updated_at: now,
     total: total + frais,
@@ -436,13 +446,21 @@ export function creerCommande(payload) {
     notes: payload.notes || '',
     created_at: now,
   }
+  items.forEach(item => {
+    const p = PRODUITS.find(prod => prod.id === item.produit_id)
+    if (p) {
+      p.stock = Math.max(0, p.stock - item.quantite)
+      p.en_stock = p.stock > 0
+    }
+  })
   COMMANDES.unshift(commande)
   sauvegarder()
   return Promise.resolve({ data: { data: { commande, numero } } })
 }
 
-export function getMesCommandes() {
-  return Promise.resolve({ data: { data: COMMANDES } })
+export function getMesCommandes(userId) {
+  const list = userId ? COMMANDES.filter(c => c.user_id === userId) : COMMANDES
+  return Promise.resolve({ data: { data: list } })
 }
 
 export function getDetailCommande(id) {
@@ -500,14 +518,20 @@ export function getMoi() {
 }
 
 export function getAdminTableau() {
+  const chiffreAffaires = COMMANDES
+    .filter(c => c.statut !== 'annulee')
+    .reduce((t, c) => t + Number(c.total || 0), 0)
+  const noteMoyenne = PRODUITS.length
+    ? (PRODUITS.reduce((t, p) => t + Number(p.note || 0), 0) / PRODUITS.length).toFixed(1)
+    : '0'
   return Promise.resolve({
     data: {
       data: {
-        chiffre_affaires: 24750,
+        chiffre_affaires: chiffreAffaires,
         total_commandes: COMMANDES.length,
         total_produits: PRODUITS.length,
         total_clients: UTILISATEURS.length,
-        note_moyenne: 4.4,
+        note_moyenne: Number(noteMoyenne),
         commandes_recentes: COMMANDES.slice(0, 8),
         produits_stock_bas: PRODUITS.filter(p => p.stock <= 20).slice(0, 5),
       }
@@ -639,13 +663,4 @@ export function creerCategorie(data) {
 
 export function getAdminUtilisateurs() {
   return Promise.resolve({ data: { data: UTILISATEURS } })
-}
-
-export function getAdminStatsRecentes() {
-  const ventesParJour = Array.from({ length: 7 }, (_, i) => ({
-    jour: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'][i],
-    ventes: Math.floor(Math.random() * 5000) + 1000,
-    commandes: Math.floor(Math.random() * 20) + 5,
-  }))
-  return Promise.resolve({ data: { data: ventesParJour } })
 }

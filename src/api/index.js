@@ -51,7 +51,7 @@ export const produitsApi = {
 }
 
 export const commandesApi = {
-  liste:   ()    => getMesCommandes(),
+  liste:   (userId) => getMesCommandes(userId),
   detail:  (id)  => getDetailCommande(id),
   creer:   (d)   => creerCommande(d),
   annuler: (id)  => annulerCommande(id),

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ShoppingBag, XCircle } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { commandesApi } from '../api/index.js'
+import { useAuth } from '../store/index.js'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import toast from 'react-hot-toast'
 import usePageMeta from '../hooks/usePageMeta.js'
@@ -19,7 +20,8 @@ const ANNULABLE = ['en_attente', 'confirmee']
 export default function MesCommandes() {
   usePageMeta({ title: 'Mes commandes', path: '/mes-commandes', noindex: true })
   const qc = useQueryClient()
-  const { data, isLoading } = useQuery({ queryKey: ['mes-commandes'], queryFn: commandesApi.liste })
+  const { user } = useAuth()
+  const { data, isLoading } = useQuery({ queryKey: ['mes-commandes'], queryFn: () => commandesApi.liste(user?.id) })
   const commandes = data?.data?.data || []
 
   const annulerMutation = useMutation({

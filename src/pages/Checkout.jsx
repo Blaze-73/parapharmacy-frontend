@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, ShoppingBag } from 'lucide-react'
-import { usePanier } from '../store/index.js'
+import { usePanier, useAuth } from '../store/index.js'
 import { commandesApi } from '../api/index.js'
 import { useForm } from 'react-hook-form'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
@@ -11,6 +11,7 @@ import usePageMeta from '../hooks/usePageMeta.js'
 export default function Checkout() {
   usePageMeta({ title: 'Finaliser ma commande', path: '/checkout', noindex: true })
   const { articles, viderPanier, sousTotal, fermer } = usePanier()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const [chargement, setChargement] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: { paiement: 'livraison' } })
@@ -31,6 +32,8 @@ export default function Checkout() {
     try {
       const payload = {
         items: articles.map(a => ({ produit_id: a.produit.id, quantite: a.quantite })),
+        user_id: user?.id,
+        user: user ? { id: user.id, nom: user.nom, email: user.email, telephone: user.telephone || data.telephone } : undefined,
         adresse_livraison: data.adresse,
         ville: data.ville,
         telephone: data.telephone,

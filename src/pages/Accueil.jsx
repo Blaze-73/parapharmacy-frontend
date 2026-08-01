@@ -127,6 +127,7 @@ export default function Accueil() {
   const mieuxNotes = mieuxNotesData?.data?.data  || []
   const marques    = marquesData?.data?.data     || []
   const avisRecents = avisData?.data?.data       || []
+  const marquesActives = marques.filter(m => m.produits > 0)
 
   function changeSlide(n) {
     setSlide(n)
@@ -194,12 +195,12 @@ export default function Accueil() {
       </section>
 
       {/* ── Marques ────────────────────────────────────────────── */}
-      {marques.length > 0 && (
+      {marquesActives.length > 0 && (
         <section className="bg-white border-b border-gray-100 py-6">
           <div className="max-w-7xl mx-auto px-4">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-4">Nos marques partenaires</p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              {marques.map(m => (
+              {marquesActives.map(m => (
                 <Link key={m.nom} to={`/produits?marque=${m.nom}`}
                   className={`${m.couleur} px-4 py-2 rounded-xl hover:shadow-md hover:-translate-y-0.5 transition-all`}>
                   <BrandLogo marque={m} />
