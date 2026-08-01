@@ -3,11 +3,13 @@ import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, ShoppingBag } from 'l
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { usePanier } from '../../store/index.js'
+import useFocusTrap from '../../hooks/useFocusTrap.js'
 import CategoryIcon from '../CategoryIcon.jsx'
 export default function PanierDrawer() {
   const { articles, ouvert, fermer, modifierQuantite, retirerArticle, sousTotal } = usePanier()
   const navigate   = useNavigate()
   const location   = useLocation()
+  const drawerRef  = useFocusTrap(ouvert, fermer)
 
   // Close drawer whenever the route changes
   useEffect(() => {
@@ -34,6 +36,10 @@ export default function PanierDrawer() {
 
           {/* Drawer */}
           <motion.div
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Panier"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -54,6 +60,7 @@ export default function PanierDrawer() {
               </div>
               <button
                 onClick={fermer}
+                aria-label="Fermer le panier"
                 className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 transition-colors"
               >
                 <X className="w-5 h-5" />

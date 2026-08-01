@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Pencil, Trash2, X, Check, Upload, Image } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, Check, Upload, Image, Search } from 'lucide-react'
 import CategoryIcon from '../../components/CategoryIcon.jsx'
+import Pagination from '../../components/Pagination.jsx'
 import { adminApi } from '../../api/index.js'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import usePageMeta from '../../hooks/usePageMeta.js'
+import useFocusTrap from '../../hooks/useFocusTrap.js'
 
 export default function AdminProduits() {
   usePageMeta({ title: 'Admin — Produits', path: '/admin/produits', noindex: true })
@@ -14,10 +16,17 @@ export default function AdminProduits() {
   const [modal, setModal]               = useState(null)
   const [supprConfirm, setSupprConfirm] = useState(null)
   const [previews, setPreviews]         = useState([null, null, null])
+  const [recherche, setRecherche]       = useState('')
+  const [page, setPage]                 = useState(1)
+  const modalRef = useFocusTrap(!!modal, () => setModal(null))
 
-  const { data, isLoading } = useQuery({ queryKey: ['admin-produits'], queryFn: () => adminApi.produits() })
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin-produits', recherche, page],
+    queryFn:  () => adminApi.produits({ recherche: recherche || undefined, page, par_page: 10 }),
+  })
   const { data: catData }   = useQuery({ queryKey: ['admin-categories'], queryFn: adminApi.categories })
   const produits   = data?.data?.data    || []
+  const meta       = data?.data?.meta
   const categories = catData?.data?.data || []
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm()
@@ -95,14 +104,36 @@ export default function AdminProduits() {
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Produits</h1>
-          <p className="text-gray-500 text-sm mt-1">{produits.length} produit{produits.length !== 1 ? 's' : ''}</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {meta ? meta.total : produits.length} produit{(meta ? meta.total : produits.length) !== 1 ? 's' : ''}
+          </p>
         </div>
         <button onClick={() => ouvrirModal(null)} className="btn-vert flex items-center gap-2">
           <Plus className="w-4 h-4" /> Nouveau produit
         </button>
+      </div>
+
+      <div className="relative mb-6 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        <input
+          type="text"
+          value={recherche}
+          onChange={e => { setRecherche(e.target.value); setPage(1) }}
+          placeholder="Rechercher un produit, une marque…"
+          className="champ pl-10"
+        />
+        {recherche && (
+          <button
+            onClick={() => { setRecherche(''); setPage(1) }}
+            aria-label="Effacer la recherche"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {isLoading ? (
@@ -226,6 +257,8 @@ export default function AdminProduits() {
         </div>
       )}
 
+      <Pagination meta={meta} onPage={setPage} />
+
       {/* Modal */}
       <AnimatePresence>
         {modal && (
@@ -233,6 +266,10 @@ export default function AdminProduits() {
             <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
               className="fixed inset-0 bg-black/50 z-50" onClick={() => setModal(null)} />
             <motion.div
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label={modal?.id ? 'Modifier le produit' : 'Nouveau produit'}
               initial={{opacity:0,scale:0.95}} animate={{opacity:1,scale:1}} exit={{opacity:0,scale:0.95}} transition={{duration:0.15}}
               className="fixed inset-x-4 top-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-lg bg-white rounded-2xl shadow-2xl z-50 overflow-y-auto max-h-[95vh]"
             >
@@ -240,7 +277,7 @@ export default function AdminProduits() {
                 <h2 className="font-bold text-gray-900 text-lg" style={{ fontFamily: 'Syne' }}>
                   {modal?.id ? 'Modifier le produit' : 'Nouveau produit'}
                 </h2>
-                <button onClick={() => setModal(null)} className="p-2 rounded-xl hover:bg-gray-100 text-gray-400">
+                <button onClick={() => setModal(null)} aria-label="Fermer" className="p-2 rounded-xl hover:bg-gray-100 text-gray-400">
                   <X className="w-5 h-5" />
                 </button>
               </div>

@@ -1,20 +1,48 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Search, X } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
+import Pagination from '../../components/Pagination.jsx'
 import usePageMeta from '../../hooks/usePageMeta.js'
 
 export default function AdminClients() {
   usePageMeta({ title: 'Admin — Clients', path: '/admin/clients', noindex: true })
+  const [recherche, setRecherche] = useState('')
+  const [page, setPage] = useState(1)
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-clients'],
-    queryFn:  () => adminApi.utilisateurs(),
+    queryKey: ['admin-clients', recherche, page],
+    queryFn:  () => adminApi.utilisateurs({ recherche: recherche || undefined, page, par_page: 10 }),
   })
   const clients = data?.data?.data || []
+  const meta    = data?.data?.meta
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Clients</h1>
-        <p className="text-gray-500 text-sm mt-1">{clients.length} client{clients.length !== 1 ? 's' : ''} inscrits</p>
+        <p className="text-gray-500 text-sm mt-1">
+          {meta ? meta.total : clients.length} client{(meta ? meta.total : clients.length) !== 1 ? 's' : ''} inscrits
+        </p>
+      </div>
+
+      <div className="relative mb-6 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        <input
+          type="text"
+          value={recherche}
+          onChange={e => { setRecherche(e.target.value); setPage(1) }}
+          placeholder="Rechercher nom, email, téléphone…"
+          className="champ pl-10"
+        />
+        {recherche && (
+          <button
+            onClick={() => { setRecherche(''); setPage(1) }}
+            aria-label="Effacer la recherche"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {isLoading ? (
@@ -68,6 +96,8 @@ export default function AdminClients() {
           </div>
         </div>
       )}
+
+      <Pagination meta={meta} onPage={setPage} />
     </div>
   )
 }

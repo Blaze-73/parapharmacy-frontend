@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Search, X } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
+import Pagination from '../../components/Pagination.jsx'
 import toast from 'react-hot-toast'
 import usePageMeta from '../../hooks/usePageMeta.js'
 
@@ -48,11 +50,18 @@ export default function AdminCommandes() {
   usePageMeta({ title: 'Admin — Commandes', path: '/admin/commandes', noindex: true })
   const qc = useQueryClient()
   const [filtreStatut, setFiltreStatut] = useState('')
+  const [recherche, setRecherche] = useState('')
+  const [page, setPage] = useState(1)
   const [detail, setDetail] = useState(null)
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-commandes', filtreStatut],
-    queryFn:  () => adminApi.commandes(filtreStatut ? { statut: filtreStatut } : undefined),
+    queryKey: ['admin-commandes', filtreStatut, recherche, page],
+    queryFn:  () => adminApi.commandes({
+      statut: filtreStatut || undefined,
+      recherche: recherche || undefined,
+      page,
+      par_page: 10,
+    }),
   })
 
   const mutation = useMutation({
@@ -65,22 +74,45 @@ export default function AdminCommandes() {
   })
 
   const commandes = data?.data?.data || []
+  const meta       = data?.data?.meta
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
+      <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Commandes</h1>
-          <p className="text-gray-500 text-sm mt-1">{commandes.length} commande{commandes.length !== 1 ? 's' : ''}</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {meta ? meta.total : commandes.length} commande{(meta ? meta.total : commandes.length) !== 1 ? 's' : ''}
+          </p>
         </div>
         <select
           value={filtreStatut}
-          onChange={e => setFiltreStatut(e.target.value)}
+          onChange={e => { setFiltreStatut(e.target.value); setPage(1) }}
           className="champ py-2 w-auto text-sm"
         >
           <option value="">Tous les statuts</option>
           {STATUTS.map(s => <option key={s.v} value={s.v}>{s.l}</option>)}
         </select>
+      </div>
+
+      <div className="relative mb-6 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        <input
+          type="text"
+          value={recherche}
+          onChange={e => { setRecherche(e.target.value); setPage(1) }}
+          placeholder="Rechercher numéro, client, email, ville…"
+          className="champ pl-10"
+        />
+        {recherche && (
+          <button
+            onClick={() => { setRecherche(''); setPage(1) }}
+            aria-label="Effacer la recherche"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {isLoading ? (
@@ -217,6 +249,8 @@ export default function AdminCommandes() {
           </div>
         </div>
       )}
+
+      <Pagination meta={meta} onPage={setPage} />
 
       {/* Order detail panel */}
       {detail && (

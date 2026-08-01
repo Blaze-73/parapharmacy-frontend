@@ -8,6 +8,7 @@ import CategoryIcon from '../components/CategoryIcon.jsx'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import usePageMeta from '../hooks/usePageMeta.js'
+import useFocusTrap from '../hooks/useFocusTrap.js'
 
 export default function Produits() {
   usePageMeta({
@@ -18,6 +19,7 @@ export default function Produits() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [filtreMobile, setFiltreMobile] = useState(false)
   const [searchInput, setSearchInput] = useState(searchParams.get('recherche') || '')
+  const filtreRef = useFocusTrap(filtreMobile, () => setFiltreMobile(false))
 
   // Debounce search input
   useEffect(() => {
@@ -323,12 +325,16 @@ export default function Produits() {
         <>
           <div className="fixed inset-0 bg-black/50 z-50 md:hidden" onClick={() => setFiltreMobile(false)} />
           <motion.div
+            ref={filtreRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Filtres"
             initial={{ x: '100%' }} animate={{ x: 0 }}
             className="fixed right-0 top-0 h-full w-72 bg-white z-50 shadow-2xl overflow-y-auto md:hidden"
           >
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <h3 className="font-bold text-gray-900">Filtres</h3>
-              <button onClick={() => setFiltreMobile(false)} className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100">
+              <button onClick={() => setFiltreMobile(false)} aria-label="Fermer les filtres" className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100">
                 <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>
