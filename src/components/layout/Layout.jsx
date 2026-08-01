@@ -223,8 +223,8 @@ export default function Layout() {
               <Cross className="w-5 h-5 text-white" />
             </div>
             <span className="text-lg xl:text-xl font-extrabold text-gray-900 whitespace-nowrap" style={{ fontFamily: 'Syne' }}>
-              <span className="sm:hidden">Karima</span>
-              <span className="hidden sm:inline">Parapharmacie <span className="text-vert-600">Karima</span></span>
+              <span className="sm:hidden">Elmakhfi</span>
+              <span className="hidden sm:inline">Parapharmacie <span className="text-vert-600">Elmakhfi</span></span>
             </span>
           </Link>
 
