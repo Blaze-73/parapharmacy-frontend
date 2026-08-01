@@ -7,8 +7,55 @@ import { produitsApi } from '../api/index.js'
 import CategoryIcon from '../components/CategoryIcon.jsx'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import CarteProduit from '../components/product/CarteProduit.jsx'
+import { formatPrix } from '../utils/format.js'
 import usePageMeta from '../hooks/usePageMeta.js'
 import useFocusTrap from '../hooks/useFocusTrap.js'
+
+function PlagePrix({ bornes, valeur, onChange, onCommit }) {
+  const { min: bmin, max: bmax } = bornes
+  const bornesOk = bmax > bmin
+  const pct = (v) => {
+    if (!bornesOk) return 0
+    const c = Math.max(bmin, Math.min(v, bmax))
+    return ((c - bmin) / (bmax - bmin)) * 100
+  }
+  const clamp = (v) => (bornesOk ? Math.max(bmin, Math.min(v, bmax)) : v)
+
+  return (
+    <div>
+      <div className="plage-prix">
+        <div className="piste" />
+        <div className="segment" style={{ left: `${pct(valeur.min)}%`, right: `${100 - pct(valeur.max)}%` }} />
+        <input
+          type="range"
+          min={bmin} max={bmax} step={5}
+          value={clamp(valeur.min)}
+          onChange={e => {
+            const nouveauMin = Math.min(Number(e.target.value), valeur.max)
+            onChange({ min: nouveauMin, max: valeur.max })
+            onCommit(nouveauMin, valeur.max)
+          }}
+          aria-label="Prix minimum"
+        />
+        <input
+          type="range"
+          min={bmin} max={bmax} step={5}
+          value={clamp(valeur.max)}
+          onChange={e => {
+            const nouveauMax = Math.max(Number(e.target.value), valeur.min)
+            onChange({ min: valeur.min, max: nouveauMax })
+            onCommit(valeur.min, nouveauMax)
+          }}
+          aria-label="Prix maximum"
+        />
+      </div>
+      <div className="flex justify-between text-xs text-gray-500 mt-2 font-medium">
+        <span>{formatPrix(clamp(valeur.min))} MAD</span>
+        <span>{formatPrix(clamp(valeur.max))} MAD</span>
+      </div>
+    </div>
+  )
+}
 
 export default function Produits() {
   usePageMeta({
@@ -20,7 +67,6 @@ export default function Produits() {
   const [filtreMobile, setFiltreMobile] = useState(false)
   const [searchInput, setSearchInput] = useState(searchParams.get('recherche') || '')
   const filtreRef = useFocusTrap(filtreMobile, () => setFiltreMobile(false))
-
   // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -42,10 +88,27 @@ export default function Produits() {
     marque:    searchParams.get('marque')    || undefined,
     en_promo:  searchParams.get('en_promo')  || undefined,
     en_stock:  searchParams.get('en_stock')  || undefined,
+    prix_min:  searchParams.get('prix_min')  || undefined,
+    prix_max:  searchParams.get('prix_max')  || undefined,
     tri:       searchParams.get('tri')       || 'recent',
     page:      searchParams.get('page')      || '1',
     par_page:  '20',
   }
+
+  const { data: prixData } = useQuery({
+    queryKey: ['prix-extremes'],
+    queryFn:  produitsApi.prixExtremes,
+    staleTime: 3_600_000,
+  })
+  const bornes = prixData?.data?.data || { min: 0, max: 500 }
+  const [prix, setPrix] = useState({ min: 0, max: 500 })
+
+  useEffect(() => {
+    setPrix({
+      min: searchParams.get('prix_min') ? Number(searchParams.get('prix_min')) : bornes.min,
+      max: searchParams.get('prix_max') ? Number(searchParams.get('prix_max')) : bornes.max,
+    })
+  }, [bornes.min, bornes.max, searchParams.get('prix_min'), searchParams.get('prix_max')])
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['produits', filtres],
@@ -77,8 +140,17 @@ export default function Produits() {
     setSearchParams(p)
   }
 
+  function setPrixParams(min, max) {
+    const p = new URLSearchParams(searchParams)
+    min > bornes.min ? p.set('prix_min', String(min)) : p.delete('prix_min')
+    max < bornes.max ? p.set('prix_max', String(max)) : p.delete('prix_max')
+    p.set('page', '1')
+    setSearchParams(p)
+  }
+
   function reset() {
     setSearchInput('')
+    setPrix({ min: bornes.min, max: bornes.max })
     setSearchParams(new URLSearchParams())
   }
 
@@ -89,7 +161,7 @@ export default function Produits() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const hasFilters = !!(filtres.recherche || filtres.categorie || filtres.marque || filtres.en_promo || filtres.en_stock)
+  const hasFilters = !!(filtres.recherche || filtres.categorie || filtres.marque || filtres.en_promo || filtres.en_stock || filtres.prix_min || filtres.prix_max)
 
   function FilterContent() {
     return (
@@ -137,6 +209,16 @@ export default function Produits() {
               <span className="text-sm text-gray-700">{label}</span>
             </label>
           ))}
+        </div>
+
+        <div>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Prix</p>
+          <PlagePrix
+            bornes={bornes}
+            valeur={prix}
+            onChange={setPrix}
+            onCommit={setPrixParams}
+          />
         </div>
 
         {marques.length > 0 && (

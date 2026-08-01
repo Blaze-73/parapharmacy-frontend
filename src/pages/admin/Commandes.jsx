@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Search, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Search, X, MapPin, User, Package, CreditCard } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
 import { formatPrix } from '../../utils/format.js'
 import Pagination from '../../components/Pagination.jsx'
@@ -54,6 +55,13 @@ export default function AdminCommandes() {
   const [recherche, setRecherche] = useState('')
   const [page, setPage] = useState(1)
   const [detail, setDetail] = useState(null)
+
+  useEffect(() => {
+    if (!detail) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [detail])
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-commandes', filtreStatut, recherche, page],
@@ -253,73 +261,111 @@ export default function AdminCommandes() {
 
       <Pagination meta={meta} onPage={setPage} />
 
-      {/* Order detail panel */}
-      {detail && (
-        <div className="mt-6 carte p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-bold text-gray-900 text-lg" style={{ fontFamily: 'Syne' }}>
-              Détail — {detail.numero}
-            </h2>
-            <button onClick={() => setDetail(null)} className="text-gray-400 hover:text-gray-600 text-sm">
-              Fermer ✕
-            </button>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Client</p>
-              <p className="font-semibold text-gray-900">{detail.user?.nom}</p>
-              <p className="text-sm text-gray-600">{detail.user?.email}</p>
-              {detail.user?.telephone && (
-                <div className="flex items-center gap-2 mt-2">
-                  <a href={`tel:${detail.user.telephone}`} className="text-sm text-vert-700 hover:underline font-medium">
-                    📞 {detail.user.telephone}
-                  </a>
-                  <a
-                    href={`https://wa.me/${numWhatsApp(detail.user.telephone)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-vert-700 bg-vert-100 hover:bg-vert-200 rounded-full px-3 py-1.5 transition-colors"
-                  >
-                    💬 Contacter sur WhatsApp
-                  </a>
+      {/* Order detail modal */}
+      <AnimatePresence>
+        {detail && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm"
+              onClick={() => setDetail(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 24, scale: 0.97 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 300 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Détail de la commande ${detail.numero}`}
+              className="fixed inset-x-4 top-[5vh] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:top-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-xl z-50 max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="sticky top-0 bg-white/95 backdrop-blur px-6 py-4 border-b border-gray-100 flex items-center justify-between rounded-t-2xl">
+                <div>
+                  <h2 className="font-bold text-gray-900 text-lg" style={{ fontFamily: 'Syne' }}>Détail — {detail.numero}</h2>
+                  <span className="mt-0.5 inline-block">{STATUTS.find(s => s.v === detail.statut)?.l && <span className={STATUTS.find(s => s.v === detail.statut).cls}>{STATUTS.find(s => s.v === detail.statut).l}</span>}</span>
                 </div>
-              )}
-            </div>
-            <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Livraison</p>
-              <p className="text-sm text-gray-700">{detail.adresse_livraison}</p>
-              <p className="text-sm text-gray-700">{detail.ville} {detail.code_postal}</p>
-              {detail.notes && <p className="text-sm text-gray-500 italic mt-1">Note : {detail.notes}</p>}
-            </div>
-          </div>
-          {detail.items?.length > 0 && (
-            <div className="mt-5">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Articles</p>
-              <div className="space-y-1.5">
-                {detail.items.map((it, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm gap-3">
-                    <span className="text-gray-700 flex-1 min-w-0 truncate">{it.nom}</span>
-                    <span className="text-gray-500 flex-shrink-0">×{it.quantite}</span>
-                    <span className="font-semibold text-gray-900 flex-shrink-0">{formatPrix(Number(it.prix_effectif) * it.quantite)} MAD</span>
-                  </div>
-                ))}
+                <button
+                  onClick={() => setDetail(null)}
+                  aria-label="Fermer le détail"
+                  className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-            </div>
-          )}
-          <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-100">
-            <div className="text-sm text-gray-600">
-              Paiement : <span className="font-semibold">{detail.paiement === 'livraison' ? 'À la livraison' : 'Carte bancaire'}</span>
-              {detail.statut_updated_at && (
-                <p className="text-xs text-gray-400 mt-1">Dernière mise à jour : {new Date(detail.statut_updated_at).toLocaleString('fr-FR')}</p>
-              )}
-            </div>
-            <div className="text-right">
-              <p className="text-xs text-gray-400">Livraison : {formatPrix(detail.frais_livraison)} MAD</p>
-              <p className="font-bold text-gray-900 text-lg">Total : {formatPrix(detail.total)} MAD</p>
-            </div>
-          </div>
-        </div>
-      )}
+
+              <div className="p-6">
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5" /> Client
+                    </p>
+                    <p className="font-semibold text-gray-900">{detail.user?.nom}</p>
+                    <p className="text-sm text-gray-600">{detail.user?.email}</p>
+                    {detail.user?.telephone && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <a href={`tel:${detail.user.telephone}`} className="text-sm text-vert-700 hover:underline font-medium">
+                          📞 {detail.user.telephone}
+                        </a>
+                        <a
+                          href={`https://wa.me/${numWhatsApp(detail.user.telephone)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-vert-700 bg-vert-100 hover:bg-vert-200 rounded-full px-3 py-1.5 transition-colors"
+                        >
+                          💬 WhatsApp
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5" /> Livraison
+                    </p>
+                    <p className="text-sm text-gray-700">{detail.adresse_livraison}</p>
+                    <p className="text-sm text-gray-700">{detail.ville} {detail.code_postal}</p>
+                    {detail.notes && <p className="text-sm text-gray-500 italic mt-1">Note : {detail.notes}</p>}
+                  </div>
+                </div>
+
+                {detail.items?.length > 0 && (
+                  <div className="mt-5">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <Package className="w-3.5 h-3.5" /> Articles
+                    </p>
+                    <div className="space-y-1.5">
+                      {detail.items.map((it, i) => (
+                        <div key={i} className="flex items-center justify-between text-sm gap-3">
+                          <span className="text-gray-700 flex-1 min-w-0 truncate">{it.nom}</span>
+                          <span className="text-gray-500 flex-shrink-0">×{it.quantite}</span>
+                          <span className="font-semibold text-gray-900 flex-shrink-0">{formatPrix(Number(it.prix_effectif) * it.quantite)} MAD</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4 flex items-center justify-between pt-4 border-t border-gray-100 gap-3 flex-wrap">
+                  <div className="text-sm text-gray-600">
+                    <p className="flex items-center gap-1.5">
+                      <CreditCard className="w-3.5 h-3.5" />
+                      <span className="font-semibold">{detail.paiement === 'livraison' ? 'Paiement à la livraison' : 'Carte bancaire'}</span>
+                    </p>
+                    {detail.statut_updated_at && (
+                      <p className="text-xs text-gray-400 mt-1">Mise à jour : {new Date(detail.statut_updated_at).toLocaleString('fr-FR')}</p>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-400">Livraison : {formatPrix(detail.frais_livraison)} MAD</p>
+                    <p className="font-bold text-gray-900 text-lg">Total : {formatPrix(detail.total)} MAD</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

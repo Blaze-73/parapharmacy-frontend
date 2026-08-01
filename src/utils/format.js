@@ -27,3 +27,15 @@ export function formatDateLivraison(jours = [1, 2]) {
   const dernier = dates[dates.length - 1].toLocaleDateString('fr-FR', opts)
   return `${premier} – ${dernier}`
 }
+
+export function numWhatsApp(num) {
+  let n = String(num || '').replace(/[^\d]/g, '')
+  if (n.startsWith('0')) n = '212' + n.slice(1)
+  return n
+}
+
+export function lienWhatsApp(numero, message) {
+  const url = `https://wa.me/${numWhatsApp(numero)}`
+  if (!message) return url
+  return `${url}?text=${encodeURIComponent(message)}`
+}

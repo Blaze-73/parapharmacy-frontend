@@ -5,6 +5,7 @@ import { commandesApi } from '../api/index.js'
 import { formatPrix } from '../utils/format.js'
 import { useAuth } from '../store/index.js'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
+import SuiviCommande from '../components/SuiviCommande.jsx'
 import toast from 'react-hot-toast'
 import usePageMeta from '../hooks/usePageMeta.js'
 
@@ -77,6 +78,9 @@ export default function MesCommandes() {
                       </button>
                     )}
                   </div>
+                </div>
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  <SuiviCommande statut={c.statut} compact />
                 </div>
               </div>
             )

@@ -32,6 +32,8 @@ function filterProducts(params = {}) {
   if (params.en_promo) result = result.filter(p => p.en_solde)
   if (params.en_stock) result = result.filter(p => p.en_stock)
   if (params.marque) result = result.filter(p => p.marque.toLowerCase() === params.marque.toLowerCase())
+  if (params.prix_min) result = result.filter(p => Number(p.prix_effectif) >= Number(params.prix_min))
+  if (params.prix_max) result = result.filter(p => Number(p.prix_effectif) <= Number(params.prix_max))
   if (params.stock_max !== undefined && params.stock_max !== null && params.stock_max !== '') {
     const max = Number(params.stock_max)
     result = result.filter(p => Number(p.stock) <= max)
@@ -300,6 +302,13 @@ export function getProduitDetail(slug) {
     : []
   const avis = produit ? AVIS.filter(a => a.produit_id === produit.id) : []
   return Promise.resolve({ data: { data: { produit, similaires, avis } } })
+}
+
+export function getPrixExtremes() {
+  const prix = PRODUITS.map(p => Number(p.prix_effectif)).filter(p => p > 0)
+  const min = prix.length ? Math.floor(Math.min(...prix) / 10) * 10 : 0
+  const max = prix.length ? Math.ceil(Math.max(...prix) / 10) * 10 : 500
+  return Promise.resolve({ data: { data: { min, max } } })
 }
 
 export function getMarques() {

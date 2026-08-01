@@ -1,18 +1,40 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, ShoppingCart, Plus, Minus, Trash2, ArrowRight, ShoppingBag } from 'lucide-react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { usePanier } from '../../store/index.js'
 import useFocusTrap from '../../hooks/useFocusTrap.js'
 import ImageProduit from '../product/ImageProduit.jsx'
 import BarreLivraison from '../BarreLivraison.jsx'
 import { formatPrix } from '../../utils/format.js'
+import { produitsApi } from '../../api/index.js'
 import { SITE } from '../../config.js'
+import toast from 'react-hot-toast'
+
 export default function PanierDrawer() {
-  const { articles, ouvert, fermer, modifierQuantite, retirerArticle, sousTotal } = usePanier()
+  const { articles, ouvert, fermer, modifierQuantite, retirerArticle, sousTotal, ajouterArticle } = usePanier()
   const navigate   = useNavigate()
   const location   = useLocation()
   const drawerRef  = useFocusTrap(ouvert, fermer)
+
+  const { data: allData } = useQuery({
+    queryKey: ['panier-suggestions'],
+    queryFn:  () => produitsApi.liste({ par_page: 999 }),
+    staleTime: 5 * 60 * 1000,
+  })
+  const tousProduits = allData?.data?.data || []
+
+  const suggestions = useMemo(() => {
+    if (articles.length === 0 || tousProduits.length === 0) return []
+    const idsPanier = new Set(articles.map(a => a.produit.id))
+    const catIds = new Set(articles.map(a => a.produit.categorie_id))
+    return tousProduits
+      .filter(p => p.en_stock && p.actif !== false && !idsPanier.has(p.id))
+      .map(p => ({ ...p, memeCat: catIds.has(p.categorie_id) }))
+      .sort((a, b) => (b.memeCat - a.memeCat) || (b.note || 0) - (a.note || 0))
+      .slice(0, 3)
+  }, [articles, tousProduits])
 
   // Close drawer whenever the route changes
   useEffect(() => {
@@ -151,6 +173,44 @@ export default function PanierDrawer() {
                     </motion.div>
                   ))}
                 </AnimatePresence>
+              )}
+
+              {/* Cross-sell suggestions */}
+              {articles.length > 0 && suggestions.length > 0 && (
+                <div className="pt-5 mt-2 border-t border-dashed border-gray-200">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
+                    Complétez votre panier
+                  </p>
+                  <div className="space-y-2.5">
+                    {suggestions.map(p => (
+                      <div key={p.id} className="flex items-center gap-3 bg-white border border-gray-100 rounded-xl p-2.5">
+                        <Link
+                          to={`/produits/${p.slug}`}
+                          onClick={fermer}
+                          className="w-11 h-11 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 overflow-hidden"
+                        >
+                          <ImageProduit produit={p} className="w-full h-full p-0.5" iconeClass="w-5 h-5" />
+                        </Link>
+                        <div className="flex-1 min-w-0">
+                          <Link to={`/produits/${p.slug}`} onClick={fermer} className="text-xs font-semibold text-gray-800 hover:text-vert-700 line-clamp-1 transition-colors">
+                            {p.nom}
+                          </Link>
+                          <p className="text-xs font-bold text-vert-700">{formatPrix(p.prix_effectif)} MAD</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            ajouterArticle(p, 1)
+                            toast.success('Ajouté au panier', { id: `sugg-${p.id}` })
+                          }}
+                          aria-label={`Ajouter ${p.nom} au panier`}
+                          className="w-8 h-8 flex-shrink-0 rounded-lg bg-vert-600 hover:bg-vert-700 text-white flex items-center justify-center transition-colors active:scale-95"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
 

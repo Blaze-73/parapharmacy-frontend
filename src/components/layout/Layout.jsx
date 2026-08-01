@@ -1,10 +1,11 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search, Heart, Cross } from 'lucide-react'
+import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search, Heart, Cross, MessageCircle } from 'lucide-react'
 import { useAuth, usePanier, useWishlist } from '../../store/index.js'
 import { authApi, produitsApi } from '../../api/index.js'
 import { SITE } from '../../config.js'
+import { lienWhatsApp } from '../../utils/format.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
 import ImageProduit from '../product/ImageProduit.jsx'
 import { formatPrix } from '../../utils/format.js'
@@ -435,6 +436,20 @@ export default function Layout() {
       </footer>
 
       <PanierDrawer />
+
+      {/* Floating WhatsApp support (hidden on product detail — sticky buy bar is there) */}
+      {!location.pathname.startsWith('/produits/') && (
+        <a
+          href={lienWhatsApp(SITE.contact.telephone, `Bonjour ${SITE.nom} 👋, j'aimerais poser une question.`)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Contacter le support sur WhatsApp"
+          title="Contacter le support"
+          className="fixed bottom-5 right-5 z-40 w-[52px] h-[52px] sm:w-14 sm:h-14 bg-[#25D366] hover:bg-[#1ebe57] text-white rounded-full flex items-center justify-center shadow-lg shadow-black/20 transition-all hover:scale-105 active:scale-95"
+        >
+          <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+        </a>
+      )}
     </div>
   )
 }

@@ -86,6 +86,35 @@ h1, h2, h3, h4, h5, h6 {
 .prix-principal { font-family: var(--font-titre); font-weight: 700; color: #15803d; }
 .prix-barre     { text-decoration: line-through; color: #94a3b8; }
 
+/* ── Plage de prix (double curseur) ───────────────────────────────────────── */
+.plage-prix { position: relative; height: 28px; }
+.plage-prix .piste {
+  position: absolute; top: 50%; left: 0; right: 0; height: 6px;
+  transform: translateY(-50%); border-radius: 9999px; background: #e2e8f0;
+}
+.plage-prix .segment {
+  position: absolute; top: 50%; height: 6px; transform: translateY(-50%);
+  border-radius: 9999px; background: #059669; pointer-events: none;
+}
+.plage-prix input[type="range"] {
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+  -webkit-appearance: none; appearance: none; background: transparent;
+  pointer-events: none;
+}
+.plage-prix input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 9999px;
+  background: #fff; border: 2px solid #059669;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  pointer-events: auto; cursor: pointer;
+}
+.plage-prix input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 9999px;
+  background: #fff; border: 2px solid #059669;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  pointer-events: auto; cursor: pointer;
+}
+
 /* ── Accessibilité ─────────────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid #059669;
