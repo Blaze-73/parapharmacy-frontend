@@ -222,14 +222,14 @@ export default function Layout() {
 
       {/* Navbar */}
       <header className={`bg-white sticky top-0 z-40 transition-shadow ${scrolled ? 'shadow-md' : 'border-b border-gray-100'}`}>
-        <div className="max-w-7xl mx-auto px-4 flex items-center h-16 gap-3">
+        <div className="max-w-7xl mx-auto px-4 flex items-center h-16 gap-1 sm:gap-3">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 flex-shrink-0 min-w-0" aria-label="Parapharmacie Elmakhfi">
-            <div className="w-9 h-9 bg-vert-600 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Cross className="w-5 h-5 text-white" />
+          <Link to="/" className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 min-w-0" aria-label="Parapharmacie Elmakhfi">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-vert-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Cross className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <span className="text-lg xl:text-xl font-extrabold text-gray-900 whitespace-nowrap" style={{ fontFamily: 'Syne' }}>
+            <span className="text-base sm:text-lg xl:text-xl font-extrabold text-gray-900 whitespace-nowrap" style={{ fontFamily: 'Syne' }}>
               <span className="sm:hidden">Elmakhfi</span>
               <span className="hidden sm:inline">Parapharmacie <span className="text-vert-600">Elmakhfi</span></span>
             </span>
@@ -256,7 +256,7 @@ export default function Layout() {
             <Link
               to="/favoris"
               aria-label={`Mes favoris (${nbFavoris})`}
-              className="relative p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
+              className="relative p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
             >
               <Heart className="w-5 h-5" />
               {nbFavoris > 0 && (
@@ -272,7 +272,7 @@ export default function Layout() {
             </Link>
 
             {/* Cart */}
-            <button onClick={ouvrir} aria-label={`Voir le panier (${nb} article${nb !== 1 ? 's' : ''})`} className="relative p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
+            <button onClick={ouvrir} aria-label={`Voir le panier (${nb} article${nb !== 1 ? 's' : ''})`} className="relative p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
               <ShoppingCart className="w-5 h-5" />
               {nb > 0 && (
                 <motion.span
@@ -345,7 +345,7 @@ export default function Layout() {
 
             {/* Mobile menu toggle */}
             <button onClick={() => setMenuOuvert(v => !v)}
-              className="xl:hidden p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 ml-1">
+              className="xl:hidden p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 sm:ml-1">
               {menuOuvert ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>

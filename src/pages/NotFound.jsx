@@ -13,11 +13,11 @@ export default function NotFound() {
         className="text-center max-w-md"
       >
         <div className="relative mb-8">
-          <div className="text-[120px] font-extrabold text-gray-100 leading-none" style={{ fontFamily: 'Syne' }}>
+          <div className="text-[96px] sm:text-[120px] font-extrabold text-gray-100 leading-none" style={{ fontFamily: 'Syne' }}>
             404
           </div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-6xl">🔍</span>
+            <span className="text-5xl sm:text-6xl">🔍</span>
           </div>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2" style={{ fontFamily: 'Syne' }}>

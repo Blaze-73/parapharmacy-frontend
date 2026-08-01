@@ -11,6 +11,8 @@
 
 html { scroll-behavior: smooth; }
 
+html, body { overflow-x: hidden; overflow-x: clip; }
+
 body {
   font-family: var(--font-corps);
   background: #f8fafc;
