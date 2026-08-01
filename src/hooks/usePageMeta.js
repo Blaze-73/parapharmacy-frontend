@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
+import { SITE } from '../config.js'
 
-const BASE = 'https://parapharmacyy.vercel.app'
-const SITE = 'Parapharmacie Elmakhfi'
+const BASE = SITE.domaine
+const SITE_NAME = SITE.nom
 const DEFAULT_DESC =
   "Achetez en ligne vos produits de parapharmacie au Maroc : soins visage, vitamines, bébé & maman, solaires et plus. Livraison 24–48h, gratuite dès 300 MAD."
 const DEFAULT_IMG =
@@ -25,7 +26,7 @@ export default function usePageMeta({
   noindex = false,
 }) {
   useEffect(() => {
-    const fullTitle = title ? `${title} | ${SITE}` : SITE
+    const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
     const url = `${BASE}${path === '/' ? '/' : path.replace(/\/+$/, '')}`
     const desc = description || DEFAULT_DESC
     const img = image.startsWith('/') ? BASE + image : image

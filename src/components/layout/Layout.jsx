@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search, Heart, Cross } from 'lucide-react'
 import { useAuth, usePanier, useWishlist } from '../../store/index.js'
 import { authApi, produitsApi } from '../../api/index.js'
+import { SITE } from '../../config.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
 import CategoryIcon from '../CategoryIcon.jsx'
 import toast from 'react-hot-toast'
@@ -414,10 +415,10 @@ export default function Layout() {
             <div>
               <h4 className="text-white font-semibold mb-3" style={{ fontFamily: 'Syne' }}>Contact</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>📞 +212 5XX-XXXXXX</li>
-                <li>✉️ contact@parapharmacie.ma</li>
-                <li>📍 Casablanca, Maroc</li>
-                <li>🕐 Lun–Sam : 9h–18h</li>
+                <li>📞 {SITE.contact.telephone}</li>
+                <li>✉️ {SITE.contact.email}</li>
+                <li>📍 {SITE.contact.adresse}</li>
+                <li>🕐 {SITE.contact.horaires}</li>
               </ul>
             </div>
           </div>

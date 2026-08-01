@@ -1,4 +1,8 @@
 import dataFichier from '../data/produits.json'
+import { SITE } from '../config.js'
+
+const ADMIN_EMAIL = SITE.contact.email
+const ADMIN_TEL = SITE.contact.telephoneIntl
 
 const CATEGORIES = [
   { id: 1, nom: 'Soins du visage', slug: 'soins-visage', icone: '🧴' },
@@ -97,14 +101,14 @@ const COMMANDES = [
   { id: 1, numero: 'CMD-202512-0001', user_id: 2, user: { id: 2, nom: 'Fatima Benali', email: 'fatima@test.ma', telephone: '+212 6XX-XXXXXX' }, statut: 'livree', total: 430, sous_total: 400, frais_livraison: 30, adresse_livraison: '12 Rue Ibn Sina', ville: 'Casablanca', code_postal: '20000', paiement: 'livraison', notes: '', items: [{ produit_id: 1, nom: 'Sérum Hydratant Acide Hyaluronique', prix_effectif: 285, quantite: 1 }, { produit_id: 4, nom: 'Contour des Yeux Anti-Âge', prix_effectif: 232, quantite: 1 }], created_at: '2025-12-05T14:30:00Z' },
   { id: 2, numero: 'CMD-202512-0002', user_id: 2, user: { id: 2, nom: 'Fatima Benali', email: 'fatima@test.ma', telephone: '+212 6XX-XXXXXX' }, statut: 'expediee', total: 585, sous_total: 585, frais_livraison: 0, adresse_livraison: '12 Rue Ibn Sina', ville: 'Casablanca', code_postal: '20000', paiement: 'carte', notes: 'Appeler avant livraison', items: [{ produit_id: 5, nom: 'Complexe Multivitaminé Énergie', prix_effectif: 215, quantite: 1 }, { produit_id: 9, nom: 'Lait Hydratant Bébé', prix_effectif: 165, quantite: 1 }, { produit_id: 16, nom: 'Protection Solaire SPF50+', prix_effectif: 225, quantite: 1 }], created_at: '2025-12-12T10:15:00Z' },
   { id: 3, numero: 'CMD-202512-0003', user_id: 2, user: { id: 2, nom: 'Fatima Benali', email: 'fatima@test.ma', telephone: '+212 6XX-XXXXXX' }, statut: 'confirmee', total: 260, sous_total: 260, frais_livraison: 0, adresse_livraison: '12 Rue Ibn Sina', ville: 'Casablanca', code_postal: '20000', paiement: 'livraison', notes: '', items: [{ produit_id: 13, nom: 'Masque Capillaire Réparateur', prix_effectif: 295, quantite: 1 }], created_at: '2025-12-18T16:45:00Z' },
-  { id: 4, numero: 'CMD-202512-0004', user_id: 1, user: { id: 1, nom: "Admin Elmakhfi", email: 'admin@parapharmacie.ma', telephone: '+212 5XX-XXXXXX' }, statut: 'en_attente', total: 450, sous_total: 420, frais_livraison: 30, adresse_livraison: 'Av. Mohammed V', ville: 'Rabat', code_postal: '10000', paiement: 'livraison', notes: 'Livrer entre 14h et 17h', items: [{ produit_id: 23, nom: 'Kit Premiers Soins Urgence', prix_effectif: 189, quantite: 1 }, { produit_id: 46, nom: 'Masques Chirurgicaux Lot 50', prix_effectif: 65, quantite: 2 }, { produit_id: 45, nom: 'Thermomètre Infrarouge', prix_effectif: 275, quantite: 1 }], created_at: '2025-12-20T09:00:00Z' },
+  { id: 4, numero: 'CMD-202512-0004', user_id: 1, user: { id: 1, nom: "Admin Elmakhfi", email: ADMIN_EMAIL, telephone: ADMIN_TEL }, statut: 'en_attente', total: 450, sous_total: 420, frais_livraison: 30, adresse_livraison: 'Av. Mohammed V', ville: 'Rabat', code_postal: '10000', paiement: 'livraison', notes: 'Livrer entre 14h et 17h', items: [{ produit_id: 23, nom: 'Kit Premiers Soins Urgence', prix_effectif: 189, quantite: 1 }, { produit_id: 46, nom: 'Masques Chirurgicaux Lot 50', prix_effectif: 65, quantite: 2 }, { produit_id: 45, nom: 'Thermomètre Infrarouge', prix_effectif: 275, quantite: 1 }], created_at: '2025-12-20T09:00:00Z' },
   { id: 5, numero: 'CMD-202512-0005', user_id: 3, user: { id: 3, nom: 'Youssef El Amrani', email: 'youssef@test.ma', telephone: '+212 7XX-XXXXXX' }, statut: 'annulee', total: 195, sous_total: 195, frais_livraison: 0, adresse_livraison: '23 Rue des Orangers', ville: 'Marrakech', code_postal: '40000', paiement: 'carte', notes: '', items: [{ produit_id: 2, nom: 'Crème Riche Visage Nourrissante', prix_effectif: 245, quantite: 1 }], created_at: '2025-12-15T11:20:00Z' },
   { id: 6, numero: 'CMD-202601-0006', user_id: 2, user: { id: 2, nom: 'Fatima Benali', email: 'fatima@test.ma', telephone: '+212 6XX-XXXXXX' }, statut: 'en_attente', total: 620, sous_total: 620, frais_livraison: 0, adresse_livraison: '12 Rue Ibn Sina', ville: 'Casablanca', code_postal: '20000', paiement: 'livraison', notes: '', items: [{ produit_id: 7, nom: 'Magnésium Marin + Vitamine B6', prix_effectif: 142, quantite: 1 }, { produit_id: 22, nom: 'Collagène Marin Pur', prix_effectif: 350, quantite: 1 }, { produit_id: 5, nom: 'Complexe Multivitaminé Énergie', prix_effectif: 215, quantite: 1 }], created_at: '2026-01-10T09:30:00Z' },
   { id: 7, numero: 'CMD-202601-0007', user_id: 4, user: { id: 4, nom: 'Salma El Idrissi', email: 'salma@test.ma', telephone: '+212 6XX-XXXXXX' }, statut: 'confirmee', total: 330, sous_total: 300, frais_livraison: 30, adresse_livraison: '7 Rue Hassan II', ville: 'Fès', code_postal: '30000', paiement: 'carte', notes: 'Code d\'accès: 1234', items: [{ produit_id: 28, nom: 'Probiotiques Flore Intestinale', prix_effectif: 242, quantite: 1 }, { produit_id: 20, nom: 'Savon Surgras Naturel', prix_effectif: 65, quantite: 1 }], created_at: '2026-01-08T15:00:00Z' },
 ]
 
 const UTILISATEURS = [
-  { id: 1, nom: "Admin Elmakhfi", email: 'admin@parapharmacie.ma', telephone: '+212 5XX-XXXXXX', role: 'admin', commandes_count: 1, created_at: '2025-01-01T00:00:00Z' },
+  { id: 1, nom: "Admin Elmakhfi", email: ADMIN_EMAIL, telephone: ADMIN_TEL, role: 'admin', commandes_count: 1, created_at: '2025-01-01T00:00:00Z' },
   { id: 2, nom: 'Fatima Benali', email: 'fatima@test.ma', telephone: '+212 6XX-XXXXXX', role: 'client', commandes_count: 4, created_at: '2025-06-15T00:00:00Z' },
   { id: 3, nom: 'Youssef El Amrani', email: 'youssef@test.ma', telephone: '+212 7XX-XXXXXX', role: 'client', commandes_count: 1, created_at: '2025-09-20T00:00:00Z' },
   { id: 4, nom: 'Salma El Idrissi', email: 'salma@test.ma', telephone: '+212 6XX-XXXXXX', role: 'client', commandes_count: 1, created_at: '2025-11-01T00:00:00Z' },
@@ -419,7 +423,7 @@ export function creerCommande(payload) {
   }, 0)
   const frais = total > 0 && total < 300 ? 30 : 0
   const telephone = payload.telephone || ''
-  const user = payload.user || { id: 1, nom: "Admin Elmakhfi", email: 'admin@parapharmacie.ma', telephone }
+  const user = payload.user || { id: 1, nom: "Admin Elmakhfi", email: ADMIN_EMAIL, telephone }
   const commande = {
     id, numero,
     user_id: payload.user_id ?? 1,
