@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRight, ChevronLeft, ChevronRight, Truck, Shield, RefreshCw, Clock, Star, Quote, Sparkles, Heart } from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight, Truck, Shield, RefreshCw, Clock, Star, Quote, Sparkles } from 'lucide-react'
 import { produitsApi } from '../api/index.js'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import CategoryIcon from '../components/CategoryIcon.jsx'
@@ -50,9 +50,9 @@ const AVANTAGES = [
   { icone: <Truck className="w-6 h-6" />, titre: 'Livraison 24-48h', desc: 'Partout au Maroc, gratuite dès 300 MAD' },
   { icone: <Shield className="w-6 h-6" />, titre: '100% Authentique', desc: 'Produits originaux garantis' },
   { icone: <RefreshCw className="w-6 h-6" />, titre: 'Retour sous 30 jours', desc: 'Satisfait ou remboursé' },
-  { icone: <Heart className="w-6 h-6" />, titre: 'Programme Fidélité', desc: 'Cumulez des points à chaque achat' },
-  { icone: <Star className="w-6 h-6" />, titre: '4.5/5 sur 2000+ avis', desc: 'Nos clients nous recommandent' },
   { icone: <Clock className="w-6 h-6" />, titre: 'Service client', desc: 'Lun–Sam 9h–18h, réponse sous 2h' },
+  { icone: <Star className="w-6 h-6" />, titre: 'Note client', desc: 'Basée sur nos avis vérifiés' },
+  { icone: <Sparkles className="w-6 h-6" />, titre: 'Conseil expert', desc: 'Une équipe formée pour vous guider' },
 ]
 
 function TimerPromo() {
@@ -119,6 +119,7 @@ export default function Accueil() {
   const { data: mieuxNotesData } = useQuery({ queryKey: ['mieux-notes'], queryFn: produitsApi.mieuxNotes, staleTime: 5*60*1000 })
   const { data: marquesData }    = useQuery({ queryKey: ['marques'],     queryFn: produitsApi.marques,    staleTime: 60*60*1000 })
   const { data: avisData }       = useQuery({ queryKey: ['avis-recents'], queryFn: produitsApi.avisRecents, staleTime: 5*60*1000 })
+  const { data: statsData }      = useQuery({ queryKey: ['stats-publiques'], queryFn: produitsApi.stats, staleTime: 5*60*1000 })
 
   const vedettes   = vedettesData?.data?.data   || []
   const promotions = promotionsData?.data?.data  || []
@@ -127,6 +128,7 @@ export default function Accueil() {
   const mieuxNotes = mieuxNotesData?.data?.data  || []
   const marques    = marquesData?.data?.data     || []
   const avisRecents = avisData?.data?.data       || []
+  const stats      = statsData?.data?.data       || {}
   const marquesActives = marques.filter(m => m.produits > 0)
 
   function changeSlide(n) {
@@ -264,7 +266,9 @@ export default function Accueil() {
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-3xl font-bold text-gray-900">Les mieux notés</h2>
-                  <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">⭐ 4.5+</span>
+                  {stats.note_moyenne > 0 && (
+                    <span className="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">⭐ {stats.note_moyenne}+</span>
+                  )}
                 </div>
                 <p className="text-gray-500 mt-1">Ce que nos clients préfèrent</p>
               </div>
@@ -333,7 +337,13 @@ export default function Accueil() {
           <section className="mt-16">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900">Ce que disent nos clients</h2>
-              <p className="text-gray-500 mt-1">4.5/5 sur plus de 2 000 avis vérifiés</p>
+              {stats.note_moyenne > 0 ? (
+                <p className="text-gray-500 mt-1">
+                  {stats.note_moyenne}/5 sur {stats.nb_avis} avis vérifiés
+                </p>
+              ) : (
+                <p className="text-gray-500 mt-1">Des avis authentiques de nos clients</p>
+              )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {avisRecents.slice(0, 3).map((avis, i) => {

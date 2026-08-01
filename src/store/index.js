@@ -17,6 +17,21 @@ export const useWishlist = create(
   )
 )
 
+// ── Récemment consultés ──────────────────────────────────────────────────────
+export const useRecents = create(
+  persist(
+    (set, get) => ({
+      produits: [],
+      ajouter: (produit) => {
+        if (!produit?.id) return
+        const autres = get().produits.filter(p => p.id !== produit.id)
+        set({ produits: [produit, ...autres].slice(0, 10) })
+      },
+    }),
+    { name: 'recents', partialize: (s) => ({ produits: s.produits }) }
+  )
+)
+
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const useAuth = create(
   persist(

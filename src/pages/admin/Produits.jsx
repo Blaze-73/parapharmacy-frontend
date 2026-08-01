@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Pencil, Trash2, X, Check, Upload, Image, Search } from 'lucide-react'
-import CategoryIcon from '../../components/CategoryIcon.jsx'
+import { Plus, Pencil, Trash2, X, Check, Upload, Image, Search, PackageX, Copy, AlertTriangle } from 'lucide-react'
+import ImageProduit from '../../components/product/ImageProduit.jsx'
 import Pagination from '../../components/Pagination.jsx'
+import { formatPrix } from '../../utils/format.js'
 import { adminApi } from '../../api/index.js'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
@@ -17,12 +18,22 @@ export default function AdminProduits() {
   const [supprConfirm, setSupprConfirm] = useState(null)
   const [previews, setPreviews]         = useState([null, null, null])
   const [recherche, setRecherche]       = useState('')
+  const [filtre, setFiltre]             = useState('tout')
   const [page, setPage]                 = useState(1)
   const modalRef = useFocusTrap(!!modal, () => setModal(null))
 
+  const params = {
+    recherche: recherche || undefined,
+    page,
+    par_page: 10,
+    stock_max: filtre === 'stock_bas' ? 5 : undefined,
+    epuises: filtre === 'epuises' ? true : undefined,
+    doublons: filtre === 'doublons' ? true : undefined,
+  }
+
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-produits', recherche, page],
-    queryFn:  () => adminApi.produits({ recherche: recherche || undefined, page, par_page: 10 }),
+    queryKey: ['admin-produits', params],
+    queryFn:  () => adminApi.produits(params),
   })
   const { data: catData }   = useQuery({ queryKey: ['admin-categories'], queryFn: adminApi.categories })
   const produits   = data?.data?.data    || []
@@ -136,6 +147,32 @@ export default function AdminProduits() {
         )}
       </div>
 
+      {/* Filtres stock / doublons */}
+      <div className="flex flex-wrap items-center gap-2 mb-6">
+        {[
+          ['tout', 'Tous'],
+          ['stock_bas', 'Stock faible (≤5)'],
+          ['epuises', 'Épuisés'],
+          ['doublons', 'Doublons'],
+        ].map(([v, label]) => (
+          <button
+            key={v}
+            onClick={() => { setFiltre(v); setPage(1) }}
+            aria-pressed={filtre === v}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors border ${
+              filtre === v
+                ? 'bg-vert-600 text-white border-vert-600'
+                : 'bg-white text-gray-600 border-gray-200 hover:border-vert-300 hover:text-vert-700'
+            }`}
+          >
+            {v === 'stock_bas' && <AlertTriangle className="w-3.5 h-3.5" />}
+            {v === 'epuises' && <PackageX className="w-3.5 h-3.5" />}
+            {v === 'doublons' && <Copy className="w-3.5 h-3.5" />}
+            {label}
+          </button>
+        ))}
+      </div>
+
       {isLoading ? (
         <div className="space-y-3">{[1,2,3,4,5].map(i=><div key={i} className="h-16 bg-gray-100 rounded-xl animate-pulse"/>)}</div>
       ) : (
@@ -155,10 +192,7 @@ export default function AdminProduits() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        {p.image
-                          ? <img src={p.image} alt={p.nom} className="w-full h-full object-cover" />
-                          : <CategoryIcon slug={p.categorie?.slug} className="w-5 h-5 text-gray-400" />
-                        }
+                        <ImageProduit produit={p} className="w-full h-full" iconeClass="w-5 h-5" />
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900 line-clamp-1 max-w-[160px]">{p.nom}</p>
@@ -168,8 +202,8 @@ export default function AdminProduits() {
                   </td>
                   <td className="px-4 py-3 text-gray-600">{p.categorie?.nom}</td>
                   <td className="px-4 py-3">
-                    <p className="font-semibold">{Number(p.prix).toFixed(2)} MAD</p>
-                    {p.prix_promo && <p className="text-xs text-vert-600">Promo : {Number(p.prix_promo).toFixed(2)}</p>}
+                    <p className="font-semibold">{formatPrix(p.prix)} MAD</p>
+                    {p.prix_promo && <p className="text-xs text-vert-600">Promo : {formatPrix(p.prix_promo)}</p>}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`font-semibold ${p.stock<=5?'text-red-500':p.stock<=15?'text-orange-500':'text-gray-700'}`}>{p.stock}</span>
@@ -209,10 +243,7 @@ export default function AdminProduits() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {p.image
-                        ? <img src={p.image} alt={p.nom} className="w-full h-full object-cover" />
-                        : <CategoryIcon slug={p.categorie?.slug} className="w-5 h-5 text-gray-400" />
-                      }
+                      <ImageProduit produit={p} className="w-full h-full" iconeClass="w-5 h-5" />
                     </div>
                     <div className="min-w-0">
                       <p className="font-semibold text-gray-900 text-sm truncate">{p.nom}</p>
@@ -241,8 +272,8 @@ export default function AdminProduits() {
                     <span className={p.actif ? 'badge-vert' : 'badge-rouge'}>{p.actif ? 'Actif' : 'Inactif'}</span>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">{Number(p.prix).toFixed(2)} MAD</p>
-                    {p.prix_promo && <p className="text-xs text-vert-600">Promo : {Number(p.prix_promo).toFixed(2)}</p>}
+                    <p className="font-semibold text-gray-900">{formatPrix(p.prix)} MAD</p>
+                    {p.prix_promo && <p className="text-xs text-vert-600">Promo : {formatPrix(p.prix_promo)}</p>}
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-xs">

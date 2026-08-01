@@ -1,21 +1,13 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShoppingCart, Star, Heart } from 'lucide-react'
-import CategoryIcon from '../CategoryIcon.jsx'
+import { ShoppingCart, Star, Heart, Eye } from 'lucide-react'
+import ImageProduit from './ImageProduit.jsx'
+import QuickView from './QuickView.jsx'
+import { StockUrgence, DelaiLivraison } from './StockUrgence.jsx'
 import { usePanier, useWishlist } from '../../store/index.js'
+import { formatPrix } from '../../utils/format.js'
 import toast from 'react-hot-toast'
 import { useState } from 'react'
-
-const GRADIENTS = {
-  'soins-visage':     'from-pink-50 to-rose-100',
-  'vitamines':        'from-amber-50 to-yellow-100',
-  'bebe-maman':       'from-sky-50 to-blue-100',
-  'cheveux':          'from-violet-50 to-purple-100',
-  'solaires':         'from-orange-50 to-amber-100',
-  'hygiene':          'from-teal-50 to-cyan-100',
-  'nutrition':        'from-lime-50 to-green-100',
-  'premiers-secours': 'from-red-50 to-rose-100',
-}
 
 function Etoiles({ note, size = 12 }) {
   const full = Math.floor(note)
@@ -39,10 +31,7 @@ export default function CarteProduit({ produit, index = 0 }) {
   const { ids, basculer } = useWishlist()
   const estFavori = ids.includes(produit.id)
   const [imgError, setImgError] = useState(false)
-  const slug     = produit.categorie?.slug || ''
-  const gradient = GRADIENTS[slug] || 'from-gray-50 to-slate-100'
-  const emoji    = produit.categorie?.icone || '💊'
-  const catSlug  = produit.categorie?.slug || ''
+  const [quickView, setQuickView] = useState(false)
 
   function handleAjouter(e) {
     e.preventDefault()
@@ -62,6 +51,12 @@ export default function CarteProduit({ produit, index = 0 }) {
     else toast('Retiré des favoris')
   }
 
+  function handleQuickView(e) {
+    e.preventDefault()
+    e.stopPropagation()
+    setQuickView(true)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -71,10 +66,7 @@ export default function CarteProduit({ produit, index = 0 }) {
       <Link to={`/produits/${produit.slug}`} className="carte-produit group block">
 
         {/* Image */}
-        <div
-          className={`relative bg-gradient-to-br ${gradient} overflow-hidden`}
-          style={{ aspectRatio: '1/1' }}
-        >
+        <div className="relative overflow-hidden" style={{ aspectRatio: '1/1' }}>
           {produit.en_solde && produit.remise && (
             <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-sm">
               -{produit.remise}%
@@ -106,18 +98,28 @@ export default function CarteProduit({ produit, index = 0 }) {
             </div>
           )}
 
-          <div className="img-produit w-full h-full flex items-center justify-center p-4">
+          <div className="img-produit w-full h-full">
             {produit.image && !imgError ? (
               <img
                 src={produit.image}
                 alt={produit.nom}
-                className="w-full h-full object-contain drop-shadow-sm"
+                className="w-full h-full object-contain p-4 drop-shadow-sm"
                 loading="lazy"
                 onError={() => setImgError(true)}
               />
             ) : (
-              <CategoryIcon slug={catSlug} className="w-12 h-12 text-gray-300" />
+              <ImageProduit produit={produit} className="w-full h-full" iconeClass="w-14 h-14" />
             )}
+          </div>
+
+          {/* Quick view — appears on hover */}
+          <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-200 opacity-0 group-hover:opacity-100">
+            <button
+              onClick={handleQuickView}
+              className="w-full py-2.5 bg-white/95 backdrop-blur-sm text-gray-800 text-sm font-semibold rounded-xl shadow-lg hover:bg-white transition-colors flex items-center justify-center gap-2"
+            >
+              <Eye className="w-4 h-4" /> Aperçu rapide
+            </button>
           </div>
         </div>
 
@@ -135,6 +137,10 @@ export default function CarteProduit({ produit, index = 0 }) {
             {produit.nom}
           </h3>
 
+          <div className="mb-1.5">
+            <StockUrgence stock={produit.stock} enStock={produit.en_stock} compact />
+          </div>
+
           {produit.note > 0 && (
             <div className="mb-2">
               <Etoiles note={produit.note} size={11} />
@@ -144,12 +150,12 @@ export default function CarteProduit({ produit, index = 0 }) {
           <div className="flex items-center justify-between gap-2">
             <div>
               <span className="prix-principal text-base sm:text-lg">
-                {Number(produit.prix_effectif).toFixed(2)}
+                {formatPrix(produit.prix_effectif)}
                 <span className="text-xs font-normal ml-0.5">MAD</span>
               </span>
               {produit.en_solde && (
                 <span className="prix-barre text-xs ml-1.5">
-                  {Number(produit.prix).toFixed(2)}
+                  {formatPrix(produit.prix)}
                 </span>
               )}
             </div>
@@ -166,8 +172,14 @@ export default function CarteProduit({ produit, index = 0 }) {
               <ShoppingCart className="w-4 h-4" />
             </button>
           </div>
+
+          <div className="mt-2.5 pt-2.5 border-t border-gray-100">
+            <DelaiLivraison compact />
+          </div>
         </div>
       </Link>
+
+      <QuickView produit={quickView ? produit : null} onClose={() => setQuickView(false)} />
     </motion.div>
   )
 }

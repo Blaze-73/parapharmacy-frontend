@@ -8,6 +8,7 @@ import {
   getProduitDetail,
   getMarques,
   getAvisRecents,
+  getStatsPubliques,
   creerCommande,
   getMesCommandes,
   getDetailCommande,
@@ -47,6 +48,7 @@ export const produitsApi = {
   categories:  ()       => getCategories(),
   marques:     ()       => getMarques(),
   avisRecents: ()       => getAvisRecents(),
+  stats:       ()       => getStatsPubliques(),
   soumettreAvis: (pid, note, commentaire) => soumettreAvis(pid, note, commentaire),
 }
 

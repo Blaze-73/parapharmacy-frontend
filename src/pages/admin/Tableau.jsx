@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { TrendingUp, ShoppingBag, Package, Users, AlertTriangle, Download } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
+import { formatPrix } from '../../utils/format.js'
 import usePageMeta from '../../hooks/usePageMeta.js'
 import toast from 'react-hot-toast'
 
@@ -86,7 +87,7 @@ export default function AdminTableau() {
                   <p className="text-xs text-gray-400">{c.user?.nom}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold font-mono">{Number(c.total).toFixed(2)} MAD</p>
+                  <p className="text-sm font-bold font-mono">{formatPrix(c.total)} MAD</p>
                   <span className={STATUTS[c.statut] || 'badge-jaune'}>{c.statut?.replace('_', ' ')}</span>
                 </div>
               </div>

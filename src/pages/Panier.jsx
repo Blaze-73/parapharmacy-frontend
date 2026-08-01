@@ -1,6 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
-import CategoryIcon from '../components/CategoryIcon.jsx'
+import ImageProduit from '../components/product/ImageProduit.jsx'
+import BarreLivraison from '../components/BarreLivraison.jsx'
+import { formatPrix } from '../utils/format.js'
+import { SITE } from '../config.js'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import { usePanier } from '../store/index.js'
 import usePageMeta from '../hooks/usePageMeta.js'
@@ -10,7 +13,7 @@ export default function Panier() {
   const { articles, modifierQuantite, retirerArticle, sousTotal, viderPanier } = usePanier()
   const navigate = useNavigate()
   const sous = sousTotal()
-  const livraison = sous > 0 && sous < 300 ? 30 : 0
+  const livraison = sous > 0 && sous < SITE.fraisLivraisonGratuite ? SITE.fraisLivraison : 0
   const total = sous + livraison
 
   if (articles.length === 0) return (
@@ -32,10 +35,7 @@ export default function Panier() {
             <div key={produit.id} className="carte p-4 flex gap-4 items-start">
               <Link to={`/produits/${produit.slug}`}
                 className="w-20 h-20 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 border border-gray-100 overflow-hidden">
-                {produit.image
-                  ? <img src={produit.image} alt={produit.nom} className="w-full h-full object-contain p-1" />
-                  : <CategoryIcon slug={produit.categorie?.slug} className="w-8 h-8 text-gray-300" />
-                }
+                <ImageProduit produit={produit} className="w-full h-full p-1" iconeClass="w-8 h-8" />
               </Link>
               <div className="flex-1 min-w-0">
                 <Link to={`/produits/${produit.slug}`}
@@ -60,7 +60,7 @@ export default function Panier() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="font-bold text-gray-900">
-                      {(Number(produit.prix_effectif) * quantite).toFixed(2)} MAD
+                      {formatPrix(Number(produit.prix_effectif) * quantite)} MAD
                     </span>
                     <button onClick={() => retirerArticle(produit.id)}
                       className="w-9 h-9 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
@@ -80,25 +80,21 @@ export default function Panier() {
 
         <div className="carte p-6 h-fit">
           <h2 className="font-bold text-gray-900 text-lg mb-5">Récapitulatif</h2>
-          <div className="space-y-3 text-sm">
+          <BarreLivraison sousTotal={sous} />
+          <div className="space-y-3 text-sm mt-3">
             <div className="flex justify-between text-gray-600">
               <span>Sous-total ({articles.reduce((t,a) => t+a.quantite, 0)} articles)</span>
-              <span className="font-semibold">{sous.toFixed(2)} MAD</span>
+              <span className="font-semibold">{formatPrix(sous)} MAD</span>
             </div>
             <div className="flex justify-between text-gray-600">
               <span>Livraison</span>
               <span className={`font-semibold ${livraison === 0 ? 'text-vert-600' : ''}`}>
-                {livraison === 0 ? 'GRATUITE' : `${livraison} MAD`}
+                {livraison === 0 ? 'GRATUITE' : `${formatPrix(livraison)} MAD`}
               </span>
             </div>
-            {livraison > 0 && (
-              <p className="text-xs text-gray-400 bg-vert-50 rounded-lg p-2.5">
-                💡 Encore {(300 - sous).toFixed(0)} MAD pour la livraison gratuite !
-              </p>
-            )}
             <div className="flex justify-between font-bold text-gray-900 pt-3 border-t border-gray-100 text-base">
               <span>Total</span>
-              <span className="prix-principal text-xl">{total.toFixed(2)} MAD</span>
+              <span className="prix-principal text-xl">{formatPrix(total)} MAD</span>
             </div>
           </div>
           <button onClick={() => navigate('/checkout')} className="btn-vert w-full mt-5 py-3.5">

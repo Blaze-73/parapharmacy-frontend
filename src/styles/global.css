@@ -84,6 +84,34 @@ h1, h2, h3, h4, h5, h6 {
 .prix-principal { font-family: var(--font-titre); font-weight: 700; color: #15803d; }
 .prix-barre     { text-decoration: line-through; color: #94a3b8; }
 
+/* ── Accessibilité ─────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 9999;
+  background: #059669;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @media (max-width: 768px) {
   .btn-vert, .btn-blanc { min-height: 44px; }
   button { -webkit-tap-highlight-color: transparent; }

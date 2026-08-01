@@ -32,6 +32,19 @@ function filterProducts(params = {}) {
   if (params.en_promo) result = result.filter(p => p.en_solde)
   if (params.en_stock) result = result.filter(p => p.en_stock)
   if (params.marque) result = result.filter(p => p.marque.toLowerCase() === params.marque.toLowerCase())
+  if (params.stock_max !== undefined && params.stock_max !== null && params.stock_max !== '') {
+    const max = Number(params.stock_max)
+    result = result.filter(p => Number(p.stock) <= max)
+  }
+  if (params.epuises) result = result.filter(p => !p.en_stock)
+  if (params.doublons) {
+    const compteur = result.reduce((acc, p) => {
+      const nom = String(p.nom).toLowerCase().trim()
+      acc[nom] = (acc[nom] || 0) + 1
+      return acc
+    }, {})
+    result = result.filter(p => compteur[String(p.nom).toLowerCase().trim()] > 1)
+  }
   if (params.tri === 'prix_asc') result.sort((a, b) => a.prix_effectif - b.prix_effectif)
   else if (params.tri === 'prix_desc') result.sort((a, b) => b.prix_effectif - a.prix_effectif)
   else if (params.tri === 'nom') result.sort((a, b) => a.nom.localeCompare(b.nom))
@@ -302,6 +315,22 @@ export function getAvisRecents() {
   return Promise.resolve({ data: { data: AVIS.slice(-6).reverse() } })
 }
 
+export function getStatsPubliques() {
+  const noteMoyenne = PRODUITS.length
+    ? PRODUITS.reduce((s, p) => s + (Number(p.note) || 0), 0) / PRODUITS.length
+    : 0
+  const nbAvis = PRODUITS.reduce((s, p) => s + (Number(p.nb_avis) || 0), 0)
+  const nbCommandes = COMMANDES.filter(c => c.statut !== 'annulee').length
+  const stats = {
+    note_moyenne: Math.round(noteMoyenne * 10) / 10,
+    nb_avis: nbAvis,
+    nb_produits: PRODUITS.length,
+    nb_commandes: nbCommandes,
+    nb_clients: UTILISATEURS.filter(u => u.role !== 'admin').length,
+  }
+  return Promise.resolve({ data: { data: stats } })
+}
+
 let avisIdCounter = 16
 export function soumettreAvis(produitId, note, commentaire) {
   const avis = { id: avisIdCounter++, produit_id: produitId, user: 'Vous', note, commentaire, date: new Date().toISOString().slice(0, 10) }
@@ -324,7 +353,7 @@ export function creerCommande(payload) {
     const p = PRODUITS.find(prod => prod.id === item.produit_id)
     return sum + (p ? Number(p.prix_effectif) * item.quantite : 0)
   }, 0)
-  const frais = total > 0 && total < 300 ? 30 : 0
+  const frais = total > 0 && total < SITE.fraisLivraisonGratuite ? SITE.fraisLivraison : 0
   const telephone = payload.telephone || ''
   const user = payload.user || { id: 1, nom: "Admin Elmakhfi", email: ADMIN_EMAIL, telephone }
   const commande = {

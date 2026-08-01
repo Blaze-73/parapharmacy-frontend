@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ShoppingBag, XCircle } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { commandesApi } from '../api/index.js'
+import { formatPrix } from '../utils/format.js'
 import { useAuth } from '../store/index.js'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import toast from 'react-hot-toast'
@@ -60,7 +61,7 @@ export default function MesCommandes() {
                   </div>
                   <div className="text-right flex flex-col items-end gap-2">
                     <span className={st.cls}>{st.label}</span>
-                    <p className="prix-principal text-xl">{Number(c.total).toFixed(2)} MAD</p>
+                    <p className="prix-principal text-xl">{formatPrix(c.total)} MAD</p>
                     {peutAnnuler && (
                       <button
                         onClick={() => {

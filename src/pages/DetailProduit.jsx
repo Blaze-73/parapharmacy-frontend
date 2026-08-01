@@ -1,13 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Minus, Plus, ShoppingCart, ArrowLeft, Check, Star, ChevronDown, ChevronUp, Heart, X, ZoomIn } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, Check, Star, ChevronDown, ChevronUp, Heart, X, ZoomIn, Share2, Truck, ShieldCheck, RotateCcw } from 'lucide-react'
 import { produitsApi } from '../api/index.js'
-import CategoryIcon from '../components/CategoryIcon.jsx'
+import ImageProduit from '../components/product/ImageProduit.jsx'
+import { StockUrgence, DelaiLivraison, CommandeAvant } from '../components/product/StockUrgence.jsx'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
-import { usePanier, useWishlist } from '../store/index.js'
+import { usePanier, useWishlist, useRecents } from '../store/index.js'
 import CarteProduit from '../components/product/CarteProduit.jsx'
+import RecentsProduits from '../components/product/RecentsProduits.jsx'
+import { formatPrix, formatDateLivraison } from '../utils/format.js'
+import { SITE } from '../config.js'
 import toast from 'react-hot-toast'
 import usePageMeta from '../hooks/usePageMeta.js'
 
@@ -44,10 +48,12 @@ export default function DetailProduit() {
   const { slug } = useParams()
   const { ajouterArticle, ouvrir } = usePanier()
   const { ids, basculer } = useWishlist()
+  const { ajouter: ajouterRecents } = useRecents()
   const qc = useQueryClient()
   const [qty, setQty] = useState(1)
   const [ajoute, setAjoute] = useState(false)
   const [voirAvis, setVoirAvis] = useState(true)
+  const [onglet, setOnglet] = useState('description')
   const [imageActive, setImageActive] = useState(0)
   const [lightboxOuvert, setLightboxOuvert] = useState(false)
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 })
@@ -59,6 +65,38 @@ export default function DetailProduit() {
     queryFn:  () => produitsApi.detail(slug),
     enabled:  !!slug,
   })
+
+  const produit    = data?.data?.data?.produit
+  const similaires = data?.data?.data?.similaires || []
+  const avis       = data?.data?.data?.avis || []
+
+  useEffect(() => {
+    if (produit?.id) {
+      ajouterRecents({
+        id: produit.id,
+        slug: produit.slug,
+        nom: produit.nom,
+        marque: produit.marque,
+        prix_effectif: produit.prix_effectif,
+        prix: produit.prix,
+        en_solde: produit.en_solde,
+        en_stock: produit.en_stock,
+        stock: produit.stock,
+        note: produit.note,
+        image: produit.image,
+        categorie: produit.categorie,
+      })
+    }
+  }, [produit?.id])
+
+  function handlePartager() {
+    const url = window.location.href
+    if (navigator.share) {
+      navigator.share({ title: produit?.nom || 'Produit', url }).catch(() => {})
+    } else {
+      navigator.clipboard?.writeText(url).then(() => toast.success('Lien copié !')).catch(() => {})
+    }
+  }
 
   const avisMutation = useMutation({
     mutationFn: ({ pid, note, commentaire }) => produitsApi.soumettreAvis(pid, note, commentaire),
@@ -72,9 +110,6 @@ export default function DetailProduit() {
     onError: () => toast.error('Erreur lors de l\'envoi de l\'avis'),
   })
 
-  const produit    = data?.data?.data?.produit
-  const similaires = data?.data?.data?.similaires || []
-  const avis       = data?.data?.data?.avis || []
   const estFavori  = ids.includes(produit?.id)
 
   usePageMeta({
@@ -132,10 +167,8 @@ export default function DetailProduit() {
     </div>
   )
 
-  const catSlug = produit.categorie?.slug || ''
-
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-28 sm:pb-8">
       <Breadcrumbs items={[
         { label: 'Produits', to: '/produits' },
         ...(produit.categorie ? [{ label: produit.categorie.nom, to: `/produits?categorie=${produit.categorie.slug}` }] : []),
@@ -170,7 +203,7 @@ export default function DetailProduit() {
                 </div>
               </>
             ) : (
-              <CategoryIcon slug={catSlug} className="w-32 h-32 text-gray-200" />
+              <ImageProduit produit={produit} className="w-full h-full" iconeClass="w-32 h-32" />
             )}
           </div>
           {imagesDisponibles.length > 1 && (
@@ -210,19 +243,28 @@ export default function DetailProduit() {
                 {produit.nom}
               </h1>
             </div>
-            <button
-              onClick={() => {
-                const devientFavori = !estFavori
-                basculer(produit.id)
-                if (devientFavori) toast.success('Ajouté aux favoris ❤️')
-                else toast('Retiré des favoris')
-              }}
-              aria-label={estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-              aria-pressed={estFavori}
-              className={`flex-shrink-0 w-10 h-10 rounded-xl border flex items-center justify-center transition-colors ${estFavori ? 'border-red-200 bg-red-50' : 'border-gray-200 hover:bg-gray-50'}`}
-            >
-              <Heart className={`w-5 h-5 transition-colors ${estFavori ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handlePartager}
+                aria-label="Partager le produit"
+                className="flex-shrink-0 w-10 h-10 rounded-xl border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => {
+                  const devientFavori = !estFavori
+                  basculer(produit.id)
+                  if (devientFavori) toast.success('Ajouté aux favoris ❤️')
+                  else toast('Retiré des favoris')
+                }}
+                aria-label={estFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                aria-pressed={estFavori}
+                className={`flex-shrink-0 w-10 h-10 rounded-xl border flex items-center justify-center transition-colors ${estFavori ? 'border-red-200 bg-red-50' : 'border-gray-200 hover:bg-gray-50'}`}
+              >
+                <Heart className={`w-5 h-5 transition-colors ${estFavori ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+              </button>
+            </div>
           </div>
 
           {/* Rating */}
@@ -236,11 +278,11 @@ export default function DetailProduit() {
           {/* Price */}
           <div className="flex items-center gap-3 flex-wrap">
             <span className="prix-principal text-3xl">
-              {Number(produit.prix_effectif).toFixed(2)} MAD
+              {formatPrix(produit.prix_effectif)} MAD
             </span>
             {produit.en_solde && (
               <>
-                <span className="prix-barre text-xl">{Number(produit.prix).toFixed(2)} MAD</span>
+                <span className="prix-barre text-xl">{formatPrix(produit.prix)} MAD</span>
                 <span className="badge-rouge px-3 py-1 text-sm">-{produit.remise}%</span>
               </>
             )}
@@ -250,13 +292,12 @@ export default function DetailProduit() {
             <p className="text-gray-600 leading-relaxed">{produit.description}</p>
           )}
 
-          {/* Stock */}
           <div className="flex items-center gap-2">
-            <div className={`w-2.5 h-2.5 rounded-full ${produit.en_stock ? 'bg-vert-500' : 'bg-red-400'}`} />
-            <span className={`text-sm font-semibold ${produit.en_stock ? 'text-vert-700' : 'text-red-600'}`}>
-              {produit.en_stock ? `En stock (${produit.stock} disponibles)` : 'Rupture de stock'}
-            </span>
+            <StockUrgence stock={produit.stock} enStock={produit.en_stock} />
+            <span className="text-xs text-gray-400">·</span>
+            <DelaiLivraison />
           </div>
+          <CommandeAvant />
 
           {/* Quantity + Add to cart */}
           {produit.en_stock && (
@@ -302,7 +343,7 @@ export default function DetailProduit() {
           {/* Trust badges */}
           <div className="grid grid-cols-3 gap-3 pt-2 border-t border-gray-100">
             {[
-              ['🚚', 'Livraison', 'Gratuite dès 300 MAD'],
+              ['🚚', 'Livraison', `Gratuite dès ${SITE.fraisLivraisonGratuite} MAD`],
               ['🔒', 'Sécurisé',  'Paiement protégé'],
               ['↩️', 'Retours',   '30 jours'],
             ].map(([ic, t, d]) => (
@@ -312,6 +353,47 @@ export default function DetailProduit() {
                 <p className="text-xs text-gray-400">{d}</p>
               </div>
             ))}
+          </div>
+
+          {/* Tabs : description / livraison */}
+          <div className="rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="flex border-b border-gray-100 bg-gray-50/50">
+              {[
+                ['description', 'Description'],
+                ['livraison', 'Livraison & retours'],
+              ].map(([id, label]) => (
+                <button
+                  key={id}
+                  onClick={() => setOnglet(id)}
+                  aria-pressed={onglet === id}
+                  className={`flex-1 py-3 px-4 text-sm font-semibold transition-colors ${onglet === id ? 'bg-white text-vert-700 border-b-2 border-vert-500' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="p-5 text-sm text-gray-600 leading-relaxed">
+              {onglet === 'description' ? (
+                <p>{produit.description}</p>
+              ) : (
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <Truck className="w-5 h-5 text-vert-600 flex-shrink-0 mt-0.5" />
+                    <span>
+                      <strong className="text-gray-900">Livraison :</strong> expédition sous 24h (jours ouvrés), réception estimée entre <strong>{formatDateLivraison()}</strong>. Livraison offerte dès {SITE.fraisLivraisonGratuite} MAD, sinon {SITE.fraisLivraison} MAD.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 text-vert-600 flex-shrink-0 mt-0.5" />
+                    <span><strong className="text-gray-900">Paiement sécurisé :</strong> paiement à la livraison disponible dans tout le Maroc.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <RotateCcw className="w-5 h-5 text-vert-600 flex-shrink-0 mt-0.5" />
+                    <span><strong className="text-gray-900">Retours :</strong> vous disposez de 30 jours pour changer d'avis, produit non ouvert.</span>
+                  </li>
+                </ul>
+              )}
+            </div>
           </div>
         </motion.div>
       </div>
@@ -406,6 +488,36 @@ export default function DetailProduit() {
           </div>
         </section>
       )}
+
+      <RecentsProduits currentId={produit.id} />
+
+      {/* Sticky mobile buy bar */}
+      <AnimatePresence>
+        {produit.en_stock && (
+          <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            exit={{ y: 100 }}
+            className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-gray-200 p-3 sm:hidden"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0">
+                <span className="prix-principal text-lg">{formatPrix(produit.prix_effectif)} MAD</span>
+                {produit.en_solde && <span className="prix-barre text-xs ml-1">{formatPrix(produit.prix)}</span>}
+              </div>
+              <motion.button
+                onClick={handleAjouter}
+                whileTap={{ scale: 0.97 }}
+                className={`flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 ${ajoute ? 'bg-vert-500 text-white' : 'btn-vert'}`}
+              >
+                {ajoute
+                  ? <><Check className="w-4 h-4" /> Ajouté !</>
+                  : <><ShoppingCart className="w-4 h-4" /> Ajouter</>}
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Lightbox */}
       <AnimatePresence>

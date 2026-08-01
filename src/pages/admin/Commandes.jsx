@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Search, X } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
+import { formatPrix } from '../../utils/format.js'
 import Pagination from '../../components/Pagination.jsx'
 import toast from 'react-hot-toast'
 import usePageMeta from '../../hooks/usePageMeta.js'
@@ -171,7 +172,7 @@ export default function AdminCommandes() {
                       )}
                     </td>
                     <td className="px-4 py-3 font-bold text-gray-900">
-                      {Number(c.total).toFixed(2)} MAD
+                      {formatPrix(c.total)} MAD
                     </td>
                     <td className="px-4 py-3 text-gray-500">
                       {new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -214,7 +215,7 @@ export default function AdminCommandes() {
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-700 font-medium">{c.user?.nom}</span>
-                    <span className="font-bold text-gray-900">{Number(c.total).toFixed(2)} MAD</span>
+                    <span className="font-bold text-gray-900">{formatPrix(c.total)} MAD</span>
                   </div>
                   <div className="flex items-center justify-between text-xs text-gray-500">
                     <span className="flex items-center gap-1.5">
@@ -299,7 +300,7 @@ export default function AdminCommandes() {
                   <div key={i} className="flex items-center justify-between text-sm gap-3">
                     <span className="text-gray-700 flex-1 min-w-0 truncate">{it.nom}</span>
                     <span className="text-gray-500 flex-shrink-0">×{it.quantite}</span>
-                    <span className="font-semibold text-gray-900 flex-shrink-0">{(Number(it.prix_effectif) * it.quantite).toFixed(2)} MAD</span>
+                    <span className="font-semibold text-gray-900 flex-shrink-0">{formatPrix(Number(it.prix_effectif) * it.quantite)} MAD</span>
                   </div>
                 ))}
               </div>
@@ -313,8 +314,8 @@ export default function AdminCommandes() {
               )}
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-400">Livraison : {Number(detail.frais_livraison).toFixed(2)} MAD</p>
-              <p className="font-bold text-gray-900 text-lg">Total : {Number(detail.total).toFixed(2)} MAD</p>
+              <p className="text-xs text-gray-400">Livraison : {formatPrix(detail.frais_livraison)} MAD</p>
+              <p className="font-bold text-gray-900 text-lg">Total : {formatPrix(detail.total)} MAD</p>
             </div>
           </div>
         </div>

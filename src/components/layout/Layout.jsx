@@ -6,7 +6,8 @@ import { useAuth, usePanier, useWishlist } from '../../store/index.js'
 import { authApi, produitsApi } from '../../api/index.js'
 import { SITE } from '../../config.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
-import CategoryIcon from '../CategoryIcon.jsx'
+import ImageProduit from '../product/ImageProduit.jsx'
+import { formatPrix } from '../../utils/format.js'
 import toast from 'react-hot-toast'
 
 // ── Search with suggestions ───────────────────────────────────────────────────
@@ -127,10 +128,7 @@ function SearchBar({ mobile = false }) {
                   >
                     {/* Thumbnail */}
                     <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      {produit.image
-                        ? <img src={produit.image} alt={produit.nom} className="w-full h-full object-contain p-0.5" />
-                        : <CategoryIcon slug={produit.categorie?.slug} className="w-5 h-5 text-gray-400" />
-                      }
+                      <ImageProduit produit={produit} className="w-full h-full p-0.5" iconeClass="w-5 h-5" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-900 line-clamp-1">{produit.nom}</p>
@@ -138,10 +136,10 @@ function SearchBar({ mobile = false }) {
                     </div>
                     <div className="flex-shrink-0 text-right">
                       <p className="text-sm font-bold text-vert-700">
-                        {Number(produit.prix_effectif).toFixed(2)} MAD
+                        {formatPrix(produit.prix_effectif)} MAD
                       </p>
                       {produit.en_solde && (
-                        <p className="text-xs text-red-500 line-through">{Number(produit.prix).toFixed(2)}</p>
+                        <p className="text-xs text-red-500 line-through">{formatPrix(produit.prix)}</p>
                       )}
                     </div>
                   </button>
@@ -209,9 +207,17 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Skip link (accessibility) */}
+      <a
+        href="#contenu-principal"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-vert-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-xl focus:font-semibold focus:text-sm"
+      >
+        Aller au contenu principal
+      </a>
+
       {/* Top bar */}
       <div className="bg-vert-700 text-white text-xs py-2 text-center hidden sm:block">
-        🚚 Livraison gratuite dès 300 MAD &nbsp;|&nbsp; 📦 Livraison en 24–48h &nbsp;|&nbsp; 🔒 Paiement sécurisé
+        🚚 Livraison gratuite dès {SITE.fraisLivraisonGratuite} MAD &nbsp;|&nbsp; 📦 Livraison en 24–48h &nbsp;|&nbsp; 🔒 Paiement sécurisé
       </div>
 
       {/* Navbar */}
@@ -385,7 +391,7 @@ export default function Layout() {
         </AnimatePresence>
       </header>
 
-      <main className="flex-1">
+      <main id="contenu-principal" className="flex-1">
         <Outlet />
       </main>
 

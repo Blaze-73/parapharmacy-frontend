@@ -4,7 +4,7 @@ import { SITE } from '../config.js'
 const BASE = SITE.domaine
 const SITE_NAME = SITE.nom
 const DEFAULT_DESC =
-  "Achetez en ligne vos produits de parapharmacie au Maroc : soins visage, vitamines, bébé & maman, solaires et plus. Livraison 24–48h, gratuite dès 300 MAD."
+  `Achetez en ligne vos produits de parapharmacie au Maroc : soins visage, vitamines, bébé & maman, solaires et plus. Livraison 24–48h, gratuite dès ${SITE.fraisLivraisonGratuite} MAD.`
 const DEFAULT_IMG =
   'https://images.unsplash.com/photo-1576671081837-49000212a370?w=1200&q=80&auto=format'
 
