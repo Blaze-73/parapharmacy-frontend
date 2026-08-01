@@ -218,7 +218,7 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4 flex items-center h-16 gap-3">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 flex-shrink-0 min-w-0" aria-label="Parapharmacie Karima">
+          <Link to="/" className="flex items-center gap-2 flex-shrink-0 min-w-0" aria-label="Parapharmacie Elmakhfi">
             <div className="w-9 h-9 bg-vert-600 rounded-xl flex items-center justify-center flex-shrink-0">
               <Cross className="w-5 h-5 text-white" />
             </div>
@@ -397,7 +397,7 @@ export default function Layout() {
                 <div className="w-8 h-8 bg-vert-600 rounded-lg flex items-center justify-center">
                   <Cross className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-lg font-bold text-white" style={{ fontFamily: 'Syne' }}>Parapharmacie Karima</span>
+                <span className="text-lg font-bold text-white" style={{ fontFamily: 'Syne' }}>Parapharmacie Elmakhfi</span>
               </div>
               <p className="text-sm text-gray-400 leading-relaxed">
                 Votre parapharmacie en ligne de confiance. Produits de santé et bien-être livrés chez vous.
@@ -422,7 +422,7 @@ export default function Layout() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6 text-center text-xs text-gray-500">
-            © {new Date().getFullYear()} Parapharmacie Karima. Tous droits réservés.
+            © {new Date().getFullYear()} Parapharmacie Elmakhfi. Tous droits réservés.
           </div>
         </div>
       </footer>

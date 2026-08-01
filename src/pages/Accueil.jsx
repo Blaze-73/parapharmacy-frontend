@@ -149,7 +149,7 @@ export default function Accueil() {
             className="absolute inset-0"
             style={{ zIndex: i === slide ? 1 : 0 }}
           >
-            <img src={sl.image} alt={i === 0 ? 'Parapharmacie Maroc — produits de santé, bien-être et beauté' : ''} className="w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} decoding="async" />
+            <img src={sl.image} alt={i === 0 ? 'Parapharmacie Elmakhfi — produits de santé, bien-être et beauté' : ''} className="w-full h-full object-cover" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
           </motion.div>
         ))}

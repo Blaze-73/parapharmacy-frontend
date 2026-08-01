@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 const BASE = 'https://parapharmacyy.vercel.app'
-const SITE = 'Parapharmacie Maroc'
+const SITE = 'Parapharmacie Elmakhfi'
 const DEFAULT_DESC =
   "Achetez en ligne vos produits de parapharmacie au Maroc : soins visage, vitamines, bébé & maman, solaires et plus. Livraison 24–48h, gratuite dès 300 MAD."
 const DEFAULT_IMG =

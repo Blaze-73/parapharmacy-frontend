@@ -52,7 +52,7 @@ export default function Connexion() {
             <div className="w-10 h-10 bg-vert-600 rounded-2xl flex items-center justify-center">
               <Cross className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Parapharmacie Karima</span>
+            <span className="text-2xl font-extrabold text-gray-900" style={{ fontFamily: 'Syne' }}>Parapharmacie Elmakhfi</span>
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">Connexion</h1>
           <p className="text-gray-500 mt-2">Bienvenue ! Connectez-vous à votre compte.</p>

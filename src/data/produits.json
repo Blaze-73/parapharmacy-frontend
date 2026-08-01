@@ -714,7 +714,7 @@
       "id": 23,
       "nom": "Kit Premiers Soins Urgence",
       "slug": "kit-premiers-soins-urgence",
-      "marque": "Omar & Karima's",
+      "marque": "Elmakhfi",
       "categorie_id": 8,
       "categorie": {
         "id": 8,
@@ -744,7 +744,7 @@
       "id": 24,
       "nom": "Pansements Hydrocolloïdes",
       "slug": "pansements-hydrocolloides",
-      "marque": "Omar & Karima's",
+      "marque": "Elmakhfi",
       "categorie_id": 8,
       "categorie": {
         "id": 8,
@@ -1194,7 +1194,7 @@
       "id": 39,
       "nom": "Brosse à Dents Électrique Sonic",
       "slug": "brosse-dents-electrique-sonic",
-      "marque": "Omar & Karima's",
+      "marque": "Elmakhfi",
       "categorie_id": 6,
       "categorie": {
         "id": 6,
@@ -1224,7 +1224,7 @@
       "id": 40,
       "nom": "Dentifrice Blanchissant Charbon",
       "slug": "dentifrice-blanchissant-charbon",
-      "marque": "Omar & Karima's",
+      "marque": "Elmakhfi",
       "categorie_id": 6,
       "categorie": {
         "id": 6,
@@ -1374,7 +1374,7 @@
       "id": 45,
       "nom": "Thermomètre Infrarouge",
       "slug": "thermometre-infrarouge",
-      "marque": "Omar & Karima's",
+      "marque": "Elmakhfi",
       "categorie_id": 8,
       "categorie": {
         "id": 8,
@@ -1404,7 +1404,7 @@
       "id": 46,
       "nom": "Masques Chirurgicaux Lot 50",
       "slug": "masques-chirurgicaux-lot-50",
-      "marque": "Omar & Karima's",
+      "marque": "Elmakhfi",
       "categorie_id": 8,
       "categorie": {
         "id": 8,
@@ -1464,7 +1464,7 @@
       "id": 48,
       "nom": "Bande de Contention Élastique",
       "slug": "bande-contention-elastique",
-      "marque": "Omar & Karima's",
+      "marque": "Elmakhfi",
       "categorie_id": 8,
       "categorie": {
         "id": 8,
@@ -1561,7 +1561,7 @@
       "user_id": 1,
       "user": {
         "id": 1,
-        "nom": "Admin Omar & Karima's",
+        "nom": "Admin Elmakhfi",
         "email": "admin@parapharmacie.ma",
         "telephone": "+212 5XX-XXXXXX"
       },
@@ -1827,7 +1827,7 @@
   "utilisateurs": [
     {
       "id": 1,
-      "nom": "Admin Omar & Karima's",
+      "nom": "Admin Elmakhfi",
       "email": "admin@parapharmacie.ma",
       "telephone": "+212 5XX-XXXXXX",
       "role": "admin",

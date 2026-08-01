@@ -37,7 +37,7 @@ export default function AdminLayout() {
               <Cross className="w-4 h-4 text-white" />
             </div>
             <div>
-              <p className="text-white font-bold text-sm" style={{ fontFamily: 'Syne' }}>Parapharmacie Karima</p>
+              <p className="text-white font-bold text-sm" style={{ fontFamily: 'Syne' }}>Parapharmacie Elmakhfi</p>
               <p className="text-gray-400 text-xs">Administration</p>
             </div>
           </Link>
