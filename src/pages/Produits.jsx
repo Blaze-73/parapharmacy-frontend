@@ -464,14 +464,14 @@ export default function Produits() {
       {/* Mobile filter drawer */}
       {filtreMobile && (
         <>
-          <div className="fixed inset-0 bg-black/50 z-50 md:hidden" onClick={() => setFiltreMobile(false)} />
+          <div className="fixed inset-0 bg-black/50 z-[55] md:hidden" onClick={() => setFiltreMobile(false)} />
           <motion.div
             ref={filtreRef}
             role="dialog"
             aria-modal="true"
             aria-label="Filtres"
             initial={{ x: '100%' }} animate={{ x: 0 }}
-            className="fixed right-0 top-0 h-full w-72 bg-white z-50 shadow-2xl overflow-y-auto md:hidden"
+            className="fixed right-0 top-0 h-full w-72 bg-white z-[55] shadow-2xl overflow-y-auto md:hidden"
           >
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <h3 className="font-bold text-gray-900">Filtres</h3>

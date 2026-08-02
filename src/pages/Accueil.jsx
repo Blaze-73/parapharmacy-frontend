@@ -75,7 +75,7 @@ function TimerPromo() {
     <div className="flex items-center gap-2">
       {[['H', t.h], ['M', t.m], ['S', t.s]].map(([l, v]) => (
         <div key={l} className="flex flex-col items-center">
-          <div className="w-12 h-12 bg-gray-900 text-white rounded-xl flex items-center justify-center font-mono font-bold text-lg">
+          <div className="w-12 h-12 bg-gray-900 text-white rounded-xl flex items-center justify-center font-bold text-lg" style={{ fontFamily: 'Syne' }}>
             {f(v)}
           </div>
           <span className="text-xs text-gray-500 mt-0.5 font-semibold">{l}</span>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import { ShoppingBag, XCircle } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { commandesApi } from '../api/index.js'
@@ -6,6 +7,7 @@ import { formatPrix } from '../utils/format.js'
 import { useAuth } from '../store/index.js'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import SuiviCommande from '../components/SuiviCommande.jsx'
+import ConfirmModal from '../components/ConfirmModal.jsx'
 import toast from 'react-hot-toast'
 import usePageMeta from '../hooks/usePageMeta.js'
 
@@ -25,6 +27,8 @@ export default function MesCommandes() {
   const { user } = useAuth()
   const { data, isLoading } = useQuery({ queryKey: ['mes-commandes'], queryFn: () => commandesApi.liste(user?.id) })
   const commandes = data?.data?.data || []
+
+  const [annulation, setAnnulation] = useState(null)
 
   const annulerMutation = useMutation({
     mutationFn: (id) => commandesApi.annuler(id),
@@ -65,11 +69,7 @@ export default function MesCommandes() {
                     <p className="prix-principal text-xl">{formatPrix(c.total)} MAD</p>
                     {peutAnnuler && (
                       <button
-                        onClick={() => {
-                          if (confirm('Confirmer l\'annulation de cette commande ?')) {
-                            annulerMutation.mutate(c.id)
-                          }
-                        }}
+                        onClick={() => setAnnulation(c)}
                         disabled={annulerMutation.isPending}
                         className="text-xs font-semibold text-red-600 hover:text-red-700 flex items-center gap-1 transition-colors"
                       >
@@ -87,6 +87,18 @@ export default function MesCommandes() {
           })}
         </div>
       )}
+
+      <ConfirmModal
+        ouvert={!!annulation}
+        titre="Annuler la commande ?"
+        message={annulation
+          ? `Voulez-vous vraiment annuler la commande ${annulation.numero} ? Cette action est définitive.`
+          : ''}
+        confirmLabel="Annuler la commande"
+        tone="danger"
+        onConfirm={() => { if (annulation) annulerMutation.mutate(annulation.id); setAnnulation(null) }}
+        onCancel={() => setAnnulation(null)}
+      />
     </div>
   )
 }

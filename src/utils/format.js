@@ -1,6 +1,6 @@
 export function formatPrix(n) {
   const v = Number(n || 0)
-  return v.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return v.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 }
 
 export function formatPrixUnite(n) {

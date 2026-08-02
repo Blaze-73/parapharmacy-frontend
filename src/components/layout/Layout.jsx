@@ -409,7 +409,7 @@ export default function Layout() {
             exit={{ opacity: 0, scale: 0.6 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             aria-label="Revenir en haut de page"
-            className="fixed bottom-[5.5rem] md:bottom-20 right-5 z-40 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-lg flex items-center justify-center text-gray-500 hover:text-vert-700 hover:border-vert-300 transition-colors"
+            className="fixed bottom-[8.25rem] md:bottom-20 right-5 z-40 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-lg flex items-center justify-center text-gray-500 hover:text-vert-700 hover:border-vert-300 transition-colors"
           >
             <ChevronUp className="w-5 h-5" />
           </motion.button>

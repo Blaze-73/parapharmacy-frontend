@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
 import ImageProduit from '../components/product/ImageProduit.jsx'
 import BarreLivraison from '../components/BarreLivraison.jsx'
+import ConfirmModal from '../components/ConfirmModal.jsx'
 import { formatPrix } from '../utils/format.js'
 import { SITE } from '../config.js'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
@@ -11,6 +13,7 @@ import usePageMeta from '../hooks/usePageMeta.js'
 export default function Panier() {
   usePageMeta({ title: 'Mon panier', path: '/panier', noindex: true })
   const { articles, modifierQuantite, retirerArticle, sousTotal, viderPanier } = usePanier()
+  const [confirmVider, setConfirmVider] = useState(false)
   const navigate = useNavigate()
   const sous = sousTotal()
   const livraison = sous > 0 && sous < SITE.fraisLivraisonGratuite ? SITE.fraisLivraison : 0
@@ -18,6 +21,7 @@ export default function Panier() {
 
   if (articles.length === 0) return (
     <div className="max-w-2xl mx-auto px-4 py-24 text-center">
+      <h1 className="sr-only">Mon panier</h1>
       <ShoppingBag className="w-16 h-16 text-gray-200 mx-auto mb-5" />
       <h2 className="text-2xl font-bold text-gray-700 mb-2">Votre panier est vide</h2>
       <p className="text-gray-400 mb-8 text-sm">Ajoutez des produits pour continuer vos achats.</p>
@@ -72,7 +76,7 @@ export default function Panier() {
             </div>
           ))}
           <button
-            onClick={() => { if (window.confirm('Vider tout le panier ?')) viderPanier() }}
+            onClick={() => setConfirmVider(true)}
             className="text-sm text-red-400 hover:text-red-600 py-2">
             Vider le panier
           </button>
@@ -105,6 +109,16 @@ export default function Panier() {
           </Link>
         </div>
       </div>
+
+      <ConfirmModal
+        ouvert={confirmVider}
+        titre="Vider le panier ?"
+        message="Tous les articles seront retirés de votre panier. Cette action est irréversible."
+        confirmLabel="Vider le panier"
+        tone="danger"
+        onConfirm={() => { setConfirmVider(false); viderPanier() }}
+        onCancel={() => setConfirmVider(false)}
+      />
     </div>
   )
 }

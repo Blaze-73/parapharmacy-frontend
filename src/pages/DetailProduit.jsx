@@ -237,7 +237,7 @@ export default function DetailProduit() {
   )
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 pb-28 sm:pb-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 pb-[11rem] sm:pb-8">
       <Breadcrumbs items={[
         { label: 'Produits', to: '/produits' },
         ...(produit.categorie ? [{ label: produit.categorie.nom, to: `/produits?categorie=${produit.categorie.slug}` }] : []),
@@ -583,7 +583,7 @@ export default function DetailProduit() {
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             exit={{ y: 100 }}
-            className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-gray-200 p-3 sm:hidden"
+            className="fixed bottom-[calc(env(safe-area-inset-bottom)+4.25rem)] sm:bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-gray-200 p-3 sm:hidden"
           >
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0">
