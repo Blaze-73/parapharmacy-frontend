@@ -73,21 +73,6 @@ export const useAlertesStock = create(
   )
 )
 
-// ── Thème (sombre / clair) ─────────────────────────────────────────────────────
-export const useThemeStore = create((set, get) => ({
-  sombre: typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
-  basculer: () => {
-    const sombre = !get().sombre
-    document.documentElement.classList.toggle('dark', sombre)
-    try {
-      localStorage.setItem('theme', sombre ? 'dark' : 'light')
-      const meta = document.querySelector('meta[name="theme-color"]')
-      if (meta) meta.setAttribute('content', sombre ? '#0b1120' : '#16a34a')
-    } catch {}
-    set({ sombre })
-  },
-}))
-
 // ── Notifications ──────────────────────────────────────────────────────────────
 export const useNotifications = create(
   persist(

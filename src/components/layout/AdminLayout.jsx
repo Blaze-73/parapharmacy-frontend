@@ -6,7 +6,6 @@ import { LayoutDashboard, Package, ShoppingBag, Users, LogOut, Menu, Cross, Bell
 import { useAuth, useNotifications } from '../../store/index.js'
 import { authApi, adminApi } from '../../api/index.js'
 import { formatPrix } from '../../utils/format.js'
-import { ModeSombre } from './Layout.jsx'
 
 const NAV = [
   { href: '/admin',             label: 'Tableau de bord',      Icone: LayoutDashboard },
@@ -144,11 +143,6 @@ export default function AdminLayout() {
           </button>
           <div className="ml-auto flex items-center gap-1 sm:gap-2">
 
-            {/* Theme toggle */}
-            <div className="hidden sm:block">
-              <ModeSombre />
-            </div>
-
             {/* Notifications */}
             <div className="relative" ref={refNotif}>
               <button
@@ -158,7 +152,7 @@ export default function AdminLayout() {
               >
                 <Bell className="w-5 h-5" />
                 {nbNonLus > 0 && (
-                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white dark:ring-gray-900" />
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white" />
                 )}
               </button>
               <AnimatePresence>

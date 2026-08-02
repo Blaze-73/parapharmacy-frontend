@@ -63,7 +63,7 @@ export default function PanierDrawer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 z-[60] backdrop-blur-sm"
             onClick={fermer}
           />
 
@@ -77,7 +77,7 @@ export default function PanierDrawer() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 shadow-2xl flex flex-col"
+            className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-[60] shadow-2xl flex flex-col"
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}

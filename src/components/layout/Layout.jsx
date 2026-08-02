@@ -1,8 +1,8 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Menu, X, ChevronDown, ChevronUp, LogOut, Package, Heart, Cross, MessageCircle, Sun, Moon, Bell, Home } from 'lucide-react'
-import { useAuth, usePanier, useWishlist, useNotifications, useThemeStore } from '../../store/index.js'
+import { ShoppingCart, Menu, X, ChevronDown, ChevronUp, LogOut, Package, Heart, Cross, MessageCircle, Bell, Home } from 'lucide-react'
+import { useAuth, usePanier, useWishlist, useNotifications } from '../../store/index.js'
 import { useQuery } from '@tanstack/react-query'
 import { authApi, commandesApi } from '../../api/index.js'
 import { SITE } from '../../config.js'
@@ -10,22 +10,6 @@ import { lienWhatsApp } from '../../utils/format.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
 import SearchBar from '../SearchBar.jsx'
 import toast from 'react-hot-toast'
-
-// ── Mode sombre / clair ───────────────────────────────────────────────────────
-export function ModeSombre({ compact = false }) {
-  const sombre   = useThemeStore(s => s.sombre)
-  const basculer = useThemeStore(s => s.basculer)
-  return (
-    <button
-      onClick={basculer}
-      aria-label={sombre ? 'Passer au mode clair' : 'Passer au mode sombre'}
-      title={sombre ? 'Mode clair' : 'Mode sombre'}
-      className={`rounded-xl hover:bg-gray-100 text-gray-600 transition-colors flex items-center justify-center ${compact ? 'p-2' : 'p-2 sm:p-2.5'}`}
-    >
-      {sombre ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-    </button>
-  )
-}
 
 // ── Barre de navigation mobile (bas de page) ──────────────────────────────────
 function BottomNav() {
@@ -98,7 +82,6 @@ export default function Layout() {
   const { totalArticles, ouvrir }       = usePanier()
   const { ids: favorisIds }             = useWishlist()
   const { estLu }                       = useNotifications()
-  const sombre                          = useThemeStore(s => s.sombre)
   const navigate                        = useNavigate()
   const location                        = useLocation()
   const [menuOuvert, setMenuOuvert]     = useState(false)
@@ -208,11 +191,11 @@ export default function Layout() {
 
           {/* Actions */}
           <div className="flex items-center gap-0.5 sm:gap-1 ml-auto">
-            {/* Favoris */}
+            {/* Favoris (caché sur mobile — présent dans la barre du bas) */}
             <Link
               to="/favoris"
               aria-label={`Mes favoris (${nbFavoris})`}
-              className="relative p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
+              className="hidden sm:flex relative p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors"
             >
               <Heart className="w-5 h-5" />
               {nbFavoris > 0 && (
@@ -227,8 +210,8 @@ export default function Layout() {
               )}
             </Link>
 
-            {/* Cart */}
-            <button onClick={ouvrir} aria-label={`Voir le panier (${nb} article${nb !== 1 ? 's' : ''})`} className="relative p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
+            {/* Cart (caché sur mobile — présent dans la barre du bas) */}
+            <button onClick={ouvrir} aria-label={`Voir le panier (${nb} article${nb !== 1 ? 's' : ''})`} className="hidden sm:flex relative p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
               <ShoppingCart className="w-5 h-5" />
               {nb > 0 && (
                 <motion.span
@@ -248,14 +231,9 @@ export default function Layout() {
               <Bell className="w-5 h-5" />
               {nbNonLus > 0 && (
                 <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}
-                  className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white dark:ring-gray-900" />
+                  className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white" />
               )}
             </Link>
-
-            {/* Theme toggle (desktop) */}
-            <div className="hidden sm:block">
-              <ModeSombre />
-            </div>
 
             {/* User */}
             {connecte ? (
@@ -356,12 +334,6 @@ export default function Layout() {
                     <Link to="/inscription" className="btn-vert flex-1 text-center text-sm py-2">Inscription</Link>
                   </div>
                 )}
-
-                {/* Theme toggle (mobile) */}
-                <div className="flex items-center justify-between px-3 py-1.5 border-t border-gray-100 mt-2">
-                  <span className="text-sm font-medium text-gray-700">{sombre ? 'Mode clair' : 'Mode sombre'}</span>
-                  <ModeSombre compact />
-                </div>
               </div>
             </motion.div>
           )}
