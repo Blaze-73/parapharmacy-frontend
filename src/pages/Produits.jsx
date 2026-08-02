@@ -8,6 +8,7 @@ import CategoryIcon from '../components/CategoryIcon.jsx'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import { formatPrix } from '../utils/format.js'
+import { SITE } from '../config.js'
 import usePageMeta from '../hooks/usePageMeta.js'
 import useFocusTrap from '../hooks/useFocusTrap.js'
 
@@ -58,11 +59,6 @@ function PlagePrix({ bornes, valeur, onChange, onCommit }) {
 }
 
 export default function Produits() {
-  usePageMeta({
-    title: 'Produits de parapharmacie',
-    description: 'Découvrez toute notre gamme de produits de parapharmacie au Maroc : soins, vitamines, solaires, hygiène et premiers secours. Livraison 24–48h.',
-    path: '/produits',
-  })
   const [searchParams, setSearchParams] = useSearchParams()
   const [filtreMobile, setFiltreMobile] = useState(false)
   const [searchInput, setSearchInput] = useState(searchParams.get('recherche') || '')
@@ -132,6 +128,36 @@ export default function Produits() {
   const meta       = data?.data?.meta
   const categories = catData?.data?.data || []
   const marques    = brandData?.data?.data || []
+
+  const catActive   = filtres.categorie ? categories.find(c => c.slug === filtres.categorie) : null
+  const titreListe  = catActive?.nom || (filtres.recherche ? `Résultats pour "${filtres.recherche}"` : 'Produits de parapharmacie')
+  const queryString = searchParams.toString()
+  const urlListe    = `/produits${queryString ? `?${queryString}` : ''}`
+
+  usePageMeta({
+    title: titreListe,
+    description: catActive
+      ? `${catActive.nom} : découvrez nos produits de parapharmacie de cette catégorie au Maroc. Livraison 24–48h, gratuite dès ${SITE.fraisLivraisonGratuite} MAD.`
+      : filtres.recherche
+        ? `Résultats pour "${filtres.recherche}" sur Parapharmacie Elmakhfi. Livraison 24–48h au Maroc.`
+        : 'Découvrez toute notre gamme de produits de parapharmacie au Maroc : soins, vitamines, solaires, hygiène et premiers secours. Livraison 24–48h.',
+    path: urlListe,
+    schema: produits.length
+      ? [
+          {
+            '@type': 'ItemList',
+            itemListElement: produits.map((p, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              name: p.nom,
+              url: `${SITE.domaine}/produits/${p.slug}`,
+              ...(p.image ? { image: p.image.startsWith('/') ? SITE.domaine + p.image : p.image } : {}),
+            })),
+            numberOfItems: produits.length,
+          },
+        ]
+      : [],
+  })
 
   function update(k, v) {
     const p = new URLSearchParams(searchParams)

@@ -120,6 +120,66 @@ export default function DetailProduit() {
       : undefined,
     path: `/produits/${slug}`,
     image: produit?.image || undefined,
+    schema: produit?.id
+      ? [
+          {
+            '@type': 'Product',
+            '@id': `${SITE.domaine}/produits/${slug}#product`,
+            name: produit.nom,
+            sku: `ELM-${produit.id}`,
+            brand: { '@type': 'Brand', name: produit.marque },
+            category: produit.categorie?.nom,
+            image: (produit.images && produit.images.length
+              ? produit.images.map((i) => (i.startsWith('/') ? SITE.domaine + i : i))
+              : [SITE.domaine + produit.image]).filter(Boolean),
+            description: produit.description,
+            url: `${SITE.domaine}/produits/${slug}`,
+            offers: {
+              '@type': 'Offer',
+              url: `${SITE.domaine}/produits/${slug}`,
+              priceCurrency: 'MAD',
+              price: produit.prix_effectif,
+              availability: produit.en_stock
+                ? 'https://schema.org/InStock'
+                : 'https://schema.org/OutOfStock',
+              itemCondition: 'https://schema.org/NewCondition',
+              seller: { '@id': `${SITE.domaine}/#organization` },
+            },
+            ...(produit.note && produit.nb_avis
+              ? {
+                  aggregateRating: {
+                    '@type': 'AggregateRating',
+                    ratingValue: produit.note,
+                    reviewCount: produit.nb_avis,
+                  },
+                }
+              : {}),
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE.domaine + '/' },
+              { '@type': 'ListItem', position: 2, name: 'Produits', item: SITE.domaine + '/produits' },
+              ...(produit.categorie?.slug
+                ? [
+                    {
+                      '@type': 'ListItem',
+                      position: 3,
+                      name: produit.categorie.nom,
+                      item: `${SITE.domaine}/produits?categorie=${produit.categorie.slug}`,
+                    },
+                  ]
+                : []),
+              {
+                '@type': 'ListItem',
+                position: produit.categorie?.slug ? 4 : 3,
+                name: produit.nom,
+                item: `${SITE.domaine}/produits/${slug}`,
+              },
+            ],
+          },
+        ]
+      : [],
   })
 
   const imagesDisponibles = (produit?.images?.length ? produit.images : produit?.image ? [produit.image] : [])

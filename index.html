@@ -6,6 +6,12 @@
     <title>Parapharmacie Elmakhfi — Produits de santé, bien-être & beauté en ligne</title>
     <meta name="description" content="Achetez en ligne vos produits de parapharmacie au Maroc : soins visage, vitamines, bébé & maman, solaires et plus. Livraison 24–48h partout au Maroc, gratuite dès 300 MAD." />
     <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="parapharmacie en ligne Maroc, pharmacie parapharmacie, soins visage, vitamine d, sérum acide hyaluronique, collagène marin, produits bébé, crème change, protection solaire, parapharmacie Boujaad, livraison parapharmacie 24h, compléments alimentaires Maroc" />
+    <meta name="author" content="Parapharmacie Elmakhfi" />
+    <meta name="geo.region" content="MA" />
+    <meta name="geo.placename" content="Boujaad, Maroc" />
+    <meta name="geo.position" content="32.7685;-6.3975" />
+    <meta name="ICBM" content="32.7685, -6.3975" />
     <link rel="canonical" href="https://parapharmacyy.vercel.app/" />
     <meta name="theme-color" content="#16a34a" />
 
@@ -39,12 +45,45 @@
       "@context": "https://schema.org",
       "@graph": [
         {
+          "@type": ["Organization", "HealthAndBeautyBusiness"],
+          "@id": "https://parapharmacyy.vercel.app/#organization",
+          "name": "Parapharmacie Elmakhfi",
+          "legalName": "Parapharmacie Elmakhfi",
+          "url": "https://parapharmacyy.vercel.app/",
+          "logo": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=1200&q=80&auto=format",
+          "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=1200&q=80&auto=format",
+          "description": "Parapharmacie en ligne au Maroc : soins visage, vitamines et compléments alimentaires, produits bébé & maman, soins capillaires, solaires, hygiène, nutrition et premiers secours.",
+          "email": "elmakhfi@gmail.com",
+          "telephone": "+212621010978",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Boujaad",
+            "addressCountry": "MA"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 32.7685,
+            "longitude": -6.3975
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              "opens": "09:00",
+              "closes": "18:00"
+            }
+          ],
+          "areaServed": { "@type": "Country", "name": "Maroc" },
+          "sameAs": []
+        },
+        {
           "@type": "WebSite",
           "@id": "https://parapharmacyy.vercel.app/#website",
           "url": "https://parapharmacyy.vercel.app/",
           "name": "Parapharmacie Elmakhfi",
           "inLanguage": "fr",
-          "description": "Produits de parapharmacie livrés partout au Maroc : soins visage, vitamines, bébé & maman, solaires et plus."
+          "description": "Produits de parapharmacie livrés partout au Maroc : soins visage, vitamines, bébé & maman, solaires et plus.",
+          "publisher": { "@id": "https://parapharmacyy.vercel.app/#organization" }
         },
         {
           "@type": "OnlineStore",
@@ -54,12 +93,54 @@
           "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=1200&q=80&auto=format",
           "inLanguage": "fr",
           "currenciesAccepted": "MAD",
-          "paymentAccepted": "Cash",
+          "paymentAccepted": "Cash on Delivery",
           "areaServed": "MA",
+          "brand": { "@id": "https://parapharmacyy.vercel.app/#organization" },
           "potentialAction": {
             "@type": "SearchAction",
             "target": "https://parapharmacyy.vercel.app/produits?recherche={search_term_string}",
             "query-input": "required name=search_term_string"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Livrez-vous partout au Maroc ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oui, nous livrons dans tout le Maroc. Les commandes sont expédiées sous 24 h ouvrées et reçues en 24 à 48 h. La livraison est gratuite dès 300 MAD d'achat, sinon elle coûte 30 MAD."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quels moyens de paiement acceptez-vous ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nous acceptons le paiement à la livraison (cash on delivery) partout au Maroc."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Puis-je retourner un produit ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oui. Si un produit arrive endommagé ou ne correspond pas à votre commande, contactez-nous sous 48 h au +212621010978 ou à elmakhfi@gmail.com pour un échange ou un remboursement."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qu'est-ce qu'une parapharmacie ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Une parapharmacie vend des produits de santé, d'hygiène, de beauté et de bien-être (cosmétiques, compléments alimentaires, soins bébé) qui ne sont pas soumis à prescription médicale. Parapharmacie Elmakhfi propose ces produits en ligne avec livraison au Maroc."
           }
         }
       ]

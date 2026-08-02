@@ -1,0 +1,40 @@
+# Parapharmacie Elmakhfi
+
+> Parapharmacie en ligne au Maroc : soins du visage, vitamines et compléments alimentaires, produits bébé & maman, soins capillaires, solaires, hygiène, nutrition et premiers secours. Livraison 24–48 h partout au Maroc, gratuite dès 300 MAD. Paiement à la livraison accepté. Tél. +212 621 010 978 · elmakhfi@gmail.com · Boujaad, Maroc.
+
+## Parapharmacie Elmakhfi
+
+- [Accueil](https://parapharmacyy.vercel.app/) : produits de parapharmacie, promotions du moment, nouveautés et produits les mieux notés.
+- [Tous les produits](https://parapharmacyy.vercel.app/produits) : catalogue complet de parapharmacie avec recherche, filtres par catégorie, marque, prix et promo.
+- [Produits en promo](https://parapharmacyy.vercel.app/produits?en_promo=true) : réductions en cours.
+- [Nouveautés](https://parapharmacyy.vercel.app/produits?tri=recent) : derniers arrivages.
+- [Les mieux notés](https://parapharmacyy.vercel.app/produits?tri=note) : produits favoris de nos clients.
+
+## Catégories
+
+- [Soins du visage](https://parapharmacyy.vercel.app/produits?categorie=soins-visage) : sérums, crèmes hydratantes, nettoyants, gommages, contour des yeux.
+- [Vitamines & compléments](https://parapharmacyy.vercel.app/produits?categorie=vitamines) : vitamine C, D3, magnésium, oméga-3, collagène, probiotiques.
+- [Bébé & maman](https://parapharmacyy.vercel.app/produits?categorie=bebe-maman) : soins du bébé, lingettes, crèmes de change, maternité.
+- [Cheveux](https://parapharmacyy.vercel.app/produits?categorie=cheveux) : shampoings, masques, huiles, anti-chute.
+- [Solaires](https://parapharmacyy.vercel.app/produits?categorie=solaires) : protections SPF 30/50, après-soleil, solaires enfants.
+- [Hygiène](https://parapharmacyy.vercel.app/produits?categorie=hygiene) : soins bucco-dentaires, déodorants, gels douche, savons.
+- [Nutrition](https://parapharmacyy.vercel.app/produits?categorie=nutrition) : barres protéinées, spiruline, gelée royale.
+- [Premiers secours](https://parapharmacyy.vercel.app/produits?categorie=premiers-secours) : kits d'urgence, pansements, thermomètres, masques.
+
+## Commandes & livraison
+
+- [Comment passer commande ?](https://parapharmacyy.vercel.app/panier) : ajoutez des articles au panier puis finalisez avec paiement à la livraison.
+- Livraison gratuite dès 300 MAD, sinon 30 MAD. Expédition sous 24 h ouvrées, réception en 24–48 h.
+- [Suivi de commande](https://parapharmacyy.vercel.app/mes-commandes) : suivez le statut (en attente, confirmée, expédiée, livrée) dans votre compte.
+
+## Contact
+
+- Téléphone / WhatsApp : +212 621 010 978
+- Email : elmakhfi@gmail.com
+- Adresse : Boujaad, Maroc
+- Horaires : lundi–samedi, 9h–18h
+
+## Fichiers utiles pour agents IA
+
+- [llms-full.txt](https://parapharmacyy.vercel.app/llms-full.txt) : catalogue complet des produits (noms, prix, catégories).
+- [sitemap.xml](https://parapharmacyy.vercel.app/sitemap.xml) : liste complète des URL indexables.

@@ -1,0 +1,515 @@
+# Parapharmacie Elmakhfi — Catalogue complet (llms-full.txt)
+
+> Catalogue complet de la parapharmacie en ligne Parapharmacie Elmakhfi (Maroc). Ce fichier liste les 48 produits avec prix en MAD (dirham marocain), catégorie, marque, note et disponibilité. Prix valides : `prix_effectif` (prix final appliqué, remise déjà déduite). Livraison partout au Maroc 24-48h, gratuite dès 300 MAD. Paiement à la livraison accepté.
+
+Site : https://parapharmacyy.vercel.app
+Contact : elmakhfi@gmail.com · +212 621 010 978
+
+## Catégories
+
+- Soins du visage (7 produits) : https://parapharmacyy.vercel.app/produits?categorie=soins-visage
+- Vitamines (7 produits) : https://parapharmacyy.vercel.app/produits?categorie=vitamines
+- Bébé & Maman (7 produits) : https://parapharmacyy.vercel.app/produits?categorie=bebe-maman
+- Cheveux (6 produits) : https://parapharmacyy.vercel.app/produits?categorie=cheveux
+- Solaires (4 produits) : https://parapharmacyy.vercel.app/produits?categorie=solaires
+- Hygiène (6 produits) : https://parapharmacyy.vercel.app/produits?categorie=hygiene
+- Nutrition (6 produits) : https://parapharmacyy.vercel.app/produits?categorie=nutrition
+- Premiers secours (5 produits) : https://parapharmacyy.vercel.app/produits?categorie=premiers-secours
+
+## Produits
+
+### Soins du visage
+
+#### Sérum Hydratant Acide Hyaluronique
+
+- **URL** : https://parapharmacyy.vercel.app/produits/serum-hydratant-acide-hyaluronique
+- **Catégorie** : Soins du visage
+- **Marque** : Vichy
+- **Prix (MAD)** : 285 MAD (au lieu de 320 MAD, -11%)
+- **Note** : 4.7/5 (128 avis)
+- **Disponibilité** : En stock
+- **Description** : Sérum concentré à l'acide hyaluronique pour une hydratation intense et durable. Texture légère et pénétration rapide. Résultats visibles dès 7 jours.
+
+#### Crème Riche Visage Nourrissante
+
+- **URL** : https://parapharmacyy.vercel.app/produits/creme-riche-visage-nourrissante
+- **Catégorie** : Soins du visage
+- **Marque** : La Roche-Posay
+- **Prix (MAD)** : 245 MAD
+- **Note** : 4.5/5 (94 avis)
+- **Disponibilité** : En stock
+- **Description** : Crème visage riche en beurre de karité et niacinamide pour nourrir et protéger les peaux sèches et sensibles.
+
+#### Nettoyant Doux Surgras
+
+- **URL** : https://parapharmacyy.vercel.app/produits/nettoyant-doux-surgras
+- **Catégorie** : Soins du visage
+- **Marque** : Avène
+- **Prix (MAD)** : 185 MAD
+- **Note** : 4.3/5 (67 avis)
+- **Disponibilité** : En stock
+- **Description** : Gel nettoyant surgras sans savon pour peaux sensibles. Nettoie en douceur sans agresser la barrière cutanée.
+
+#### Contour des Yeux Anti-Âge
+
+- **URL** : https://parapharmacyy.vercel.app/produits/contour-yeux-anti-age
+- **Catégorie** : Soins du visage
+- **Marque** : Vichy
+- **Prix (MAD)** : 232 MAD (au lieu de 290 MAD, -20%)
+- **Note** : 4.6/5 (203 avis)
+- **Disponibilité** : En stock
+- **Description** : Soin contour des yeux à la caféine et à l'acide hyaluronique. Corrige poches, cernes et rides en 4 semaines.
+
+#### Eau Micellaire Démaquillante
+
+- **URL** : https://parapharmacyy.vercel.app/produits/eau-micellaire-demaquillante
+- **Catégorie** : Soins du visage
+- **Marque** : La Roche-Posay
+- **Prix (MAD)** : 158 MAD (au lieu de 175 MAD, -10%)
+- **Note** : 4.6/5 (432 avis)
+- **Disponibilité** : En stock
+- **Description** : Eau micellaire ultra-apaisante pour peaux sensibles. Démaquille et nettoie en un geste, sans rincer.
+
+#### Soin Nuit Réparateur Visage
+
+- **URL** : https://parapharmacyy.vercel.app/produits/soin-nuit-reparateur-visage
+- **Catégorie** : Soins du visage
+- **Marque** : Vichy
+- **Prix (MAD)** : 310 MAD
+- **Note** : 4.7/5 (89 avis)
+- **Disponibilité** : En stock
+- **Description** : Soin nuit régénérant au resvératrol et à la vitamine C. Répare les signes de l'âge pendant le sommeil.
+
+#### Gommage Visage Doux Enzymatique
+
+- **URL** : https://parapharmacyy.vercel.app/produits/gommage-visage-doux-enzymatique
+- **Catégorie** : Soins du visage
+- **Marque** : Avène
+- **Prix (MAD)** : 195 MAD
+- **Note** : 4.4/5 (112 avis)
+- **Disponibilité** : En stock
+- **Description** : Gommage enzymatique doux aux particules de jojoba. Exfolie en douceur sans agresser, pour un teint lumineux.
+
+### Vitamines
+
+#### Complexe Multivitaminé Énergie
+
+- **URL** : https://parapharmacyy.vercel.app/produits/complexe-multivitamine-energie
+- **Catégorie** : Vitamines
+- **Marque** : Pileje
+- **Prix (MAD)** : 215 MAD
+- **Note** : 4.4/5 (156 avis)
+- **Disponibilité** : En stock
+- **Description** : Complexe breveté de 12 vitamines et 5 minéraux pour retrouver vitalité et énergie au quotidien. Cure de 30 jours.
+
+#### Vitamine D3 2000 UI
+
+- **URL** : https://parapharmacyy.vercel.app/produits/vitamine-d3-2000-ui
+- **Catégorie** : Vitamines
+- **Marque** : Arkopharma
+- **Prix (MAD)** : 145 MAD
+- **Note** : 4.8/5 (312 avis)
+- **Disponibilité** : En stock
+- **Description** : Complément alimentaire en huile de foie de morue riche en vitamine D3 pour renforcer l'immunité et la santé osseuse.
+
+#### Magnésium Marin + Vitamine B6
+
+- **URL** : https://parapharmacyy.vercel.app/produits/magnesium-marin-vitamine-b6
+- **Catégorie** : Vitamines
+- **Marque** : Forté Pharma
+- **Prix (MAD)** : 142 MAD (au lieu de 178 MAD, -20%)
+- **Note** : 4.6/5 (189 avis)
+- **Disponibilité** : En stock
+- **Description** : Magnésium marin associé à la vitamine B6 pour réduire la fatigue, le stress et les crampes musculaires. Haute absorption.
+
+#### Omega 3 Triple Force
+
+- **URL** : https://parapharmacyy.vercel.app/produits/omega-3-triple-force
+- **Catégorie** : Vitamines
+- **Marque** : Même
+- **Prix (MAD)** : 260 MAD
+- **Note** : 4.5/5 (87 avis)
+- **Disponibilité** : En stock
+- **Description** : Oméga 3 concentré EPA/DHA 3:2 pour la santé cardiovasculaire et le bon fonctionnement du cerveau. 100% pur poisson.
+
+#### Probiotiques Flore Intestinale
+
+- **URL** : https://parapharmacyy.vercel.app/produits/probiotiques-flore-intestinale
+- **Catégorie** : Vitamines
+- **Marque** : Pileje
+- **Prix (MAD)** : 242 MAD (au lieu de 285 MAD, -15%)
+- **Note** : 4.8/5 (267 avis)
+- **Disponibilité** : En stock
+- **Description** : Probiotiques brevetés 4 souches pour rééquilibrer la flore intestinale. 30 gélules gastro-résistantes.
+
+#### Vitamine C Pure 1000mg
+
+- **URL** : https://parapharmacyy.vercel.app/produits/vitamine-c-pure-1000mg
+- **Catégorie** : Vitamines
+- **Marque** : Arkopharma
+- **Prix (MAD)** : 165 MAD
+- **Note** : 4.5/5 (198 avis)
+- **Disponibilité** : En stock
+- **Description** : Vitamine C pure dosage 1000mg en gélules végétales. Soutient l'immunité et réduit la fatigue. Fabrication française.
+
+#### Gelée Royale Fraîche Bio
+
+- **URL** : https://parapharmacyy.vercel.app/produits/gelee-royale-fraiche-bio
+- **Catégorie** : Vitamines
+- **Marque** : Forté Pharma
+- **Prix (MAD)** : 378 MAD (au lieu de 420 MAD, -10%)
+- **Note** : 4.6/5 (85 avis)
+- **Disponibilité** : En stock
+- **Description** : Gelée royale fraîche bio 1.5g par dose. Tonus et vitalité au quotidien. Conditionnée sous vide.
+
+### Bébé & Maman
+
+#### Lait Hydratant Bébé
+
+- **URL** : https://parapharmacyy.vercel.app/produits/lait-hydratant-bebe
+- **Catégorie** : Bébé & Maman
+- **Marque** : Mustela
+- **Prix (MAD)** : 165 MAD
+- **Note** : 4.9/5 (245 avis)
+- **Disponibilité** : En stock
+- **Description** : Lait hydratant pour bébé à la texture onctueuse enrichi à l'avocat bio. Hydrate, adoucit et protège la peau délicate.
+
+#### Crème Change Bébé
+
+- **URL** : https://parapharmacyy.vercel.app/produits/creme-change-bebe
+- **Catégorie** : Bébé & Maman
+- **Marque** : Biolane
+- **Prix (MAD)** : 98 MAD
+- **Note** : 4.7/5 (178 avis)
+- **Disponibilité** : En stock
+- **Description** : Crème de change enrichie à l'oxyde de zinc et au calendula. Protège, soulage et répare les rougeurs dès la première application.
+
+#### Shampooing Doux Maternité
+
+- **URL** : https://parapharmacyy.vercel.app/produits/shampooing-doux-maternite
+- **Catégorie** : Bébé & Maman
+- **Marque** : Mustela
+- **Prix (MAD)** : 135 MAD
+- **Note** : 4.2/5 (43 avis)
+- **Disponibilité** : En stock
+- **Description** : Shampooing doux pour femme enceinte et bébé. Formule hypoallergénique sans parfum ni alcool.
+
+#### Liniment Oléo-Calcaire
+
+- **URL** : https://parapharmacyy.vercel.app/produits/liniment-oleo-calcaire
+- **Catégorie** : Bébé & Maman
+- **Marque** : Biolane
+- **Prix (MAD)** : 78 MAD
+- **Note** : 4.4/5 (92 avis)
+- **Disponibilité** : En stock
+- **Description** : Liniment bio à l'huile d'olive et au calcium. Nettoie et protège la peau de bébé au moment du change en douceur.
+
+#### Lingettes Bébé Aqua Pure
+
+- **URL** : https://parapharmacyy.vercel.app/produits/lingettes-bebe-aqua-pure
+- **Catégorie** : Bébé & Maman
+- **Marque** : Mustela
+- **Prix (MAD)** : 45 MAD
+- **Note** : 4.8/5 (523 avis)
+- **Disponibilité** : En stock
+- **Description** : Lingettes bébé 99% eau pure, sans parfum ni conservateur. Lot de 4 paquets de 60 lingettes chacun.
+
+#### Stérilet Pansement Bébé
+
+- **URL** : https://parapharmacyy.vercel.app/produits/sterilet-pansement-bebe
+- **Catégorie** : Bébé & Maman
+- **Marque** : Biolane
+- **Prix (MAD)** : 135 MAD
+- **Note** : 4.3/5 (54 avis)
+- **Disponibilité** : En stock
+- **Description** : Crème protectrice à l'eau thermale pour le change. Appliquer à chaque change pour prévenir les rougeurs.
+
+#### Huile de Massage Bébé
+
+- **URL** : https://parapharmacyy.vercel.app/produits/huile-massage-bebe
+- **Catégorie** : Bébé & Maman
+- **Marque** : Mustela
+- **Prix (MAD)** : 118 MAD
+- **Note** : 4.6/5 (98 avis)
+- **Disponibilité** : En stock
+- **Description** : Huile de massage végétale 100% d'origine naturelle. Facilite le moment de complicité entre parent et bébé.
+
+### Cheveux
+
+#### Masque Capillaire Réparateur
+
+- **URL** : https://parapharmacyy.vercel.app/produits/masque-capillaire-reparateur
+- **Catégorie** : Cheveux
+- **Marque** : Kérastase
+- **Prix (MAD)** : 295 MAD
+- **Note** : 4.8/5 (167 avis)
+- **Disponibilité** : En stock
+- **Description** : Masque réparateur intensif pour cheveux abîmés et fragilisés. Nutrition intense grâce à l'huile de ricin et la kératine végétale.
+
+#### Huile Capillaire Nutrition
+
+- **URL** : https://parapharmacyy.vercel.app/produits/huile-capillaire-nutrition
+- **Catégorie** : Cheveux
+- **Marque** : L'Oréal Professionnel
+- **Prix (MAD)** : 210 MAD
+- **Note** : 4.3/5 (76 avis)
+- **Disponibilité** : En stock
+- **Description** : Huile sèche capillaire nourrissante aux extraits de fleurs luxueuses. Termine la mise en pli avec brillance et légèreté.
+
+#### Shampooing Anti-Pelliculaire
+
+- **URL** : https://parapharmacyy.vercel.app/produits/shampooing-anti-pelliculaire
+- **Catégorie** : Cheveux
+- **Marque** : Vichy
+- **Prix (MAD)** : 151 MAD (au lieu de 168 MAD, -10%)
+- **Note** : 4.1/5 (55 avis)
+- **Disponibilité** : En stock
+- **Description** : Shampooing traitant anti-pelliculaire à l'acide salicylique et au sélénium. Cuir chevelu apaisé dès la première utilisation.
+
+#### Sérum Capillaire Anti-Chute
+
+- **URL** : https://parapharmacyy.vercel.app/produits/serum-capillaire-anti-chute
+- **Catégorie** : Cheveux
+- **Marque** : Kérastase
+- **Prix (MAD)** : 342 MAD (au lieu de 380 MAD, -10%)
+- **Note** : 4.4/5 (134 avis)
+- **Disponibilité** : En stock
+- **Description** : Sérum anti-chute concentré à l'aminexil et au complexe vitaminé. Réduit la chute en 6 semaines.
+
+#### Après-Shampooing Démélant
+
+- **URL** : https://parapharmacyy.vercel.app/produits/apres-shampooing-demelant
+- **Catégorie** : Cheveux
+- **Marque** : L'Oréal Professionnel
+- **Prix (MAD)** : 185 MAD
+- **Note** : 4.2/5 (66 avis)
+- **Disponibilité** : En stock
+- **Description** : Après-shampooing démélant à la vitamine B5 et au panthénol. Cheveux soyeux et faciles à coiffer.
+
+#### Brushing Spray Thermo-Protecteur
+
+- **URL** : https://parapharmacyy.vercel.app/produits/brushing-spray-thermo-protecteur
+- **Catégorie** : Cheveux
+- **Marque** : L'Oréal Professionnel
+- **Prix (MAD)** : 155 MAD
+- **Note** : 4.5/5 (92 avis)
+- **Disponibilité** : En stock
+- **Description** : Spray thermo-protecteur pour brushing. Protège jusqu'à 230°C tout en apportant volume et brillance.
+
+### Solaires
+
+#### Protection Solaire SPF50+
+
+- **URL** : https://parapharmacyy.vercel.app/produits/protection-solaire-spf50
+- **Catégorie** : Solaires
+- **Marque** : Avène
+- **Prix (MAD)** : 225 MAD
+- **Note** : 4.6/5 (134 avis)
+- **Disponibilité** : En stock
+- **Description** : Crème solaire haute protection SPF50+ pour peaux sensibles et intolérantes. Résiste à l'eau, sans parfum.
+
+#### Spray Solaire Enfant SPF30
+
+- **URL** : https://parapharmacyy.vercel.app/produits/spray-solaire-enfant-spf30
+- **Catégorie** : Solaires
+- **Marque** : Mustela
+- **Prix (MAD)** : 198 MAD
+- **Note** : 4.5/5 (88 avis)
+- **Disponibilité** : En stock
+- **Description** : Spray solaire spécial enfants SPF30. Protection large spectre UVA/UVB, formule résistante à l'eau et sans parfum.
+
+#### Lait Solaire Après-Soleil
+
+- **URL** : https://parapharmacyy.vercel.app/produits/lait-solaire-apres-soleil
+- **Catégorie** : Solaires
+- **Marque** : Avène
+- **Prix (MAD)** : 165 MAD (au lieu de 195 MAD, -15%)
+- **Note** : 4.5/5 (78 avis)
+- **Disponibilité** : En stock
+- **Description** : Lait après-soleil apaisant à l'eau thermale. Hydrate et prolonge le bronzage tout en calmant les picotements.
+
+#### Stick Solaire Visage SPF50
+
+- **URL** : https://parapharmacyy.vercel.app/produits/stick-solaire-visage-spf50
+- **Catégorie** : Solaires
+- **Marque** : Mustela
+- **Prix (MAD)** : 168 MAD
+- **Note** : 4.3/5 (47 avis)
+- **Disponibilité** : En stock
+- **Description** : Stick solaire visage SPF50+ format poche. Application facile et précise pour les zones sensibles.
+
+### Hygiène
+
+#### Gel Douche Surgras Hydratant
+
+- **URL** : https://parapharmacyy.vercel.app/produits/gel-douche-surgras-hydratant
+- **Catégorie** : Hygiène
+- **Marque** : Avène
+- **Prix (MAD)** : 130 MAD (au lieu de 145 MAD, -10%)
+- **Note** : 4.2/5 (63 avis)
+- **Disponibilité** : En stock
+- **Description** : Gel douche surgras sans savon qui nettoie tout en respectant le film hydrolipidique des peaux sèches et sensibles.
+
+#### Déodorant Aluminium-Free
+
+- **URL** : https://parapharmacyy.vercel.app/produits/deodorant-aluminium-free
+- **Catégorie** : Hygiène
+- **Marque** : Vichy
+- **Prix (MAD)** : 128 MAD
+- **Note** : 4/5 (41 avis)
+- **Disponibilité** : En stock
+- **Description** : Déodorant sans sels d'aluminium ni alcool, efficace 48h. Testé dermatologiquement pour les peaux réactives.
+
+#### Savon Surgras Naturel
+
+- **URL** : https://parapharmacyy.vercel.app/produits/savon-surgras-naturel
+- **Catégorie** : Hygiène
+- **Marque** : Uriage
+- **Prix (MAD)** : 65 MAD
+- **Note** : 4.7/5 (210 avis)
+- **Disponibilité** : En stock
+- **Description** : Savon surgras enrichi en beurre de karité et huile d'amande douce. Nettoie en respectant les peaux sèches et sensibles.
+
+#### Brosse à Dents Électrique Sonic
+
+- **URL** : https://parapharmacyy.vercel.app/produits/brosse-dents-electrique-sonic
+- **Catégorie** : Hygiène
+- **Marque** : Elmakhfi
+- **Prix (MAD)** : 380 MAD (au lieu de 450 MAD, -16%)
+- **Note** : 4.7/5 (92 avis)
+- **Disponibilité** : En stock
+- **Description** : Brosse à dents électrique sonique 5 modes. Technologie à 32 000 vibrations/min pour un nettoyage en profondeur.
+
+#### Dentifrice Blanchissant Charbon
+
+- **URL** : https://parapharmacyy.vercel.app/produits/dentifrice-blanchissant-charbon
+- **Catégorie** : Hygiène
+- **Marque** : Elmakhfi
+- **Prix (MAD)** : 85 MAD
+- **Note** : 4/5 (215 avis)
+- **Disponibilité** : En stock
+- **Description** : Dentifrice au charbon végétal actif et à la menthe fraîche. Blanchit les dents naturellement sans les agresser.
+
+#### Mousse Nettoyante Visage
+
+- **URL** : https://parapharmacyy.vercel.app/produits/mousse-nettoyante-visage
+- **Catégorie** : Hygiène
+- **Marque** : Uriage
+- **Prix (MAD)** : 140 MAD (au lieu de 155 MAD, -10%)
+- **Note** : 4.4/5 (77 avis)
+- **Disponibilité** : En stock
+- **Description** : Mousse nettoyante hydratante à l'eau thermale. Nettoie en douceur sans dessécher la peau. Format 150ml.
+
+### Nutrition
+
+#### Barre Protéinée Amande-Chocolat
+
+- **URL** : https://parapharmacyy.vercel.app/produits/barre-proteinee-amande-chocolat
+- **Catégorie** : Nutrition
+- **Marque** : Pileje
+- **Prix (MAD)** : 45 MAD
+- **Note** : 4.3/5 (198 avis)
+- **Disponibilité** : En stock
+- **Description** : Barre protéinée riche en fibres, sans sucres ajoutés. 15g de protéines par barre, parfaite en collation post-sport.
+
+#### Collagène Marin Pur
+
+- **URL** : https://parapharmacyy.vercel.app/produits/collagene-marin-pur
+- **Catégorie** : Nutrition
+- **Marque** : Arkopharma
+- **Prix (MAD)** : 350 MAD
+- **Note** : 4.5/5 (142 avis)
+- **Disponibilité** : En stock
+- **Description** : Collagène marin hydrolysé pure à 100% pour la beauté de la peau, la santé des cheveux et des ongles. Saveur neutre.
+
+#### Spiruline Bio Pure 500mg
+
+- **URL** : https://parapharmacyy.vercel.app/produits/spiruline-bio-pure-500mg
+- **Catégorie** : Nutrition
+- **Marque** : Arkopharma
+- **Prix (MAD)** : 176 MAD (au lieu de 195 MAD, -10%)
+- **Note** : 4.4/5 (189 avis)
+- **Disponibilité** : En stock
+- **Description** : Spiruline bio pure française 500mg. Riche en fer, protéines et antioxydants naturels. 200 comprimés.
+
+#### Mélatonine Action Rapide
+
+- **URL** : https://parapharmacyy.vercel.app/produits/melatonine-action-rapide
+- **Catégorie** : Nutrition
+- **Marque** : Forté Pharma
+- **Prix (MAD)** : 135 MAD
+- **Note** : 4.5/5 (234 avis)
+- **Disponibilité** : En stock
+- **Description** : Mélatonine en comprimés orodispersibles 1mg. Aide à s'endormir rapidement et à réguler le cycle du sommeil.
+
+#### Charbon Végétal Actif Digestion
+
+- **URL** : https://parapharmacyy.vercel.app/produits/charbon-vegetal-actif-digestion
+- **Catégorie** : Nutrition
+- **Marque** : Pileje
+- **Prix (MAD)** : 115 MAD
+- **Note** : 4.2/5 (156 avis)
+- **Disponibilité** : En stock
+- **Description** : Charbon végétal actif micronisé pour faciliter la digestion et réduire les ballonnements. 60 gélules.
+
+#### Multi-Vitamines Enfants Gommes
+
+- **URL** : https://parapharmacyy.vercel.app/produits/multi-vitamines-enfants-gommes
+- **Catégorie** : Nutrition
+- **Marque** : Arkopharma
+- **Prix (MAD)** : 145 MAD
+- **Note** : 4.7/5 (312 avis)
+- **Disponibilité** : En stock
+- **Description** : Gommes multivitaminées aux fruits pour enfants dès 4 ans. Vitamines A, C, D, E, B6, B12. Sans sucre ajouté.
+
+### Premiers secours
+
+#### Kit Premiers Soins Urgence
+
+- **URL** : https://parapharmacyy.vercel.app/produits/kit-premiers-soins-urgence
+- **Catégorie** : Premiers secours
+- **Marque** : Elmakhfi
+- **Prix (MAD)** : 189 MAD
+- **Note** : 4.6/5 (73 avis)
+- **Disponibilité** : En stock
+- **Description** : Kit complet de premiers secours avec pansements, compresses stériles, désinfectant et ciseaux. Idéal pour la maison.
+
+#### Pansements Hydrocolloïdes
+
+- **URL** : https://parapharmacyy.vercel.app/produits/pansements-hydrocolloides
+- **Catégorie** : Premiers secours
+- **Marque** : Elmakhfi
+- **Prix (MAD)** : 55 MAD
+- **Note** : 4.1/5 (38 avis)
+- **Disponibilité** : En stock
+- **Description** : Pansements hydrocolloïdes invisibles pour soigner les ampoules, cors et petites plaies. Protection étanche 48h.
+
+#### Thermomètre Infrarouge
+
+- **URL** : https://parapharmacyy.vercel.app/produits/thermometre-infrarouge
+- **Catégorie** : Premiers secours
+- **Marque** : Elmakhfi
+- **Prix (MAD)** : 275 MAD
+- **Note** : 4.6/5 (145 avis)
+- **Disponibilité** : En stock
+- **Description** : Thermomètre infrarouge sans contact. Mesure précise en 1 seconde. Pour toute la famille, du nouveau-né à l'adulte.
+
+#### Masques Chirurgicaux Lot 50
+
+- **URL** : https://parapharmacyy.vercel.app/produits/masques-chirurgicaux-lot-50
+- **Catégorie** : Premiers secours
+- **Marque** : Elmakhfi
+- **Prix (MAD)** : 65 MAD
+- **Note** : 4.1/5 (678 avis)
+- **Disponibilité** : En stock
+- **Description** : Masques chirurgicaux type IIR, lot de 50. Certification CE, 3 couches de protection. Fabriqué en France.
+
+#### Bande de Contention Élastique
+
+- **URL** : https://parapharmacyy.vercel.app/produits/bande-contention-elastique
+- **Catégorie** : Premiers secours
+- **Marque** : Elmakhfi
+- **Prix (MAD)** : 38 MAD
+- **Note** : 4/5 (28 avis)
+- **Disponibilité** : En stock
+- **Description** : Bande de contention élastique 4m x 10cm. Maintien et compression pour entorses et oedèmes. Lavable et réutilisable.

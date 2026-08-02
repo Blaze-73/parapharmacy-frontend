@@ -24,6 +24,7 @@ export default function usePageMeta({
   path = '/',
   image = DEFAULT_IMG,
   noindex = false,
+  schema = [],
 }) {
   useEffect(() => {
     const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
@@ -33,10 +34,14 @@ export default function usePageMeta({
 
     document.title = fullTitle
     upsertMeta('meta[name="description"]', { name: 'description' }, desc)
+    upsertMeta('meta[property="og:type"]', { property: 'og:type' }, 'website')
+    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name' }, SITE_NAME)
     upsertMeta('meta[property="og:title"]', { property: 'og:title' }, fullTitle)
     upsertMeta('meta[property="og:description"]', { property: 'og:description' }, desc)
     upsertMeta('meta[property="og:url"]', { property: 'og:url' }, url)
+    upsertMeta('meta[property="og:locale"]', { property: 'og:locale' }, 'fr_MA')
     upsertMeta('meta[property="og:image"]', { property: 'og:image' }, img)
+    upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card' }, 'summary_large_image')
     upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title' }, fullTitle)
     upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description' }, desc)
     upsertMeta('meta[name="twitter:image"]', { name: 'twitter:image' }, img)
@@ -54,5 +59,20 @@ export default function usePageMeta({
       document.head.appendChild(canonical)
     }
     canonical.setAttribute('href', url)
-  }, [title, description, path, image, noindex])
+
+    let ld = document.head.querySelector('script[type="application/ld+json"][data-seo="page"]')
+    if (!ld) {
+      ld = document.createElement('script')
+      ld.setAttribute('type', 'application/ld+json')
+      ld.setAttribute('data-seo', 'page')
+      document.head.appendChild(ld)
+    }
+    if (schema.length > 0) {
+      ld.textContent = JSON.stringify(
+        schema.length === 1 ? schema[0] : { '@context': 'https://schema.org', '@graph': schema }
+      )
+    } else {
+      ld.remove()
+    }
+  }, [title, description, path, image, noindex, JSON.stringify(schema)])
 }
