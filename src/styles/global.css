@@ -86,6 +86,13 @@ h1, h2, h3, h4, h5, h6 {
 .prix-principal { font-family: var(--font-titre); font-weight: 700; color: #15803d; }
 .prix-barre     { text-decoration: line-through; color: #94a3b8; }
 
+/* ── Hero ken-burns (zoom lent) ────────────────────────────────────────────── */
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+.animate-kenburns { animation: kenburns 9s ease-in-out forwards; will-change: transform; }
+
 /* ── Plage de prix (double curseur) ───────────────────────────────────────── */
 .plage-prix { position: relative; height: 28px; }
 .plage-prix .piste {

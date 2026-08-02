@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, ShoppingBag, Truck } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowRight, ShoppingBag, Truck, ChevronDown } from 'lucide-react'
 import { usePanier, useAuth } from '../store/index.js'
 import { commandesApi } from '../api/index.js'
 import { useForm } from 'react-hook-form'
@@ -18,6 +19,7 @@ export default function Checkout() {
   const navigate = useNavigate()
   const [chargement, setChargement] = useState(false)
   const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: { paiement: 'livraison' } })
+  const [resumeOuvert, setResumeOuvert] = useState(false)
   const sous = sousTotal()
   const livraison = sous > 0 && sous < SITE.fraisLivraisonGratuite ? SITE.fraisLivraison : 0
   const total = sous + livraison
@@ -59,6 +61,68 @@ export default function Checkout() {
     <div className="max-w-5xl mx-auto px-4 py-8">
       <Breadcrumbs items={[{ label: 'Panier', to: '/panier' }, { label: 'Commander' }]} />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Passer la commande</h1>
+
+      {/* Mobile collapsible order summary */}
+      <div className="lg:hidden carte mb-5 overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setResumeOuvert(v => !v)}
+          aria-expanded={resumeOuvert}
+          className="w-full flex items-center justify-between px-5 py-4 text-left"
+        >
+          <span className="flex items-center gap-2 font-bold text-gray-900">
+            <ShoppingBag className="w-4 h-4 text-vert-600" />
+            Votre commande
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="prix-principal text-lg">{formatPrix(total)} MAD</span>
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${resumeOuvert ? 'rotate-180' : ''}`} />
+          </span>
+        </button>
+        <AnimatePresence initial={false}>
+          {resumeOuvert && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="px-5 pb-5 border-t border-gray-100">
+                <div className="space-y-2 mb-4 mt-4">
+                  {articles.map(({ produit, quantite }) => (
+                    <div key={produit.id} className="flex justify-between text-sm gap-2">
+                      <span className="text-gray-600 line-clamp-1 flex-1">{produit.nom}</span>
+                      <span className="font-semibold text-gray-900 flex-shrink-0">
+                        ×{quantite} — {formatPrix(Number(produit.prix_effectif) * quantite)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-500 mb-3 bg-vert-50 rounded-lg p-2.5">
+                  <Truck className="w-4 h-4 text-vert-600 flex-shrink-0" />
+                  Livraison estimée : <strong className="text-gray-700">{formatDateLivraison()}</strong>
+                </div>
+                <div className="border-t border-gray-100 pt-3 space-y-2 text-sm">
+                  <div className="flex justify-between text-gray-600">
+                    <span>Sous-total</span><span>{formatPrix(sous)} MAD</span>
+                  </div>
+                  <div className="flex justify-between text-gray-600">
+                    <span>Livraison</span>
+                    <span className={livraison === 0 ? 'text-vert-600 font-semibold' : ''}>
+                      {livraison === 0 ? 'GRATUITE' : `${formatPrix(livraison)} MAD`}
+                    </span>
+                  </div>
+                  <div className="flex justify-between font-bold text-gray-900 pt-2 border-t border-gray-100 text-base">
+                    <span>Total</span>
+                    <span className="prix-principal text-xl">{formatPrix(total)} MAD</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-5">

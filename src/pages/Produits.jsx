@@ -163,6 +163,18 @@ export default function Produits() {
 
   const hasFilters = !!(filtres.recherche || filtres.categorie || filtres.marque || filtres.en_promo || filtres.en_stock || filtres.prix_min || filtres.prix_max)
 
+  const chips = []
+  if (filtres.recherche) chips.push({ key: 'recherche', label: `"${filtres.recherche}"`, action: () => { setSearchInput(''); update('recherche', '') } })
+  if (filtres.categorie) chips.push({ key: 'categorie', label: categories.find(c => c.slug === filtres.categorie)?.nom || filtres.categorie, action: () => update('categorie', '') })
+  if (filtres.marque)    chips.push({ key: 'marque', label: filtres.marque, action: () => update('marque', '') })
+  if (filtres.en_promo)  chips.push({ key: 'en_promo', label: 'Promotions', action: () => update('en_promo', '') })
+  if (filtres.en_stock)  chips.push({ key: 'en_stock', label: 'En stock', action: () => update('en_stock', '') })
+  if (filtres.prix_min || filtres.prix_max) {
+    const plageMin = Math.max(Number(filtres.prix_min) || bornes.min, bornes.min)
+    const plageMax = Math.min(Number(filtres.prix_max) || bornes.max, bornes.max)
+    chips.push({ key: 'prix', label: `${formatPrix(plageMin)} – ${formatPrix(plageMax)} MAD`, action: () => { setPrix({ min: bornes.min, max: bornes.max }); setPrixParams(bornes.min, bornes.max) } })
+  }
+
   function FilterContent() {
     return (
       <div className="space-y-6">
@@ -302,6 +314,27 @@ export default function Produits() {
         </aside>
 
         <div className="flex-1 min-w-0">
+          {/* Active filter chips */}
+          {chips.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              {chips.map(c => (
+                <span key={c.key} className="inline-flex items-center gap-1.5 bg-vert-50 text-vert-800 text-xs font-semibold pl-3 pr-1.5 py-1.5 rounded-full border border-vert-100 max-w-full">
+                  <span className="truncate">{c.label}</span>
+                  <button
+                    onClick={c.action}
+                    aria-label={`Retirer le filtre ${c.label}`}
+                    className="w-5 h-5 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-vert-100 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+              <button onClick={reset} className="text-xs font-medium text-gray-400 hover:text-gray-600 underline underline-offset-2">
+                Tout effacer
+              </button>
+            </div>
+          )}
+
           {/* Toolbar */}
           <div className="flex items-center justify-between mb-5 gap-3">
             <button

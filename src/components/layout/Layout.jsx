@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Menu, X, ChevronDown, LogOut, Package, Search, Heart, Cross, MessageCircle } from 'lucide-react'
+import { ShoppingCart, Menu, X, ChevronDown, ChevronUp, LogOut, Package, Search, Heart, Cross, MessageCircle } from 'lucide-react'
 import { useAuth, usePanier, useWishlist } from '../../store/index.js'
 import { authApi, produitsApi } from '../../api/index.js'
 import { SITE } from '../../config.js'
@@ -11,8 +11,10 @@ import ImageProduit from '../product/ImageProduit.jsx'
 import { formatPrix } from '../../utils/format.js'
 import toast from 'react-hot-toast'
 
+const RECHERCHES_POPULAIRES = ['Vitamine C', 'Sérum', 'Crème solaire', 'Shampoing', 'Bébé', 'Collagène']
+
 // ── Search with suggestions ───────────────────────────────────────────────────
-function SearchBar({ mobile = false }) {
+function SearchBar({ mobile = false, inputRef = null }) {
   const navigate = useNavigate()
   const [q, setQ] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -64,7 +66,7 @@ function SearchBar({ mobile = false }) {
 
   const inputClass = mobile
     ? 'w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-vert-500 focus:bg-white transition-all'
-    : 'w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-vert-500 focus:border-transparent focus:bg-white transition-all'
+    : 'w-full pl-10 pr-14 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-vert-500 focus:border-transparent focus:bg-white transition-all'
 
   return (
     <div ref={wrapperRef} className="relative w-full">
@@ -72,18 +74,27 @@ function SearchBar({ mobile = false }) {
         <div className="relative flex-1">
           <Search className={`absolute ${mobile ? 'left-3 w-4 h-4' : 'left-3.5 w-4 h-4'} top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none`} />
           <input
+            ref={inputRef}
             type="text"
             value={q}
             onChange={e => setQ(e.target.value)}
-            onFocus={() => suggestions.length > 0 && setShowSugg(true)}
+            onFocus={() => setShowSugg(true)}
             placeholder={mobile ? 'Rechercher…' : 'Rechercher un produit, une marque…'}
             className={inputClass}
           />
-          {q && (
+          {q ? (
             <button type="button" onClick={() => { setQ(''); setSuggestions([]); setShowSugg(false) }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
               <X className="w-4 h-4" />
             </button>
+          ) : (
+            !mobile && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <kbd className="hidden sm:inline-flex items-center justify-center w-6 h-6 rounded-md border border-gray-200 bg-white text-[11px] font-semibold text-gray-400">
+                  /
+                </kbd>
+              </span>
+            )
           )}
         </div>
         {!mobile && (
@@ -103,6 +114,25 @@ function SearchBar({ mobile = false }) {
             transition={{ duration: 0.15 }}
             className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
           >
+            {!q.trim() && (
+              <div className="px-4 py-3">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
+                  Recherches populaires
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {RECHERCHES_POPULAIRES.map(t => (
+                    <button
+                      key={t}
+                      onClick={() => { setShowSugg(false); setQ(''); navigate(`/produits?recherche=${encodeURIComponent(t)}`) }}
+                      className="text-xs font-medium text-gray-600 bg-gray-100 hover:bg-vert-50 hover:text-vert-700 px-2.5 py-1.5 rounded-full transition-colors"
+                    >
+                      🔍 {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {loading && (
               <div className="px-4 py-3 text-sm text-gray-400 flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-gray-200 border-t-vert-500 rounded-full animate-spin" />
@@ -178,14 +208,34 @@ export default function Layout() {
   const [menuOuvert, setMenuOuvert]     = useState(false)
   const [menuUser, setMenuUser]         = useState(false)
   const [scrolled, setScrolled]         = useState(false)
+  const [showTop, setShowTop]           = useState(false)
   const refUser                         = useRef(null)
+  const searchDesktopRef                = useRef(null)
+  const searchMobileRef                 = useRef(null)
 
   useEffect(() => { setMenuOuvert(false); setMenuUser(false) }, [location.pathname])
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20)
+      setShowTop(window.scrollY > 400)
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Press "/" to focus the visible search input
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return
+      const t = e.target
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return
+      e.preventDefault()
+      const el = searchDesktopRef.current?.offsetParent ? searchDesktopRef.current : searchMobileRef.current
+      if (el) { el.focus(); el.select?.() }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
   }, [])
 
   useEffect(() => {
@@ -223,7 +273,7 @@ export default function Layout() {
 
       {/* Navbar */}
       <header className={`bg-white sticky top-0 z-40 transition-shadow ${scrolled ? 'shadow-md' : 'border-b border-gray-100'}`}>
-        <div className="max-w-7xl mx-auto px-4 flex items-center h-16 gap-1 sm:gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 flex items-center h-16 gap-1 sm:gap-3">
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0 min-w-0" aria-label="Parapharmacie Elmakhfi">
@@ -238,7 +288,7 @@ export default function Layout() {
 
           {/* Desktop search with suggestions */}
           <div className="flex-1 max-w-lg hidden lg:flex items-center gap-2">
-            <SearchBar />
+            <SearchBar inputRef={searchDesktopRef} />
           </div>
 
           {/* Nav links */}
@@ -291,14 +341,14 @@ export default function Layout() {
             {connecte ? (
               <div className="relative" ref={refUser}>
                 <button onClick={() => setMenuUser(v => !v)}
-                  className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-gray-100 transition-colors">
+                  className="flex items-center gap-1.5 px-1.5 sm:px-2 py-1.5 rounded-xl hover:bg-gray-100 transition-colors">
                   <div className="w-7 h-7 bg-vert-100 rounded-full flex items-center justify-center text-vert-700 font-bold text-sm flex-shrink-0">
                     {user?.nom?.[0]?.toUpperCase()}
                   </div>
                   <span className="text-sm font-medium text-gray-700 hidden sm:block max-w-[80px] truncate">
                     {user?.nom?.split(' ')[0]}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-gray-400" />
+                  <ChevronDown className="w-3 h-3 text-gray-400 hidden sm:block" />
                 </button>
                 <AnimatePresence>
                   {menuUser && (
@@ -346,7 +396,7 @@ export default function Layout() {
 
             {/* Mobile menu toggle */}
             <button onClick={() => setMenuOuvert(v => !v)}
-              className="xl:hidden p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 sm:ml-1">
+              className="xl:hidden p-1.5 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 sm:ml-1">
               {menuOuvert ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
@@ -354,7 +404,7 @@ export default function Layout() {
 
         {/* Mobile search */}
         <div className="lg:hidden px-4 pb-3">
-          <SearchBar mobile />
+          <SearchBar mobile inputRef={searchMobileRef} />
         </div>
 
         {/* Mobile menu */}
@@ -436,6 +486,22 @@ export default function Layout() {
       </footer>
 
       <PanierDrawer />
+
+      {/* Back to top */}
+      <AnimatePresence>
+        {showTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.6 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            aria-label="Revenir en haut de page"
+            className="fixed bottom-20 right-5 z-40 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-lg flex items-center justify-center text-gray-500 hover:text-vert-700 hover:border-vert-300 transition-colors"
+          >
+            <ChevronUp className="w-5 h-5" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       {/* Floating WhatsApp support (hidden on product detail — sticky buy bar is there) */}
       {!location.pathname.startsWith('/produits/') && (

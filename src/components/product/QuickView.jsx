@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { X, ShoppingCart, Check, Star, Heart } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePanier, useWishlist } from '../../store/index.js'
 import ImageProduit from './ImageProduit.jsx'
 import { formatPrix } from '../../utils/format.js'
@@ -27,6 +27,13 @@ export default function QuickView({ produit, onClose }) {
   const [ajoute, setAjoute] = useState(false)
   const ref = useFocusTrap(!!produit, onClose)
   const estFavori = ids.includes(produit?.id)
+
+  useEffect(() => {
+    if (!produit) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [!!produit])
 
   if (!produit) return null
 

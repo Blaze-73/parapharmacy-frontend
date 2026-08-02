@@ -18,6 +18,14 @@ export default function PanierDrawer() {
   const location   = useLocation()
   const drawerRef  = useFocusTrap(ouvert, fermer)
 
+  // Lock body scroll while the drawer is open
+  useEffect(() => {
+    if (!ouvert) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [ouvert])
+
   const { data: allData } = useQuery({
     queryKey: ['panier-suggestions'],
     queryFn:  () => produitsApi.liste({ par_page: 999 }),

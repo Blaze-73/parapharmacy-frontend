@@ -180,7 +180,7 @@ export default function DetailProduit() {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="space-y-3"
+          className="space-y-3 min-w-0"
         >
           <div
             className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-100 flex items-center justify-center overflow-hidden relative group cursor-zoom-in"
@@ -227,10 +227,10 @@ export default function DetailProduit() {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="space-y-5"
+          className="space-y-5 min-w-0"
         >
           <div className="flex items-start justify-between gap-3">
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
               {produit.marque && (
                 <Link
                   to={`/produits?marque=${produit.marque}`}
