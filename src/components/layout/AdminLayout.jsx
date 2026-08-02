@@ -6,6 +6,7 @@ import { LayoutDashboard, Package, ShoppingBag, Users, LogOut, Menu, Cross, Bell
 import { useAuth, useNotifications } from '../../store/index.js'
 import { authApi, adminApi } from '../../api/index.js'
 import { formatPrix } from '../../utils/format.js'
+import ConfirmModal from '../ConfirmModal.jsx'
 
 const NAV = [
   { href: '/admin',             label: 'Tableau de bord',      Icone: LayoutDashboard },
@@ -31,6 +32,7 @@ export default function AdminLayout() {
   const navigate = useNavigate()
   const [ouvert, setOuvert] = useState(false)
   const [notifOuvert, setNotifOuvert] = useState(false)
+  const [confirmDeconnexion, setConfirmDeconnexion] = useState(false)
   const refNotif = useRef(null)
 
   const { data: cmdData } = useQuery({
@@ -45,7 +47,6 @@ export default function AdminLayout() {
   useOutside(refNotif, () => setNotifOuvert(false))
 
   async function handleDeconnexion() {
-    if (!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) return
     try { await authApi.deconnexion() } catch {}
     deconnexion()
     navigate('/')
@@ -96,7 +97,7 @@ export default function AdminLayout() {
             ← Voir la boutique
           </Link>
           <button
-            onClick={handleDeconnexion}
+            onClick={() => setConfirmDeconnexion(true)}
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm text-red-400 hover:bg-gray-800 transition-all"
           >
             <LogOut className="w-4 h-4" /> Déconnexion
@@ -107,6 +108,7 @@ export default function AdminLayout() {
   }
 
   return (
+    <>
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Desktop sidebar */}
       <aside className="w-60 flex-shrink-0 hidden md:block">
@@ -219,5 +221,16 @@ export default function AdminLayout() {
         </main>
       </div>
     </div>
+
+    <ConfirmModal
+      ouvert={confirmDeconnexion}
+      titre="Se déconnecter ?"
+      message="Voulez-vous vraiment vous déconnecter de votre compte ?"
+      confirmLabel="Se déconnecter"
+      tone="danger"
+      onConfirm={async () => { setConfirmDeconnexion(false); await handleDeconnexion() }}
+      onCancel={() => setConfirmDeconnexion(false)}
+    />
+    </>
   )
 }

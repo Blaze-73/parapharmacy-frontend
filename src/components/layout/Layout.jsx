@@ -9,6 +9,7 @@ import { SITE } from '../../config.js'
 import { lienWhatsApp } from '../../utils/format.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
 import SearchBar from '../SearchBar.jsx'
+import ConfirmModal from '../ConfirmModal.jsx'
 import toast from 'react-hot-toast'
 
 // ── Barre de navigation mobile (bas de page) ──────────────────────────────────
@@ -86,6 +87,7 @@ export default function Layout() {
   const location                        = useLocation()
   const [menuOuvert, setMenuOuvert]     = useState(false)
   const [menuUser, setMenuUser]         = useState(false)
+  const [confirmDeconnexion, setConfirmDeconnexion] = useState(false)
   const [scrolled, setScrolled]         = useState(false)
   const [showTop, setShowTop]           = useState(false)
   const refUser                         = useRef(null)
@@ -126,7 +128,6 @@ export default function Layout() {
   }, [])
 
   async function handleDeconnexion() {
-    if (!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) return
     try { await authApi.deconnexion() } catch {}
     deconnexion()
     toast.success('À bientôt !')
@@ -277,7 +278,7 @@ export default function Layout() {
                         </Link>
                       </div>
                       <div className="border-t border-gray-100 py-1">
-                        <button onClick={handleDeconnexion}
+                        <button onClick={() => setConfirmDeconnexion(true)}
                           className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
                           <LogOut className="w-4 h-4" /> Déconnexion
                         </button>
@@ -385,6 +386,16 @@ export default function Layout() {
       </footer>
 
       <PanierDrawer />
+
+      <ConfirmModal
+        ouvert={confirmDeconnexion}
+        titre="Se déconnecter ?"
+        message="Voulez-vous vraiment vous déconnecter de votre compte ?"
+        confirmLabel="Se déconnecter"
+        tone="danger"
+        onConfirm={async () => { setConfirmDeconnexion(false); await handleDeconnexion() }}
+        onCancel={() => setConfirmDeconnexion(false)}
+      />
 
       {/* Bottom mobile navigation */}
       <BottomNav />
