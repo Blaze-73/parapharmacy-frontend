@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Minus, Plus, ShoppingCart, Check, Star, ChevronDown, ChevronUp, Heart, X, ZoomIn, Share2, Truck, ShieldCheck, RotateCcw } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, Check, Star, ChevronDown, ChevronUp, Heart, X, ZoomIn, Share2, Truck, ShieldCheck, RotateCcw, BellRing } from 'lucide-react'
 import { produitsApi } from '../api/index.js'
 import ImageProduit from '../components/product/ImageProduit.jsx'
 import { StockUrgence, DelaiLivraison, CommandeAvant } from '../components/product/StockUrgence.jsx'
 import Breadcrumbs from '../components/Breadcrumbs.jsx'
-import { usePanier, useWishlist, useRecents } from '../store/index.js'
+import { usePanier, useWishlist, useRecents, useAlertesStock } from '../store/index.js'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import RecentsProduits from '../components/product/RecentsProduits.jsx'
 import { formatPrix, formatDateLivraison } from '../utils/format.js'
@@ -49,6 +49,7 @@ export default function DetailProduit() {
   const { ajouterArticle, ouvrir } = usePanier()
   const { ids, basculer } = useWishlist()
   const { ajouter: ajouterRecents } = useRecents()
+  const { ids: alertesIds, basculer: basculerAlerte } = useAlertesStock()
   const qc = useQueryClient()
   const [qty, setQty] = useState(1)
   const [ajoute, setAjoute] = useState(false)
@@ -130,6 +131,14 @@ export default function DetailProduit() {
     setTimeout(() => setAjoute(false), 2000)
     toast.success(`${produit.nom.slice(0, 30)}… ajouté !`)
     ouvrir()
+  }
+
+  const alerteActif = alertesIds.includes(produit?.id)
+  function handleAlerter() {
+    if (!produit?.id) return
+    basculerAlerte(produit.id)
+    if (alerteActif) toast('Alerte désactivée')
+    else toast.success('Alerte activée — vous serez prévenu du retour en stock 🔔')
   }
 
   function handleZoom(e) {
@@ -338,6 +347,22 @@ export default function DetailProduit() {
                 }
               </motion.button>
             </div>
+          )}
+
+          {/* Back-in-stock alert */}
+          {!produit.en_stock && (
+            <motion.button
+              onClick={handleAlerter}
+              whileTap={{ scale: 0.97 }}
+              aria-pressed={alerteActif}
+              className={`flex items-center justify-center gap-2.5 py-4 px-8 rounded-2xl font-bold text-base w-full sm:w-auto transition-all duration-300 ${
+                alerteActif ? 'bg-vert-500 text-white' : 'border-2 border-vert-600 text-vert-700 hover:bg-vert-50'
+              }`}
+            >
+              {alerteActif
+                ? <><Check className="w-5 h-5" /> Alerte activée — nous vous préviendrons</>
+                : <><BellRing className="w-5 h-5" /> M'avertir du retour en stock</>}
+            </motion.button>
           )}
 
           {/* Trust badges */}

@@ -6,6 +6,7 @@ import { adminApi } from '../../api/index.js'
 import { formatPrix } from '../../utils/format.js'
 import { useAuth } from '../../store/index.js'
 import usePageMeta from '../../hooks/usePageMeta.js'
+import usePageTitle from '../../hooks/usePageTitle.js'
 import toast from 'react-hot-toast'
 
 const STATUTS = {
@@ -55,6 +56,7 @@ function Thumb({ produit }) {
 
 export default function AdminTableau() {
   usePageMeta({ title: 'Admin — Tableau de bord', path: '/admin', noindex: true })
+  usePageTitle('Admin — Tableau de bord')
   const { user } = useAuth()
   const { data, isLoading } = useQuery({
     queryKey: ['admin-tableau'],

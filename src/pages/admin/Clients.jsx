@@ -4,9 +4,11 @@ import { Search, X } from 'lucide-react'
 import { adminApi } from '../../api/index.js'
 import Pagination from '../../components/Pagination.jsx'
 import usePageMeta from '../../hooks/usePageMeta.js'
+import usePageTitle from '../../hooks/usePageTitle.js'
 
 export default function AdminClients() {
   usePageMeta({ title: 'Admin — Clients', path: '/admin/clients', noindex: true })
+  usePageTitle('Admin — Clients')
   const [recherche, setRecherche] = useState('')
   const [page, setPage] = useState(1)
   const { data, isLoading } = useQuery({

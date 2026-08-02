@@ -1,200 +1,94 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Menu, X, ChevronDown, ChevronUp, LogOut, Package, Search, Heart, Cross, MessageCircle } from 'lucide-react'
-import { useAuth, usePanier, useWishlist } from '../../store/index.js'
-import { authApi, produitsApi } from '../../api/index.js'
+import { ShoppingCart, Menu, X, ChevronDown, ChevronUp, LogOut, Package, Heart, Cross, MessageCircle, Sun, Moon, Bell, Home } from 'lucide-react'
+import { useAuth, usePanier, useWishlist, useNotifications, useThemeStore } from '../../store/index.js'
+import { useQuery } from '@tanstack/react-query'
+import { authApi, commandesApi } from '../../api/index.js'
 import { SITE } from '../../config.js'
 import { lienWhatsApp } from '../../utils/format.js'
 import PanierDrawer from '../cart/PanierDrawer.jsx'
-import ImageProduit from '../product/ImageProduit.jsx'
-import { formatPrix } from '../../utils/format.js'
+import SearchBar from '../SearchBar.jsx'
 import toast from 'react-hot-toast'
 
-const RECHERCHES_POPULAIRES = ['Vitamine C', 'Sérum', 'Crème solaire', 'Shampoing', 'Bébé', 'Collagène']
+// ── Mode sombre / clair ───────────────────────────────────────────────────────
+export function ModeSombre({ compact = false }) {
+  const sombre   = useThemeStore(s => s.sombre)
+  const basculer = useThemeStore(s => s.basculer)
+  return (
+    <button
+      onClick={basculer}
+      aria-label={sombre ? 'Passer au mode clair' : 'Passer au mode sombre'}
+      title={sombre ? 'Mode clair' : 'Mode sombre'}
+      className={`rounded-xl hover:bg-gray-100 text-gray-600 transition-colors flex items-center justify-center ${compact ? 'p-2' : 'p-2 sm:p-2.5'}`}
+    >
+      {sombre ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+    </button>
+  )
+}
 
-// ── Search with suggestions ───────────────────────────────────────────────────
-function SearchBar({ mobile = false, inputRef = null }) {
-  const navigate = useNavigate()
-  const [q, setQ] = useState('')
-  const [suggestions, setSuggestions] = useState([])
-  const [showSugg, setShowSugg] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const debounceRef = useRef(null)
-  const wrapperRef  = useRef(null)
+// ── Barre de navigation mobile (bas de page) ──────────────────────────────────
+function BottomNav() {
+  const { totalArticles, ouvrir } = usePanier()
+  const { ids: favorisIds }       = useWishlist()
+  const location                  = useLocation()
+  const nb                        = totalArticles()
+  const nbFavoris                 = favorisIds.length
+  const actif = (to) => to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
 
-  // Close on outside click
-  useEffect(() => {
-    function handler(e) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-        setShowSugg(false)
-      }
-    }
-    document.addEventListener('mousedown', handler)
-    return () => document.removeEventListener('mousedown', handler)
-  }, [])
-
-  // Debounced fetch
-  useEffect(() => {
-    clearTimeout(debounceRef.current)
-    if (q.trim().length < 2) { setSuggestions([]); setShowSugg(false); return }
-    setLoading(true)
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const res = await produitsApi.liste({ recherche: q.trim(), par_page: 6 })
-        setSuggestions(res.data?.data || [])
-        setShowSugg(true)
-      } catch {}
-      finally { setLoading(false) }
-    }, 300)
-    return () => clearTimeout(debounceRef.current)
-  }, [q])
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    if (!q.trim()) return
-    setShowSugg(false)
-    navigate(`/produits?recherche=${encodeURIComponent(q.trim())}`)
-    setQ('')
-  }
-
-  function handleSelect(produit) {
-    setShowSugg(false)
-    setQ('')
-    navigate(`/produits/${produit.slug}`)
-  }
-
-  const inputClass = mobile
-    ? 'w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-vert-500 focus:bg-white transition-all'
-    : 'w-full pl-10 pr-14 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-vert-500 focus:border-transparent focus:bg-white transition-all'
+  const items = [
+    { to: '/', label: 'Accueil', Icon: Home },
+    { to: '/produits', label: 'Produits', Icon: Package },
+  ]
 
   return (
-    <div ref={wrapperRef} className="relative w-full">
-      <form onSubmit={handleSubmit} className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search className={`absolute ${mobile ? 'left-3 w-4 h-4' : 'left-3.5 w-4 h-4'} top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none`} />
-          <input
-            ref={inputRef}
-            type="text"
-            value={q}
-            onChange={e => setQ(e.target.value)}
-            onFocus={() => setShowSugg(true)}
-            placeholder={mobile ? 'Rechercher…' : 'Rechercher un produit, une marque…'}
-            className={inputClass}
-          />
-          {q ? (
-            <button type="button" onClick={() => { setQ(''); setSuggestions([]); setShowSugg(false) }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-              <X className="w-4 h-4" />
-            </button>
-          ) : (
-            !mobile && (
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                <kbd className="hidden sm:inline-flex items-center justify-center w-6 h-6 rounded-md border border-gray-200 bg-white text-[11px] font-semibold text-gray-400">
-                  /
-                </kbd>
+    <nav
+      aria-label="Navigation principale (mobile)"
+      className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
+    >
+      <div className="flex items-stretch">
+        {items.map(({ to, label, Icon }) => (
+          <Link key={to} to={to} aria-current={actif(to) ? 'page' : undefined}
+            className="flex-1 flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold transition-colors">
+            <span className={`relative p-0.5 rounded-lg transition-colors ${actif(to) ? 'text-vert-600' : 'text-gray-400'}`}>
+              <Icon className="w-6 h-6" />
+              {to === '/produits' && nb > 0 && (
+                <span className="absolute -top-1 -right-1.5 w-4 h-4 bg-vert-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {nb > 9 ? '9+' : nb}
+                </span>
+              )}
+            </span>
+            <span className={actif(to) ? 'text-vert-700' : 'text-gray-500'}>{label}</span>
+          </Link>
+        ))}
+
+        <button onClick={ouvrir}
+          className="flex-1 flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold transition-colors">
+          <span className="relative p-0.5 rounded-lg text-gray-400">
+            <ShoppingCart className="w-6 h-6" />
+            {nb > 0 && (
+              <span className="absolute -top-1 -right-1.5 w-4 h-4 bg-vert-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {nb > 9 ? '9+' : nb}
               </span>
-            )
-          )}
-        </div>
-        {!mobile && (
-          <button type="submit" className="btn-vert py-2.5 px-4 text-sm flex-shrink-0">
-            Chercher
-          </button>
-        )}
-      </form>
-
-      {/* Suggestions dropdown */}
-      <AnimatePresence>
-        {showSugg && (
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
-          >
-            {!q.trim() && (
-              <div className="px-4 py-3">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-                  Recherches populaires
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {RECHERCHES_POPULAIRES.map(t => (
-                    <button
-                      key={t}
-                      onClick={() => { setShowSugg(false); setQ(''); navigate(`/produits?recherche=${encodeURIComponent(t)}`) }}
-                      className="text-xs font-medium text-gray-600 bg-gray-100 hover:bg-vert-50 hover:text-vert-700 px-2.5 py-1.5 rounded-full transition-colors"
-                    >
-                      🔍 {t}
-                    </button>
-                  ))}
-                </div>
-              </div>
             )}
+          </span>
+          <span className="text-gray-500">Panier</span>
+        </button>
 
-            {loading && (
-              <div className="px-4 py-3 text-sm text-gray-400 flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-gray-200 border-t-vert-500 rounded-full animate-spin" />
-                Recherche en cours…
-              </div>
+        <Link to="/favoris" aria-current={actif('/favoris') ? 'page' : undefined}
+          className="flex-1 flex flex-col items-center gap-0.5 py-2 text-[11px] font-semibold transition-colors">
+          <span className={`relative p-0.5 rounded-lg transition-colors ${actif('/favoris') ? 'text-vert-600' : 'text-gray-400'}`}>
+            <Heart className="w-6 h-6" />
+            {nbFavoris > 0 && (
+              <span className="absolute -top-1 -right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {nbFavoris > 9 ? '9+' : nbFavoris}
+              </span>
             )}
-
-            {!loading && suggestions.length === 0 && (
-              <div className="px-4 py-3 text-sm text-gray-400">
-                Aucun résultat pour <strong>"{q}"</strong>
-              </div>
-            )}
-
-            {!loading && suggestions.length > 0 && (
-              <>
-                <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
-                  Suggestions
-                </div>
-                {suggestions.map((produit) => (
-                  <button
-                    key={produit.id}
-                    onClick={() => handleSelect(produit)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
-                  >
-                    {/* Thumbnail */}
-                    <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                      <ImageProduit produit={produit} className="w-full h-full p-0.5" iconeClass="w-5 h-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 line-clamp-1">{produit.nom}</p>
-                      <p className="text-xs text-gray-400">{produit.marque || produit.categorie?.nom}</p>
-                    </div>
-                    <div className="flex-shrink-0 text-right">
-                      <p className="text-sm font-bold text-vert-700">
-                        {formatPrix(produit.prix_effectif)} MAD
-                      </p>
-                      {produit.en_solde && (
-                        <p className="text-xs text-red-500 line-through">{formatPrix(produit.prix)}</p>
-                      )}
-                    </div>
-                  </button>
-                ))}
-
-                {/* See all results */}
-                <button
-                  onClick={handleSubmit.bind(null, { preventDefault: () => {} })}
-                  onMouseDown={(e) => {
-                    e.preventDefault()
-                    setShowSugg(false)
-                    navigate(`/produits?recherche=${encodeURIComponent(q.trim())}`)
-                    setQ('')
-                  }}
-                  className="w-full px-4 py-3 text-sm font-semibold text-vert-700 hover:bg-vert-50 transition-colors text-center border-t border-gray-100 flex items-center justify-center gap-1.5"
-                >
-                  Voir tous les résultats pour "{q}"
-                </button>
-              </>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          </span>
+          <span className={actif('/favoris') ? 'text-vert-700' : 'text-gray-500'}>Favoris</span>
+        </Link>
+      </div>
+    </nav>
   )
 }
 
@@ -203,6 +97,8 @@ export default function Layout() {
   const { connecte, user, deconnexion } = useAuth()
   const { totalArticles, ouvrir }       = usePanier()
   const { ids: favorisIds }             = useWishlist()
+  const { estLu }                       = useNotifications()
+  const sombre                          = useThemeStore(s => s.sombre)
   const navigate                        = useNavigate()
   const location                        = useLocation()
   const [menuOuvert, setMenuOuvert]     = useState(false)
@@ -252,6 +148,15 @@ export default function Layout() {
     toast.success('À bientôt !')
     navigate('/')
   }
+
+  const { data: cmdData } = useQuery({
+    queryKey: ['mes-commandes'],
+    queryFn: () => commandesApi.liste(user?.id),
+    enabled: !!connecte,
+    staleTime: 60 * 1000,
+  })
+  const livraisons = (cmdData?.data?.data || []).filter(c => c.statut === 'livree')
+  const nbNonLus   = livraisons.filter(c => !estLu(c.id)).length
 
   const nb = totalArticles()
   const nbFavoris = favorisIds.length
@@ -336,6 +241,21 @@ export default function Layout() {
                 </motion.span>
               )}
             </button>
+
+            {/* Notifications (livraisons) */}
+            <Link to="/mes-commandes" aria-label="Mes commandes et notifications"
+              className="relative p-2 sm:p-2.5 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
+              <Bell className="w-5 h-5" />
+              {nbNonLus > 0 && (
+                <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}
+                  className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white dark:ring-gray-900" />
+              )}
+            </Link>
+
+            {/* Theme toggle (desktop) */}
+            <div className="hidden sm:block">
+              <ModeSombre />
+            </div>
 
             {/* User */}
             {connecte ? (
@@ -436,18 +356,24 @@ export default function Layout() {
                     <Link to="/inscription" className="btn-vert flex-1 text-center text-sm py-2">Inscription</Link>
                   </div>
                 )}
+
+                {/* Theme toggle (mobile) */}
+                <div className="flex items-center justify-between px-3 py-1.5 border-t border-gray-100 mt-2">
+                  <span className="text-sm font-medium text-gray-700">{sombre ? 'Mode clair' : 'Mode sombre'}</span>
+                  <ModeSombre compact />
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </header>
 
-      <main id="contenu-principal" className="flex-1">
+      <main id="contenu-principal" className="flex-1 pb-14 md:pb-0">
         <Outlet />
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 mt-16">
+      <footer className="bg-gray-900 text-gray-300 mt-16 pb-16 md:pb-0">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 mb-10">
             <div>
@@ -487,6 +413,9 @@ export default function Layout() {
 
       <PanierDrawer />
 
+      {/* Bottom mobile navigation */}
+      <BottomNav />
+
       {/* Back to top */}
       <AnimatePresence>
         {showTop && (
@@ -496,7 +425,7 @@ export default function Layout() {
             exit={{ opacity: 0, scale: 0.6 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             aria-label="Revenir en haut de page"
-            className="fixed bottom-20 right-5 z-40 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-lg flex items-center justify-center text-gray-500 hover:text-vert-700 hover:border-vert-300 transition-colors"
+            className="fixed bottom-[5.5rem] md:bottom-20 right-5 z-40 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-lg flex items-center justify-center text-gray-500 hover:text-vert-700 hover:border-vert-300 transition-colors"
           >
             <ChevronUp className="w-5 h-5" />
           </motion.button>
@@ -511,7 +440,7 @@ export default function Layout() {
           rel="noopener noreferrer"
           aria-label="Contacter le support sur WhatsApp"
           title="Contacter le support"
-          className="fixed bottom-5 right-5 z-40 w-[52px] h-[52px] sm:w-14 sm:h-14 bg-[#25D366] hover:bg-[#1ebe57] text-white rounded-full flex items-center justify-center shadow-lg shadow-black/20 transition-all hover:scale-105 active:scale-95"
+          className="fixed bottom-[4.5rem] md:bottom-5 right-5 z-40 w-[52px] h-[52px] sm:w-14 sm:h-14 bg-[#25D366] hover:bg-[#1ebe57] text-white rounded-full flex items-center justify-center shadow-lg shadow-black/20 transition-all hover:scale-105 active:scale-95"
         >
           <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
         </a>

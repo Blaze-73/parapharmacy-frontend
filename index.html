@@ -8,6 +8,15 @@
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://parapharmacyy.vercel.app/" />
     <meta name="theme-color" content="#16a34a" />
+    <script>
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0b1120');
+        }
+      } catch (e) {}
+    </script>
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Parapharmacie Elmakhfi" />

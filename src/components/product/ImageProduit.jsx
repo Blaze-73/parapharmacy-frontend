@@ -14,19 +14,24 @@ const STYLES = {
 
 export default function ImageProduit({ produit, className = '', iconeClass = 'w-12 h-12' }) {
   const [err, setErr] = useState(false)
+  const [load, setLoad] = useState(true)
   const catSlug = produit?.categorie?.slug || ''
   const style   = STYLES[catSlug] || STYLES.default
   const icone   = produit?.categorie?.icone || '💊'
 
   if (produit?.image && !err) {
     return (
-      <img
-        src={produit.image}
-        alt={produit.nom}
-        loading="lazy"
-        onError={() => setErr(true)}
-        className={`object-contain ${className}`}
-      />
+      <div className={`relative overflow-hidden ${className}`}>
+        {load && <div className="absolute inset-0 skeleton" aria-hidden="true" />}
+        <img
+          src={produit.image}
+          alt={produit.nom}
+          loading="lazy"
+          onLoad={() => setLoad(false)}
+          onError={() => { setErr(true); setLoad(false) }}
+          className="absolute inset-0 w-full h-full object-contain"
+        />
+      </div>
     )
   }
 

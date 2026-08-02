@@ -7,6 +7,7 @@ import { formatPrix } from '../../utils/format.js'
 import Pagination from '../../components/Pagination.jsx'
 import toast from 'react-hot-toast'
 import usePageMeta from '../../hooks/usePageMeta.js'
+import usePageTitle from '../../hooks/usePageTitle.js'
 
 const STATUTS = [
   { v: 'en_attente', l: 'En attente',  cls: 'badge-jaune' },
@@ -50,6 +51,7 @@ function OptionsStatut({ statut, onChange, className }) {
 
 export default function AdminCommandes() {
   usePageMeta({ title: 'Admin — Commandes', path: '/admin/commandes', noindex: true })
+  usePageTitle('Admin — Commandes')
   const qc = useQueryClient()
   const [filtreStatut, setFiltreStatut] = useState('')
   const [recherche, setRecherche] = useState('')

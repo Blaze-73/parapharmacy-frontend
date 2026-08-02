@@ -6,8 +6,8 @@ import { ArrowRight, ChevronLeft, ChevronRight, Truck, Shield, RefreshCw, Clock,
 import { produitsApi } from '../api/index.js'
 import CarteProduit from '../components/product/CarteProduit.jsx'
 import CategoryIcon from '../components/CategoryIcon.jsx'
+import SearchBar from '../components/SearchBar.jsx'
 import usePageMeta from '../hooks/usePageMeta.js'
-import toast from 'react-hot-toast'
 
 const SLIDES = [
   {
@@ -194,6 +194,15 @@ export default function Accueil() {
           className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/30 backdrop-blur-sm text-white rounded-full flex items-center justify-center hover:bg-black/50 transition-colors" style={{ zIndex: 3 }}>
           <ChevronRight className="w-5 h-5" />
         </button>
+      </section>
+
+      {/* ── Recherche rapide ─────────────────────────────────── */}
+      <section className="relative z-10 -mt-8 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-100 p-2 sm:p-3">
+            <SearchBar />
+          </div>
+        </div>
       </section>
 
       {/* ── Marques ────────────────────────────────────────────── */}
@@ -392,35 +401,8 @@ export default function Accueil() {
           </section>
         )}
 
-        {/* ── Newsletter ─────────────────────────────────────────── */}
-        <section className="mt-16 mb-16">
-          <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-vert-600 to-emerald-700 p-8 md:p-12 text-center">
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-5 left-5 text-6xl">🧴</div>
-              <div className="absolute bottom-5 right-5 text-6xl">💊</div>
-              <div className="absolute top-1/2 right-1/4 text-4xl">🌿</div>
-            </div>
-            <div className="relative z-10 max-w-lg mx-auto">
-              <Sparkles className="w-10 h-10 text-white/80 mx-auto mb-4" />
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2" style={{ fontFamily: 'Syne' }}>
-                Ne manquez aucune offre
-              </h2>
-              <p className="text-white/80 text-sm mb-6">
-                Recevez nos promotions exclusives et nos conseils santé directement dans votre boîte mail.
-              </p>
-              <form onSubmit={e => { e.preventDefault(); toast.success('Merci ! Vous êtes bien abonné(e).') }} className="flex gap-2 max-w-sm mx-auto">
-                <input type="email" placeholder="votre@email.com" className="flex-1 px-4 py-3 rounded-xl text-sm border-0 focus:ring-2 focus:ring-white/50 bg-white/95 placeholder-gray-400" />
-                <button type="submit" className="bg-white text-vert-700 font-bold px-6 py-3 rounded-xl text-sm hover:bg-gray-50 transition-colors whitespace-nowrap">
-                  S'abonner
-                </button>
-              </form>
-              <p className="text-white/60 text-xs mt-3">Aucun spam, désinscription à tout moment.</p>
-            </div>
-          </div>
-        </section>
-
         {/* ── Témoignages ────────────────────────────────────────── */}
-        <section className="mb-16">
+        <section className="mt-16 mb-16">
           <AnimatePresence mode="wait">
             <motion.div
               key={temoinIndex}

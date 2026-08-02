@@ -60,6 +60,46 @@ export const useAuth = create(
   )
 )
 
+// ── Alertes de réapprovisionnement ─────────────────────────────────────────────
+export const useAlertesStock = create(
+  persist(
+    (set, get) => ({
+      ids: [],
+      ajouter: (id) => set({ ids: get().ids.includes(id) ? get().ids : [...get().ids, id] }),
+      retirer:  (id) => set({ ids: get().ids.filter(x => x !== id) }),
+      basculer: (id) => set({ ids: get().ids.includes(id) ? get().ids.filter(x => x !== id) : [...get().ids, id] }),
+    }),
+    { name: 'alertes-stock', partialize: (s) => ({ ids: s.ids }) }
+  )
+)
+
+// ── Thème (sombre / clair) ─────────────────────────────────────────────────────
+export const useThemeStore = create((set, get) => ({
+  sombre: typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
+  basculer: () => {
+    const sombre = !get().sombre
+    document.documentElement.classList.toggle('dark', sombre)
+    try {
+      localStorage.setItem('theme', sombre ? 'dark' : 'light')
+      const meta = document.querySelector('meta[name="theme-color"]')
+      if (meta) meta.setAttribute('content', sombre ? '#0b1120' : '#16a34a')
+    } catch {}
+    set({ sombre })
+  },
+}))
+
+// ── Notifications ──────────────────────────────────────────────────────────────
+export const useNotifications = create(
+  persist(
+    (set, get) => ({
+      lus: [],
+      marquerLus: () => set({ lus: ['all'] }),
+      estLu: (id) => get().lus.includes('all') || get().lus.includes(id),
+    }),
+    { name: 'notifications', partialize: (s) => ({ lus: s.lus }) }
+  )
+)
+
 // ── Panier ────────────────────────────────────────────────────────────────────
 export const usePanier = create(
   persist(
