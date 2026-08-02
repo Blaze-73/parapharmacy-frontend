@@ -287,7 +287,7 @@ export default function Layout() {
           </Link>
 
           {/* Desktop search with suggestions */}
-          <div className="flex-1 max-w-lg hidden lg:flex items-center gap-2">
+          <div className="flex-1 max-w-lg min-w-0 hidden lg:flex items-center gap-2">
             <SearchBar inputRef={searchDesktopRef} />
           </div>
 
