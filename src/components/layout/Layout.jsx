@@ -126,6 +126,7 @@ export default function Layout() {
   }, [])
 
   async function handleDeconnexion() {
+    if (!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) return
     try { await authApi.deconnexion() } catch {}
     deconnexion()
     toast.success('À bientôt !')

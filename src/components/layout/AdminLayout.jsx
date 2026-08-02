@@ -45,6 +45,7 @@ export default function AdminLayout() {
   useOutside(refNotif, () => setNotifOuvert(false))
 
   async function handleDeconnexion() {
+    if (!confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) return
     try { await authApi.deconnexion() } catch {}
     deconnexion()
     navigate('/')
